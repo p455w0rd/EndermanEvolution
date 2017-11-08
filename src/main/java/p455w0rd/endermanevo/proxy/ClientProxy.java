@@ -1,13 +1,14 @@
 package p455w0rd.endermanevo.proxy;
 
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
-import p455w0rd.endermanevo.init.ModBlocks;
+import p455w0rd.endermanevo.blocks.tiles.TileBlockSkull;
+import p455w0rd.endermanevo.client.render.TESRBlockSkull;
 import p455w0rd.endermanevo.init.ModCreativeTab;
-import p455w0rd.endermanevo.init.ModItems;
 import p455w0rd.endermanevo.init.ModRendering;
 import p455w0rdslib.util.EasyMappings;
 
@@ -17,8 +18,7 @@ public class ClientProxy extends CommonProxy {
 	public void preInit(FMLPreInitializationEvent e) {
 		super.preInit(e);
 		ModCreativeTab.init();
-		ModBlocks.preInitModels();
-		ModItems.preInitModels();
+		ClientRegistry.bindTileEntitySpecialRenderer(TileBlockSkull.class, new TESRBlockSkull());
 	}
 
 	@Override

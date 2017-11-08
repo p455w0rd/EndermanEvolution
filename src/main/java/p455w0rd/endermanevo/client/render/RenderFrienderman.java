@@ -37,7 +37,7 @@ import p455w0rd.endermanevo.init.ModGlobals;
  */
 public class RenderFrienderman extends RenderLiving<EntityFrienderman> {
 
-	private static final ResourceLocation ENDERMAN_TEXTURES = new ResourceLocation(ModGlobals.MODID, "textures/entity/enderman2/enderman3.png");
+	private static final ResourceLocation ENDERMAN_TEXTURES = new ResourceLocation(ModGlobals.MODID, "textures/entity/enderman3.png");
 	/** The model of the enderman */
 	private final ModelFrienderman endermanModel;
 	private final Random rnd = new Random();
@@ -56,7 +56,7 @@ public class RenderFrienderman extends RenderLiving<EntityFrienderman> {
 	public void doRender(EntityFrienderman entity, double x, double y, double z, float entityYaw, float partialTicks) {
 		IBlockState iblockstate = entity.getHeldBlockState();
 		ItemStack stack = entity.getHeldItemStack();
-		endermanModel.isCarrying = iblockstate != null || stack != null;
+		endermanModel.isCarrying = iblockstate != null || !stack.isEmpty();
 		if (endermanModel.isCarrying && iblockstate != null) {
 			endermanModel.carriedBlock = iblockstate.getBlock();
 		}

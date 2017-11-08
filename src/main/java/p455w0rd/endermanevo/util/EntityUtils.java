@@ -54,7 +54,7 @@ public class EntityUtils {
 			return null;
 		}
 		ItemSkullBase item = getSkullItem(entity);
-		return TileBlockSkull.getModel(item.getName());
+		return TileBlockSkull.getModel(item.getRegistryName().getResourcePath());
 	}
 
 	public static ItemStack getSkullDrop(EntityLivingBase entity) {

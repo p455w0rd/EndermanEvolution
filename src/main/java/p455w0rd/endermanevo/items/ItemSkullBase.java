@@ -18,7 +18,6 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import p455w0rd.endermanevo.api.IModelHolder;
@@ -47,11 +46,6 @@ public class ItemSkullBase extends ItemArmor implements IModelHolder {
 		setMaxStackSize(64);
 		setMaxDamage(0);
 		skullBlock = block;
-		ForgeRegistries.ITEMS.register(this);
-	}
-
-	public String getName() {
-		return NAME;
 	}
 
 	@Override
@@ -77,7 +71,7 @@ public class ItemSkullBase extends ItemArmor implements IModelHolder {
 			}
 			ItemStack stack = player.getHeldItem(hand);
 			if (player.canPlayerEdit(pos, facing, stack) && Blocks.SKULL.canPlaceBlockAt(worldIn, pos)) {
-				if (worldIn.isRemote) {
+				if (worldIn.isRemote || skullBlock == null) {
 					return EnumActionResult.SUCCESS;
 				}
 				else {

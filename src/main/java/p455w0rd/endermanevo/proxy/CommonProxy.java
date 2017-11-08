@@ -20,10 +20,10 @@ public class CommonProxy {
 		ModBlocks.init();
 		ModIntegration.preInit();
 		ModNetworking.init();
+		ModEvents.init();
 	}
 
 	public void init(FMLInitializationEvent e) {
-		ModEvents.init();
 		ModEntities.init();
 		ModIntegration.init();
 	}

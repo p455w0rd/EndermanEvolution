@@ -31,7 +31,7 @@ import p455w0rd.endermanevo.init.ModGlobals;
  *
  */
 public class LayerEnderman2Eyes implements LayerRenderer<EntityEnderman2> {
-	private static final ResourceLocation RES_ENDERMAN_EYES = new ResourceLocation(ModGlobals.MODID, "textures/entity/enderman2/enderman2_eyes.png");
+	private static final ResourceLocation RES_ENDERMAN_EYES = new ResourceLocation(ModGlobals.MODID, "textures/entity/enderman2_eyes.png");
 	private final RenderEnderman2 endermanRenderer;
 
 	public LayerEnderman2Eyes(RenderEnderman2 endermanRendererIn) {

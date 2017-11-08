@@ -32,7 +32,7 @@ public class ModItems {
 
 	public static List<Item> getList() {
 		if (ITEM_LIST.isEmpty()) {
-			ITEM_LIST.addAll(Lists.newArrayList(SKULL_ENDERMAN, SKULL_FRIENDERMAN, SKULL_ENDERMAN2, FRIENDER_PEARL));
+			ITEM_LIST.addAll(Lists.newArrayList(FRIENDER_PEARL, SKULL_ENDERMAN, SKULL_FRIENDERMAN, SKULL_ENDERMAN2));
 		}
 		return ITEM_LIST;
 	}

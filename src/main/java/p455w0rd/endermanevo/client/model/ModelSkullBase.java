@@ -230,7 +230,7 @@ public class ModelSkullBase extends ModelBiped {
 
 	public static class Frienderman extends ModelSkullBase {
 
-		protected static final ResourceLocation TEXTURE_ENDERMAN = new ResourceLocation(ModGlobals.MODID, "textures/entity/enderman2/enderman3.png");
+		protected static final ResourceLocation TEXTURE_ENDERMAN = new ResourceLocation(ModGlobals.MODID, "textures/entity/enderman3.png");
 		protected static final ResourceLocation LIGHTMAP_ENDERMAN = new ResourceLocation("textures/entity/enderman/enderman_eyes.png");
 		private static Frienderman INSTANCE = new Frienderman();
 
@@ -253,8 +253,8 @@ public class ModelSkullBase extends ModelBiped {
 
 	public static class Enderman2 extends ModelSkullBase {
 
-		protected static final ResourceLocation TEXTURE_ENDERMAN = new ResourceLocation(ModGlobals.MODID, "textures/entity/enderman2/enderman2.png");
-		protected static final ResourceLocation LIGHTMAP_ENDERMAN = new ResourceLocation(ModGlobals.MODID, "textures/entity/enderman2/enderman2_eyes.png");
+		protected static final ResourceLocation TEXTURE_ENDERMAN = new ResourceLocation(ModGlobals.MODID, "textures/entity/enderman2.png");
+		protected static final ResourceLocation LIGHTMAP_ENDERMAN = new ResourceLocation(ModGlobals.MODID, "textures/entity/enderman2_eyes.png");
 		private static Enderman2 INSTANCE = new Enderman2();
 
 		public Enderman2() {

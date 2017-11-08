@@ -42,7 +42,7 @@ public class ItemSkullRenderer implements IItemRenderer {
 			return;
 		}
 		ItemSkullBase item = (ItemSkullBase) stack.getItem();
-		ModelSkullBase model = TileBlockSkull.getModel(item.getName());
+		ModelSkullBase model = TileBlockSkull.getModel(item.getRegistryName().getResourcePath());
 		renderSkull(0.0F, model, stack);
 	}
 
