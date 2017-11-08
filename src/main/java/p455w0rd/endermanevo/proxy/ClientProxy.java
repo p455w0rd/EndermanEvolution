@@ -16,9 +16,9 @@ public class ClientProxy extends CommonProxy {
 	@Override
 	public void preInit(FMLPreInitializationEvent e) {
 		super.preInit(e);
+		ModCreativeTab.init();
 		ModBlocks.preInitModels();
 		ModItems.preInitModels();
-		ModCreativeTab.init();
 	}
 
 	@Override

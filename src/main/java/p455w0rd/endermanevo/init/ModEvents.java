@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.google.common.collect.Lists;
 
+import net.minecraft.block.Block;
 import net.minecraft.client.model.ModelBiped;
 import net.minecraft.client.renderer.entity.RenderLivingBase;
 import net.minecraft.client.renderer.entity.layers.LayerRenderer;
@@ -15,6 +16,8 @@ import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.monster.EntityEnderman;
 import net.minecraft.entity.monster.EntitySkeleton;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 import net.minecraft.world.storage.loot.LootEntryItem;
@@ -26,6 +29,7 @@ import net.minecraftforge.client.event.RenderLivingEvent;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.LootTableLoadEvent;
+import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingDropsEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
@@ -70,7 +74,7 @@ public class ModEvents {
 				frienderman.setPosition(newPlayer.posX, newPlayer.posY + 2, newPlayer.posZ);
 			}
 		}
-	
+
 		@SubscribeEvent
 		public void onDimensionChange(EntityTravelToDimensionEvent e) {
 			List<EntityFrienderman> friendermanList = Lists.newArrayList();
@@ -88,10 +92,10 @@ public class ModEvents {
 				}
 			}
 			for (EntityFrienderman frienderman : friendermanList) {
-	
+
 				BlockPos playerPos = new BlockPos(newPlayer.posX, newPlayer.posY, newPlayer.posZ);
 				BlockPos spawnPos = playerPos.east(3).west(3).up(2);
-	
+
 				for (int i = 0; i < Integer.MAX_VALUE; i++) {
 					spawnPos = playerPos.east(i).west(i).down();
 					IBlockState state = world.getBlockState(spawnPos);
@@ -100,7 +104,7 @@ public class ModEvents {
 						break;
 					}
 				}
-	
+
 				EntityFrienderman newEntity = (EntityFrienderman) TeleportUtils.teleportEntity(frienderman, e.getDimension(), e.getDimension() == -1 ? spawnPos.getX() / 8 : spawnPos.getX(), e.getDimension() == -1 ? spawnPos.getY() / 8 : spawnPos.getY(), e.getDimension() == -1 ? spawnPos.getZ() / 8 : spawnPos.getZ(), frienderman.rotationYaw, frienderman.rotationPitch);
 				if (newEntity != null) {
 					ModRegistries.registerTamedFrienderman(newPlayer, newEntity);
@@ -111,7 +115,7 @@ public class ModEvents {
 				//frienderman.setPosition(playerPos.getX(), playerPos.getY(), playerPos.getZ());
 			}
 		}
-	
+
 		@SubscribeEvent
 		public void onDeath(LivingDeathEvent e) {
 			if (!e.isCanceled() && !e.getEntityLiving().getEntityWorld().isRemote && e.getEntityLiving() instanceof EntityFrienderman) {
@@ -262,6 +266,23 @@ public class ModEvents {
 			}
 		}
 
+	}
+
+	@SubscribeEvent
+	public void registerItems(RegistryEvent.Register<Item> event) {
+		for (Item item : ModItems.getList()) {
+			event.getRegistry().register(item);
+		}
+		for (Block block : ModBlocks.getList()) {
+			event.getRegistry().register(new ItemBlock(block).setRegistryName(block.getRegistryName()));
+		}
+	}
+
+	@SubscribeEvent
+	public void registerBlock(RegistryEvent.Register<Block> event) {
+		for (Block block : ModBlocks.getList()) {
+			event.getRegistry().register(block);
+		}
 	}
 
 	// rainbow colors

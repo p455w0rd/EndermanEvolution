@@ -21,7 +21,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import p455w0rd.endermanevo.blocks.tiles.TileBlockSkull;
 import p455w0rd.endermanevo.init.ModItems;
 
@@ -36,6 +35,7 @@ public class BlockSkullBase extends BlockSkull {
 	protected static final AxisAlignedBB SOUTH_AABB = new AxisAlignedBB(0.25D, 0.25D, 0.0D, 0.75D, 0.75D, 0.5D);
 	protected static final AxisAlignedBB WEST_AABB = new AxisAlignedBB(0.5D, 0.25D, 0.25D, 1.0D, 0.75D, 0.75D);
 	protected static final AxisAlignedBB EAST_AABB = new AxisAlignedBB(0.0D, 0.25D, 0.25D, 0.5D, 0.75D, 0.75D);
+	ItemBlock itemBlock = null;
 
 	private String NAME;
 
@@ -45,8 +45,6 @@ public class BlockSkullBase extends BlockSkull {
 		setRegistryName(NAME);
 		setHardness(1.0F);
 		setSoundType(SoundType.STONE);
-		ForgeRegistries.BLOCKS.register(this);
-		ForgeRegistries.ITEMS.register(new ItemBlock(this).setRegistryName(getRegistryName()));
 	}
 
 	@Override

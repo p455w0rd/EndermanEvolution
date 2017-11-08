@@ -15,6 +15,7 @@ import p455w0rd.endermanevo.blocks.tiles.TileBlockSkull;
 import p455w0rd.endermanevo.client.render.TESRBlockSkull;
 
 public class ModBlocks {
+
 	private static final List<Block> BLOCK_LIST = new ArrayList<Block>();
 
 	public static BlockSkullBase.Enderman ENDERMAN_SKULL;
@@ -23,7 +24,7 @@ public class ModBlocks {
 
 	public static void init() {
 		GameRegistry.registerTileEntity(TileBlockSkull.class, ModGlobals.MODID + ":tile_pskull");
-		BLOCK_LIST.addAll(Arrays.asList(ENDERMAN_SKULL = new BlockSkullBase.Enderman(), FRIENDERMAN_SKULL = new BlockSkullBase.Frienderman(), ENDERMAN2_SKULL = new BlockSkullBase.Enderman2()));
+
 	}
 
 	@SideOnly(Side.CLIENT)
@@ -37,6 +38,9 @@ public class ModBlocks {
 	}
 
 	public static List<Block> getList() {
+		if (BLOCK_LIST.isEmpty()) {
+			BLOCK_LIST.addAll(Arrays.asList(ENDERMAN_SKULL = new BlockSkullBase.Enderman(), FRIENDERMAN_SKULL = new BlockSkullBase.Frienderman(), ENDERMAN2_SKULL = new BlockSkullBase.Enderman2()));
+		}
 		return BLOCK_LIST;
 	}
 }

@@ -11,7 +11,6 @@ import p455w0rd.endermanevo.init.ModConfig;
 import p455w0rd.endermanevo.init.ModEntities;
 import p455w0rd.endermanevo.init.ModEvents;
 import p455w0rd.endermanevo.init.ModIntegration;
-import p455w0rd.endermanevo.init.ModItems;
 import p455w0rd.endermanevo.init.ModNetworking;
 
 public class CommonProxy {
@@ -19,7 +18,6 @@ public class CommonProxy {
 	public void preInit(FMLPreInitializationEvent e) {
 		ModConfig.init();
 		ModBlocks.init();
-		ModItems.init();
 		ModIntegration.preInit();
 		ModNetworking.init();
 	}
