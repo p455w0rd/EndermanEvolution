@@ -3,9 +3,7 @@ package p455w0rd.endermanevo.proxy;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import p455w0rd.endermanevo.blocks.tiles.TileBlockSkull;
 import p455w0rd.endermanevo.client.render.TESRBlockSkull;
 import p455w0rd.endermanevo.init.ModCreativeTab;
@@ -25,16 +23,6 @@ public class ClientProxy extends CommonProxy {
 	public void init(FMLInitializationEvent e) {
 		super.init(e);
 		ModRendering.init();
-	}
-
-	@Override
-	public void postInit(FMLPostInitializationEvent e) {
-		super.postInit(e);
-	}
-
-	@Override
-	public void serverStarting(FMLServerStartingEvent e) {
-
 	}
 
 	@Override

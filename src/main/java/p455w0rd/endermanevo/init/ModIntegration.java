@@ -29,10 +29,6 @@ public class ModIntegration {
 		}
 	}
 
-	public static void postInit() {
-
-	}
-
 	public static enum Mods {
 			TOP("theoneprobe", "The One Probe"),
 			ENDERSTORAGE("EnderStorage", "Ender Storage"),

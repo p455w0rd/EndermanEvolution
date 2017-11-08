@@ -3,10 +3,7 @@ package p455w0rd.endermanevo;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
-import net.minecraftforge.fml.common.event.FMLServerStoppedEvent;
 import p455w0rd.endermanevo.init.ModGlobals;
 import p455w0rd.endermanevo.proxy.CommonProxy;
 
@@ -30,18 +27,4 @@ public class EndermanEvolution {
 		PROXY.init(e);
 	}
 
-	@Mod.EventHandler
-	public void postInit(FMLPostInitializationEvent e) {
-		PROXY.postInit(e);
-	}
-
-	@Mod.EventHandler
-	public void serverStarting(FMLServerStartingEvent e) {
-		PROXY.serverStarting(e);
-	}
-
-	@Mod.EventHandler
-	public void serverStopped(FMLServerStoppedEvent e) {
-		PROXY.serverStopped(e);
-	}
 }
