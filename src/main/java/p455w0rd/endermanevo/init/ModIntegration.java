@@ -16,24 +16,15 @@ public class ModIntegration {
 		if (Mods.TOP.isLoaded()) {
 			TOP.init();
 		}
-		else {
-			ModLogger.info(Mods.TOP.getName() + " Integation: Disabled");
-		}
 	}
 
 	public static void init() {
 		if (Mods.ENDERSTORAGE.isLoaded()) {
 			EnderStorage.init();
 		}
-		else {
-			ModLogger.info(Mods.ENDERSTORAGE.getName() + " Integation: Disabled");
-		}
 		if (FMLCommonHandler.instance().getSide().isClient()) {
 			if (Mods.WAILA.isLoaded()) {
 				WAILA.init();
-			}
-			else {
-				ModLogger.info("Waila Integation: Disabled");
 			}
 		}
 	}

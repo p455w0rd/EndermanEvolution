@@ -12,33 +12,26 @@ import p455w0rd.endermanevo.init.ModEntities;
 import p455w0rd.endermanevo.init.ModEvents;
 import p455w0rd.endermanevo.init.ModIntegration;
 import p455w0rd.endermanevo.init.ModItems;
-import p455w0rd.endermanevo.init.ModLogger;
 import p455w0rd.endermanevo.init.ModNetworking;
 
 public class CommonProxy {
 
 	public void preInit(FMLPreInitializationEvent e) {
-		ModLogger.infoBegin("PreInit");
 		ModConfig.init();
 		ModBlocks.init();
 		ModItems.init();
 		ModIntegration.preInit();
 		ModNetworking.init();
-		ModLogger.infoEnd("PreInit");
 	}
 
 	public void init(FMLInitializationEvent e) {
-		ModLogger.infoBegin("Init");
 		ModEvents.init();
 		ModEntities.init();
 		ModIntegration.init();
-		ModLogger.infoEnd("Init");
 	}
 
 	public void postInit(FMLPostInitializationEvent e) {
-		ModLogger.infoBegin("PostInit");
 		ModIntegration.postInit();
-		ModLogger.infoEnd("PostInit");
 	}
 
 	public void serverStarting(FMLServerStartingEvent e) {

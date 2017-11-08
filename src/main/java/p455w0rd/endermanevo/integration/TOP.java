@@ -20,8 +20,6 @@ import p455w0rd.endermanevo.api.ITOPBlockDisplayOverride;
 import p455w0rd.endermanevo.api.ITOPEntityInfoProvider;
 import p455w0rd.endermanevo.api.ITOPInfoProvider;
 import p455w0rd.endermanevo.init.ModGlobals;
-import p455w0rd.endermanevo.init.ModIntegration.Mods;
-import p455w0rd.endermanevo.init.ModLogger;
 
 /**
  * @author p455w0rd
@@ -36,7 +34,6 @@ public class TOP {
 		if (registered) {
 			return;
 		}
-		ModLogger.info(Mods.TOP.getName() + " Integation: Enabled");
 		registered = true;
 		FMLInterModComms.sendFunctionMessage("theoneprobe", "getTheOneProbe", "p455w0rd.endermanevo.integration.TOP$GetTheOneProbe");
 	}

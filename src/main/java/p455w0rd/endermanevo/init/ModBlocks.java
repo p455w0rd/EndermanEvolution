@@ -24,20 +24,16 @@ public class ModBlocks {
 	public static void init() {
 		GameRegistry.registerTileEntity(TileBlockSkull.class, ModGlobals.MODID + ":tile_pskull");
 		BLOCK_LIST.addAll(Arrays.asList(ENDERMAN_SKULL = new BlockSkullBase.Enderman(), FRIENDERMAN_SKULL = new BlockSkullBase.Frienderman(), ENDERMAN2_SKULL = new BlockSkullBase.Enderman2()));
-		ModLogger.info("Added Blocks");
 	}
 
 	@SideOnly(Side.CLIENT)
 	public static void preInitModels() {
-		ModLogger.info("Init adding block models");
 		for (Block block : BLOCK_LIST) {
 			if (block instanceof IModelHolder) {
 				((IModelHolder) block).initModel();
-				ModLogger.info(" Registered Model for " + block.getUnlocalizedName());
 			}
 		}
 		ClientRegistry.bindTileEntitySpecialRenderer(TileBlockSkull.class, new TESRBlockSkull());
-		ModLogger.info("Finished adding block models");
 	}
 
 	public static List<Block> getList() {

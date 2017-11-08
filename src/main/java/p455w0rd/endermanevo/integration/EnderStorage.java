@@ -10,8 +10,6 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
-import p455w0rd.endermanevo.init.ModIntegration.Mods;
-import p455w0rd.endermanevo.init.ModLogger;
 
 /**
  * @author p455w0rd
@@ -20,7 +18,6 @@ import p455w0rd.endermanevo.init.ModLogger;
 public class EnderStorage {
 
 	public static void init() {
-		ModLogger.info(Mods.ENDERSTORAGE.getName() + " Integation: Enabled");
 		//EntityFrienderman.setCarriable(getEnderStorageBlock(), true);
 	}
 

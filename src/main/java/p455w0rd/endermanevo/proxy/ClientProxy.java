@@ -8,7 +8,6 @@ import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import p455w0rd.endermanevo.init.ModBlocks;
 import p455w0rd.endermanevo.init.ModCreativeTab;
 import p455w0rd.endermanevo.init.ModItems;
-import p455w0rd.endermanevo.init.ModLogger;
 import p455w0rd.endermanevo.init.ModRendering;
 import p455w0rdslib.util.EasyMappings;
 
@@ -20,20 +19,17 @@ public class ClientProxy extends CommonProxy {
 		ModBlocks.preInitModels();
 		ModItems.preInitModels();
 		ModCreativeTab.init();
-		ModLogger.infoEnd("PreInit");
 	}
 
 	@Override
 	public void init(FMLInitializationEvent e) {
 		super.init(e);
 		ModRendering.init();
-		ModLogger.infoEnd("Init");
 	}
 
 	@Override
 	public void postInit(FMLPostInitializationEvent e) {
 		super.postInit(e);
-		ModLogger.infoEnd("PostInit");
 	}
 
 	@Override
