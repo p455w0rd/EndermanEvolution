@@ -41,7 +41,6 @@ public class ModItems {
 			if (item instanceof IModelHolder) {
 				((IModelHolder) item).initModel();
 			}
-			//
 			ModLogger.info(" Registered Model for " + item.getItemStackDisplayName(new ItemStack(item)));
 		}
 		ModLogger.info("Finished adding item models");

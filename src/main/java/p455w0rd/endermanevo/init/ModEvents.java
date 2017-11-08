@@ -70,7 +70,7 @@ public class ModEvents {
 				frienderman.setPosition(newPlayer.posX, newPlayer.posY + 2, newPlayer.posZ);
 			}
 		}
-
+	
 		@SubscribeEvent
 		public void onDimensionChange(EntityTravelToDimensionEvent e) {
 			List<EntityFrienderman> friendermanList = Lists.newArrayList();
@@ -88,10 +88,10 @@ public class ModEvents {
 				}
 			}
 			for (EntityFrienderman frienderman : friendermanList) {
-
+	
 				BlockPos playerPos = new BlockPos(newPlayer.posX, newPlayer.posY, newPlayer.posZ);
 				BlockPos spawnPos = playerPos.east(3).west(3).up(2);
-
+	
 				for (int i = 0; i < Integer.MAX_VALUE; i++) {
 					spawnPos = playerPos.east(i).west(i).down();
 					IBlockState state = world.getBlockState(spawnPos);
@@ -100,7 +100,7 @@ public class ModEvents {
 						break;
 					}
 				}
-
+	
 				EntityFrienderman newEntity = (EntityFrienderman) TeleportUtils.teleportEntity(frienderman, e.getDimension(), e.getDimension() == -1 ? spawnPos.getX() / 8 : spawnPos.getX(), e.getDimension() == -1 ? spawnPos.getY() / 8 : spawnPos.getY(), e.getDimension() == -1 ? spawnPos.getZ() / 8 : spawnPos.getZ(), frienderman.rotationYaw, frienderman.rotationPitch);
 				if (newEntity != null) {
 					ModRegistries.registerTamedFrienderman(newPlayer, newEntity);
@@ -111,7 +111,7 @@ public class ModEvents {
 				//frienderman.setPosition(playerPos.getX(), playerPos.getY(), playerPos.getZ());
 			}
 		}
-
+	
 		@SubscribeEvent
 		public void onDeath(LivingDeathEvent e) {
 			if (!e.isCanceled() && !e.getEntityLiving().getEntityWorld().isRemote && e.getEntityLiving() instanceof EntityFrienderman) {
@@ -257,7 +257,7 @@ public class ModEvents {
 			LootPool mainPool = event.getTable().getPool("main");
 			if (mainPool != null) {
 				if (event.getName().equals(LootTableList.CHESTS_ABANDONED_MINESHAFT) || event.getName().equals(LootTableList.CHESTS_NETHER_BRIDGE) || event.getName().equals(LootTableList.CHESTS_SIMPLE_DUNGEON)) {
-					mainPool.addEntry(new LootEntryItem(ModItems.FRIENDER_PEARL, 10, 0, new LootFunction[] {}, new LootCondition[0], "p455w0rdsthings:friender_pearl_loot"));
+					mainPool.addEntry(new LootEntryItem(ModItems.FRIENDER_PEARL, 10, 0, new LootFunction[] {}, new LootCondition[0], ModGlobals.MODID + ":friender_pearl_loot"));
 				}
 			}
 		}
