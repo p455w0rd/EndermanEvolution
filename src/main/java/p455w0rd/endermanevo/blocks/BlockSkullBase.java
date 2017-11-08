@@ -41,8 +41,8 @@ public class BlockSkullBase extends BlockSkull {
 
 	public BlockSkullBase(String name) {
 		NAME = name;
-		setUnlocalizedName(name + "_skull");
-		setRegistryName(name + "_skull");
+		setUnlocalizedName(NAME);
+		setRegistryName(NAME);
 		setHardness(1.0F);
 		setSoundType(SoundType.STONE);
 		ForgeRegistries.BLOCKS.register(this);
@@ -56,7 +56,7 @@ public class BlockSkullBase extends BlockSkull {
 
 	@Override
 	public String getUnlocalizedName() {
-		return "tile." + NAME + "_skull.name";
+		return "tile." + NAME + ".name";
 	}
 
 	@Override
@@ -99,7 +99,7 @@ public class BlockSkullBase extends BlockSkull {
 	public static class Enderman extends BlockSkullBase {
 
 		public Enderman() {
-			super("enderman");
+			super("enderman_skull");
 		}
 
 		@Override
@@ -127,27 +127,27 @@ public class BlockSkullBase extends BlockSkull {
 	public static class Frienderman extends BlockSkullBase {
 
 		public Frienderman() {
-			super("frienderman");
+			super("frienderman_skull");
 		}
 
 		@Override
 		public ItemStack getItem(World worldIn, BlockPos pos, IBlockState state) {
-			return null;//new ItemStack(ModItems.SKULL_FRIENDERMAN);
+			return new ItemStack(ModItems.SKULL_FRIENDERMAN);
 		}
 
 		@Override
 		public Item getItemDropped(IBlockState state, Random rand, int fortune) {
-			return null;//ModItems.SKULL_FRIENDERMAN;
+			return ModItems.SKULL_FRIENDERMAN;
 		}
 
 		@Override
 		public List<ItemStack> getDrops(IBlockAccess worldIn, BlockPos pos, IBlockState state, int fortune) {
-			return null;//Lists.newArrayList(new ItemStack(ModItems.SKULL_FRIENDERMAN));
+			return Lists.newArrayList(new ItemStack(ModItems.SKULL_FRIENDERMAN));
 		}
 
 		@Override
 		public ItemStack getPickBlock(IBlockState state, RayTraceResult target, World world, BlockPos pos, EntityPlayer player) {
-			return null;//new ItemStack(ModItems.SKULL_FRIENDERMAN);
+			return new ItemStack(ModItems.SKULL_FRIENDERMAN);
 		}
 
 	}
@@ -155,27 +155,27 @@ public class BlockSkullBase extends BlockSkull {
 	public static class Enderman2 extends BlockSkullBase {
 
 		public Enderman2() {
-			super("enderman2");
+			super("enderman2_skull");
 		}
 
 		@Override
 		public ItemStack getItem(World worldIn, BlockPos pos, IBlockState state) {
-			return null;//new ItemStack(ModItems.SKULL_ENDERMAN2);
+			return new ItemStack(ModItems.SKULL_ENDERMAN2);
 		}
 
 		@Override
 		public Item getItemDropped(IBlockState state, Random rand, int fortune) {
-			return null;//ModItems.SKULL_ENDERMAN2;
+			return ModItems.SKULL_ENDERMAN2;
 		}
 
 		@Override
 		public List<ItemStack> getDrops(IBlockAccess worldIn, BlockPos pos, IBlockState state, int fortune) {
-			return null;//Lists.newArrayList(new ItemStack(ModItems.SKULL_ENDERMAN2));
+			return Lists.newArrayList(new ItemStack(ModItems.SKULL_ENDERMAN2));
 		}
 
 		@Override
 		public ItemStack getPickBlock(IBlockState state, RayTraceResult target, World world, BlockPos pos, EntityPlayer player) {
-			return null;//new ItemStack(ModItems.SKULL_ENDERMAN2);
+			return new ItemStack(ModItems.SKULL_ENDERMAN2);
 		}
 
 	}

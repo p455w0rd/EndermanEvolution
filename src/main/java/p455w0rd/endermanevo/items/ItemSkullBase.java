@@ -18,12 +18,14 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import p455w0rd.endermanevo.api.IModelHolder;
 import p455w0rd.endermanevo.blocks.BlockSkullBase;
 import p455w0rd.endermanevo.blocks.tiles.TileBlockSkull;
 import p455w0rd.endermanevo.client.render.ItemSkullRenderer;
+import p455w0rd.endermanevo.init.ModBlocks;
 import p455w0rd.endermanevo.init.ModMaterials;
 import p455w0rdslib.util.MathUtils;
 
@@ -35,22 +37,21 @@ public class ItemSkullBase extends ItemArmor implements IModelHolder {
 
 	private BlockSkullBase skullBlock;
 	private String NAME = "";
-	private String NAME_RAW = "";
 
 	public ItemSkullBase(String name, BlockSkullBase block) {
 		super(ModMaterials.SKULL_MATERIAL, 0, EntityEquipmentSlot.HEAD);
 		//BlockDispenser.DISPENSE_BEHAVIOR_REGISTRY.putObject(this, ItemArmor.DISPENSER_BEHAVIOR);
-		NAME = name + "_skull";
-		NAME_RAW = name;
+		NAME = name;
 		setRegistryName(NAME);
 		setUnlocalizedName(NAME);
 		setMaxStackSize(64);
 		setMaxDamage(0);
 		skullBlock = block;
+		ForgeRegistries.ITEMS.register(this);
 	}
 
 	public String getName() {
-		return NAME_RAW;
+		return NAME;
 	}
 
 	@Override
@@ -106,13 +107,13 @@ public class ItemSkullBase extends ItemArmor implements IModelHolder {
 	@Override
 	@SideOnly(Side.CLIENT)
 	public ModelBiped getArmorModel(EntityLivingBase entityLiving, ItemStack stack, EntityEquipmentSlot armorSlot, ModelBiped original) {
-		return TileBlockSkull.getModel(NAME_RAW);
+		return TileBlockSkull.getModel(NAME);
 	}
 
 	@Override
 	@SideOnly(Side.CLIENT)
 	public String getArmorTexture(ItemStack stack, Entity entity, EntityEquipmentSlot slot, String layer) {
-		return TileBlockSkull.getModel(NAME_RAW).getTexture().getResourceDomain() + ":" + TileBlockSkull.getModel(NAME_RAW).getTexture().getResourcePath();
+		return TileBlockSkull.getModel(NAME).getTexture().getResourceDomain() + ":" + TileBlockSkull.getModel(NAME).getTexture().getResourcePath();
 	}
 
 	@Override
@@ -124,6 +125,45 @@ public class ItemSkullBase extends ItemArmor implements IModelHolder {
 
 	public boolean isEndermanSkull() {
 		return false;
+	}
+
+	public static class Enderman extends ItemSkullBase {
+
+		public Enderman() {
+			super("enderman_skull", ModBlocks.ENDERMAN_SKULL);
+		}
+
+		@Override
+		public boolean isEndermanSkull() {
+			return true;
+		}
+
+	}
+
+	public static class Enderman2 extends ItemSkullBase {
+
+		public Enderman2() {
+			super("enderman2_skull", ModBlocks.ENDERMAN2_SKULL);
+		}
+
+		@Override
+		public boolean isEndermanSkull() {
+			return true;
+		}
+
+	}
+
+	public static class Frienderman extends ItemSkullBase {
+
+		public Frienderman() {
+			super("frienderman_skull", ModBlocks.FRIENDERMAN_SKULL);
+		}
+
+		@Override
+		public boolean isEndermanSkull() {
+			return true;
+		}
+
 	}
 
 }
