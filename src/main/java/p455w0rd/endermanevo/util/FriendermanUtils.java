@@ -125,7 +125,7 @@ public class FriendermanUtils {
 	}
 
 	public static enum ChestType {
-			VANILLA, IRONCHEST, ENDERSTORAGE;
+			VANILLA, IRONCHEST, ENDERSTORAGE, VANILLA_SHULKER;
 	}
 
 }

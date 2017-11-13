@@ -52,18 +52,12 @@ public class ItemSkullRenderer implements IItemRenderer {
 
 	public void renderSkull(float rot, ModelSkullBase modelIn, ItemStack stack) {
 		ModelSkullBase modelbase = modelIn;
-		ItemSkullBase item = (ItemSkullBase) stack.getItem();
-
 		bindTexture(modelbase.getTexture());
 		GlStateManager.pushAttrib();
 		GlStateManager.pushMatrix();
-		GlStateManager.disableDepth();
 		//GlStateManager.disableCull();
-		//RenderHelper.enableGUIStandardItemLighting();
-		float f = 0.0625F;
-
-		//GlStateManager.enableRescaleNormal();
-		//RenderHelper.enableStandardItemLighting();
+		//GlStateManager.enableAlpha();
+		//GlStateManager.disableDepth();
 		GlStateManager.enableLighting();
 		GlStateManager.translate(0.5, 0.0, 0.5);
 		if (stack.isOnItemFrame()) {
@@ -72,7 +66,6 @@ public class ItemSkullRenderer implements IItemRenderer {
 		else {
 			GlStateManager.scale(-1.5F, -1.5F, 1.5F);
 		}
-		//GlStateManager.enableAlpha();
 		if (stack.isOnItemFrame()) {
 			rot = 180.0F;
 		}
@@ -83,18 +76,12 @@ public class ItemSkullRenderer implements IItemRenderer {
 			bindTexture(modelbase.getLightMap());
 			modelbase.renderLightMap(rot);
 		}
-
 		GlStateManager.translate(-0.5, -0.0, -0.5);
 		GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
-		//GlStateManager.disableRescaleNormal();
 		GlStateManager.disableLighting();
-		//RenderHelper.disableStandardItemLighting();
-		//GlStateManager.enableCull();
-		GlStateManager.enableDepth();
+		//GlStateManager.enableDepth();
 		GlStateManager.popMatrix();
 		GlStateManager.popAttrib();
-
-		//RenderHelper.enableGUIStandardItemLighting();
 	}
 
 	@Override

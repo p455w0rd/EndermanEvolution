@@ -35,7 +35,6 @@ public class ModelFrienderman extends ModelBiped {
 
 	public ModelFrienderman(float scale) {
 		super(0.0F, -14.0F, 64, 32);
-		float f = -14.0F;
 		bipedHeadwear = new ModelRenderer(this, 0, 16);
 		bipedHeadwear.addBox(-4.0F, -8.0F, -4.0F, 8, 8, 8, scale - 0.5F);
 		bipedHeadwear.setRotationPoint(0.0F, -14.0F, 0.0F);
@@ -67,7 +66,6 @@ public class ModelFrienderman extends ModelBiped {
 	public void setRotationAngles(float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scaleFactor, Entity entityIn) {
 		super.setRotationAngles(limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, scaleFactor, entityIn);
 		bipedHead.showModel = true;
-		float f = -14.0F;
 		bipedBody.rotateAngleX = 0.0F;
 		bipedBody.rotationPointY = -14.0F;
 		bipedBody.rotationPointZ = -0.0F;
@@ -77,7 +75,6 @@ public class ModelFrienderman extends ModelBiped {
 		bipedLeftArm.rotateAngleX = (float) (bipedLeftArm.rotateAngleX * 0.5D);
 		bipedRightLeg.rotateAngleX = (float) (bipedRightLeg.rotateAngleX * 0.5D);
 		bipedLeftLeg.rotateAngleX = (float) (bipedLeftLeg.rotateAngleX * 0.5D);
-		float f1 = 0.4F;
 
 		if (bipedRightArm.rotateAngleX > 0.4F) {
 			bipedRightArm.rotateAngleX = 0.4F;
@@ -142,7 +139,6 @@ public class ModelFrienderman extends ModelBiped {
 		bipedHeadwear.rotateAngleZ = bipedHead.rotateAngleZ;
 
 		if (isAttacking) {
-			float f2 = 1.0F;
 			bipedHead.rotationPointY -= 5.0F;
 		}
 	}

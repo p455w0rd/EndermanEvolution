@@ -25,7 +25,6 @@ import java.util.UUID;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
-import com.google.common.base.Throwables;
 import com.google.common.collect.Maps;
 
 import io.netty.buffer.ByteBuf;
@@ -50,8 +49,8 @@ public class PacketFriendermanRegistrySync implements IMessage {
 		this.registry = registry;
 	}
 
-	@Override
 	@SuppressWarnings("unchecked")
+	@Override
 	public void fromBytes(ByteBuf buf) {
 		short len = buf.readShort();
 		byte[] compressedBody = new byte[len];
@@ -66,7 +65,7 @@ public class PacketFriendermanRegistrySync implements IMessage {
 			obj.close();
 		}
 		catch (Exception e) {
-			Throwables.propagate(e);
+			throw new RuntimeException(e);
 		}
 	}
 
@@ -81,7 +80,7 @@ public class PacketFriendermanRegistrySync implements IMessage {
 			objStream.close();
 		}
 		catch (IOException e) {
-			Throwables.propagate(e);
+			throw new RuntimeException(e);
 		}
 		buf.writeShort(obj.size());
 		buf.writeBytes(obj.toByteArray());
@@ -91,15 +90,11 @@ public class PacketFriendermanRegistrySync implements IMessage {
 		@Override
 		public IMessage onMessage(PacketFriendermanRegistrySync message, MessageContext ctx) {
 			FMLCommonHandler.instance().getWorldThread(ctx.netHandler).addScheduledTask(() -> {
-				handle(message, ctx);
+				if (ctx.getClientHandler() != null) {
+					ModRegistries.setTamedFriendermanRegistry(message.registry);
+				}
 			});
 			return null;
-		}
-
-		private void handle(PacketFriendermanRegistrySync message, MessageContext ctx) {
-			if (ctx.getClientHandler() != null) {
-				ModRegistries.setTamedFriendermanRegistry(message.registry);
-			}
 		}
 	}
 

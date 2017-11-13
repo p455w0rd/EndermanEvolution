@@ -26,7 +26,7 @@ public class ModCreativeTab extends CreativeTabs {
 		items.add(new ItemStack(ModItems.FRIENDER_PEARL));
 		items.add(new ItemStack(ModItems.SKULL_ENDERMAN));
 		items.add(new ItemStack(ModItems.SKULL_FRIENDERMAN));
-		items.add(new ItemStack(ModItems.SKULL_ENDERMAN2));
+		items.add(new ItemStack(ModItems.SKULL_EVOLVED_ENDERMAN));
 		super.displayAllRelevantItems(items);
 	}
 

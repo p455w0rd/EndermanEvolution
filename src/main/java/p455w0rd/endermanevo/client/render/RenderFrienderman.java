@@ -26,7 +26,7 @@ import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import p455w0rd.endermanevo.client.model.ModelFrienderman;
-import p455w0rd.endermanevo.client.model.layers.LayerEnderman3Eyes;
+import p455w0rd.endermanevo.client.model.layers.LayerFriendermanEyes;
 import p455w0rd.endermanevo.client.model.layers.LayerHeldBlock3;
 import p455w0rd.endermanevo.entity.EntityFrienderman;
 import p455w0rd.endermanevo.init.ModGlobals;
@@ -38,20 +38,16 @@ import p455w0rd.endermanevo.init.ModGlobals;
 public class RenderFrienderman extends RenderLiving<EntityFrienderman> {
 
 	private static final ResourceLocation ENDERMAN_TEXTURES = new ResourceLocation(ModGlobals.MODID, "textures/entity/enderman3.png");
-	/** The model of the enderman */
 	private final ModelFrienderman endermanModel;
 	private final Random rnd = new Random();
 
 	public RenderFrienderman(RenderManager renderManagerIn) {
 		super(renderManagerIn, new ModelFrienderman(0.05F), 0.25F);
 		endermanModel = (ModelFrienderman) super.mainModel;
-		addLayer(new LayerEnderman3Eyes(this));
+		addLayer(new LayerFriendermanEyes(this));
 		addLayer(new LayerHeldBlock3(this));
 	}
 
-	/**
-	 * Renders the desired {@code T} type Entity.
-	 */
 	@Override
 	public void doRender(EntityFrienderman entity, double x, double y, double z, float entityYaw, float partialTicks) {
 		IBlockState iblockstate = entity.getHeldBlockState();
@@ -63,16 +59,12 @@ public class RenderFrienderman extends RenderLiving<EntityFrienderman> {
 		endermanModel.isAttacking = entity.isScreaming();
 
 		if (entity.isScreaming()) {
-			double d0 = 0.02D;
 			x += rnd.nextGaussian() * 0.02D;
 			z += rnd.nextGaussian() * 0.02D;
 		}
 		super.doRender(entity, x, y, z, entityYaw, partialTicks);
 	}
 
-	/**
-	 * Returns the location of an entity's texture. Doesn't seem to be called unless you call Render.bindEntityTexture.
-	 */
 	@Override
 	protected ResourceLocation getEntityTexture(EntityFrienderman entity) {
 		return ENDERMAN_TEXTURES;

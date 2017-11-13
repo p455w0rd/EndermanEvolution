@@ -13,7 +13,6 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import p455w0rd.endermanevo.init.ModGlobals;
-import p455w0rdslib.math.Pos3D;
 
 /**
  * @author p455w0rd
@@ -145,13 +144,8 @@ public class ModelSkullBase extends ModelBiped {
 	}
 
 	public void renderLightMap(float skullRotation, float skullPitch, EntityLivingBase entity) {
-		boolean isAlphaEnabled = GL11.glIsEnabled(GL11.GL_ALPHA_TEST);
-
 		GlStateManager.pushMatrix();
 		GlStateManager.enableBlend();
-		//if (isAlphaEnabled) {
-		//GL11.glDisable(GL11.GL_ALPHA_TEST);
-		//}
 		GlStateManager.blendFunc(GL11.GL_ONE, GL11.GL_ONE);
 		GlStateManager.depthMask(true);
 		float brightnessX = OpenGlHelper.lastBrightnessX;
@@ -168,40 +162,21 @@ public class ModelSkullBase extends ModelBiped {
 		OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, brightnessX, brightnessY);
 		GlStateManager.disableBlend();
 		GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-		//if (isAlphaEnabled) {
-		//GlStateManager.enableAlpha();
-		//}
 		GlStateManager.popMatrix();
 	}
 
 	public void renderLightMapOnPlayerHead(World world, EntityLivingBase wearer) {
-
-		Pos3D userPos = new Pos3D(wearer).translate(0, 1.7, 0);
-		Pos3D vCenter = new Pos3D(0.0, -0.9, -0.00).rotatePitch(0).rotateYaw(wearer.renderYawOffset);
-		Pos3D v = userPos.translate(vCenter).translate(new Pos3D(wearer.motionX, wearer.motionY, wearer.motionZ).scale(0.5));
-
-		boolean isAlphaEnabled = GL11.glIsEnabled(GL11.GL_ALPHA_TEST);
-
 		GlStateManager.pushMatrix();
 		GlStateManager.enableBlend();
-		//if (isAlphaEnabled) {
-		//GL11.glDisable(GL11.GL_ALPHA_TEST);
-		//}
 		GlStateManager.blendFunc(GL11.GL_ONE, GL11.GL_ONE);
 		GlStateManager.depthMask(true);
 		float brightnessX = OpenGlHelper.lastBrightnessX;
 		float brightnessY = OpenGlHelper.lastBrightnessY;
 		OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, 61680, 0);
-
-		//render(wearer.renderYawOffset * (float) Math.PI);
 		head.render(0.01F);
-
 		OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, brightnessX, brightnessY);
 		GlStateManager.disableBlend();
 		GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-		//if (isAlphaEnabled) {
-		//GlStateManager.enableAlpha();
-		//}
 		GlStateManager.popMatrix();
 	}
 
@@ -253,8 +228,8 @@ public class ModelSkullBase extends ModelBiped {
 
 	public static class Enderman2 extends ModelSkullBase {
 
-		protected static final ResourceLocation TEXTURE_ENDERMAN = new ResourceLocation(ModGlobals.MODID, "textures/entity/enderman2.png");
-		protected static final ResourceLocation LIGHTMAP_ENDERMAN = new ResourceLocation(ModGlobals.MODID, "textures/entity/enderman2_eyes.png");
+		protected static final ResourceLocation TEXTURE_ENDERMAN = new ResourceLocation(ModGlobals.MODID, "textures/entity/enderman_evolved.png");
+		protected static final ResourceLocation LIGHTMAP_ENDERMAN = new ResourceLocation(ModGlobals.MODID, "textures/entity/enderman_evolved_eyes.png");
 		private static Enderman2 INSTANCE = new Enderman2();
 
 		public Enderman2() {

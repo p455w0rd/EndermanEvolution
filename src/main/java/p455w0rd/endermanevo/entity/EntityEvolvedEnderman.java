@@ -12,7 +12,6 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityCreature;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.MoverType;
 import net.minecraft.entity.ai.EntityAIAttackMelee;
 import net.minecraft.entity.ai.EntityAIBase;
 import net.minecraft.entity.ai.EntityAIHurtByTarget;
@@ -44,31 +43,35 @@ import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import p455w0rd.endermanevo.init.ModConfig.ConfigOptions;
+import p455w0rd.endermanevo.items.ItemSkullBase;
 import p455w0rd.endermanevo.util.EnumParticles;
 import p455w0rd.endermanevo.util.ParticleUtil;
 import p455w0rdslib.util.EasyMappings;
 import p455w0rdslib.util.MCPrivateUtils;
 import p455w0rdslib.util.MathUtils;
 
-public class EntityEnderman2 extends EntityEnderman {
+public class EntityEvolvedEnderman extends EntityEnderman {
 
 	//private int targetChangeTime = 0;
 
-	public EntityEnderman2(World worldIn) {
+	public EntityEvolvedEnderman(World worldIn) {
 		super(worldIn);
 	}
 
 	private boolean shouldAttackPlayer(EntityPlayer player) {
 		ItemStack itemstack = player.inventory.armorInventory.get(3);
-		if ((itemstack != null) && (itemstack.getItem() == Item.getItemFromBlock(Blocks.PUMPKIN))) {
+
+		if (itemstack.getItem() == Item.getItemFromBlock(Blocks.PUMPKIN) || itemstack.getItem() instanceof ItemSkullBase) {
 			return false;
 		}
-		Vec3d vec3d = player.getLook(1.0F).normalize();
-		Vec3d vec3d1 = new Vec3d(posX - player.posX, getEntityBoundingBox().minY + getEyeHeight() - (player.posY + player.getEyeHeight()), posZ - player.posZ);
-		double d0 = vec3d1.lengthVector();
-		vec3d1 = vec3d1.normalize();
-		double d1 = vec3d.dotProduct(vec3d1);
-		return d1 > 1.0D - 0.025D / d0 ? player.canEntityBeSeen(this) : false;
+		else {
+			Vec3d vec3d = player.getLook(1.0F).normalize();
+			Vec3d vec3d1 = new Vec3d(posX - player.posX, getEntityBoundingBox().minY + getEyeHeight() - (player.posY + player.getEyeHeight()), posZ - player.posZ);
+			double d0 = vec3d1.lengthVector();
+			vec3d1 = vec3d1.normalize();
+			double d1 = vec3d.dotProduct(vec3d1);
+			return d1 > 1.0D - 0.025D / d0 ? player.canEntityBeSeen(this) : false;
+		}
 	}
 
 	@Override
@@ -80,9 +83,9 @@ public class EntityEnderman2 extends EntityEnderman {
 		tasks.addTask(8, new EntityAILookIdle(this));
 		//tasks.addTask(10, new EntityEnderman2.AIPlaceBlock(this));
 		//tasks.addTask(11, new EntityEnderman2.AITakeBlock(this));
-		targetTasks.addTask(1, new EntityEnderman2.AIFindPlayer(this));
+		targetTasks.addTask(1, new EntityEvolvedEnderman.AIFindPlayer(this));
 		targetTasks.addTask(2, new EntityAIHurtByTarget(this, false, new Class[0]));
-		targetTasks.addTask(3, new EntityAINearestAttackableTarget<EntityEndermite2>(this, EntityEndermite2.class, 10, true, false, (@Nullable EntityEndermite2 p_apply_1_) -> p_apply_1_.isSpawnedByPlayer()));
+		targetTasks.addTask(3, new EntityAINearestAttackableTarget<EntityEvolvedEndermite>(this, EntityEvolvedEndermite.class, 10, true, false, (@Nullable EntityEvolvedEndermite p_apply_1_) -> p_apply_1_.isSpawnedByPlayer()));
 	}
 
 	@SideOnly(Side.CLIENT)
@@ -137,9 +140,9 @@ public class EntityEnderman2 extends EntityEnderman {
 			}
 			return false;
 		}
-		else if (EasyMappings.world(this).isRemote) {
-			return false;
-		}
+		//else if (EasyMappings.world(this).isRemote) {
+		//return false;
+		//}
 		else {
 			if (isEntityInvulnerable(source)) {
 				return false;
@@ -429,7 +432,7 @@ public class EntityEnderman2 extends EntityEnderman {
 		moveForward *= 0.98F;
 		randomYawVelocity *= 0.9F;
 		//this.updateElytra();
-		move(MoverType.SELF, moveStrafing, randomYawVelocity, moveForward);
+		travel(moveStrafing, randomYawVelocity, moveForward);
 		EasyMappings.world(this).profiler.endSection();
 		EasyMappings.world(this).profiler.startSection("push");
 		collideWithNearbyEntities();
@@ -450,51 +453,67 @@ public class EntityEnderman2 extends EntityEnderman {
 	}
 
 	static class AIFindPlayer extends EntityAINearestAttackableTarget<EntityPlayer> {
-		private final EntityEnderman2 enderman;
+		private final EntityEvolvedEnderman enderman;
+		/** The player */
 		private EntityPlayer player;
 		private int aggroTime;
 		private int teleportTime;
 
-		public AIFindPlayer(EntityEnderman2 p_i45842_1_) {
+		public AIFindPlayer(EntityEvolvedEnderman p_i45842_1_) {
 			super(p_i45842_1_, EntityPlayer.class, false);
 			enderman = p_i45842_1_;
 		}
 
+		/**
+		 * Returns whether the EntityAIBase should begin execution.
+		 */
 		@Override
-		@SuppressWarnings({
-				"unchecked",
-				"rawtypes"
-		})
 		public boolean shouldExecute() {
 			double d0 = getTargetDistance();
-			player = EasyMappings.world(enderman).getNearestAttackablePlayer(enderman.posX, enderman.posY, enderman.posZ, d0, d0, (Function) null, (@Nullable EntityPlayer player) -> (player != null) && (enderman.shouldAttackPlayer(player)));
+			player = enderman.world.getNearestAttackablePlayer(enderman.posX, enderman.posY, enderman.posZ, d0, d0, (Function<EntityPlayer, Double>) null, (@Nullable EntityPlayer p_apply_1_) -> p_apply_1_ != null && enderman.shouldAttackPlayer(p_apply_1_));
 			return player != null;
 		}
 
+		/**
+		 * Execute a one shot task or start executing a continuous task
+		 */
 		@Override
 		public void startExecuting() {
 			aggroTime = 5;
 			teleportTime = 0;
 		}
 
+		/**
+		 * Reset the task's internal state. Called when this task is interrupted by another one
+		 */
 		@Override
 		public void resetTask() {
 			player = null;
 			super.resetTask();
 		}
 
+		/**
+		 * Returns whether an in-progress EntityAIBase should continue executing
+		 */
 		@Override
 		public boolean shouldContinueExecuting() {
 			if (player != null) {
 				if (!enderman.shouldAttackPlayer(player)) {
 					return false;
 				}
-				enderman.faceEntity(player, 10.0F, 10.0F);
-				return true;
+				else {
+					enderman.faceEntity(player, 10.0F, 10.0F);
+					return true;
+				}
 			}
-			return (targetEntity != null) && (targetEntity.isEntityAlive());
+			else {
+				return targetEntity != null && targetEntity.isEntityAlive() ? true : super.shouldContinueExecuting();
+			}
 		}
 
+		/**
+		 * Keep ticking a continuous task that has already been started
+		 */
 		@Override
 		public void updateTask() {
 			if (player != null) {
@@ -508,22 +527,25 @@ public class EntityEnderman2 extends EntityEnderman {
 				if (targetEntity != null) {
 					if (enderman.shouldAttackPlayer(targetEntity)) {
 						if (targetEntity.getDistanceSq(enderman) < 16.0D) {
+							enderman.teleportRandomly();
 						}
+
 						teleportTime = 0;
 					}
-					else if ((targetEntity.getDistanceSq(enderman) > 256.0D) && (teleportTime++ >= 30) && (enderman.teleportToEntity(targetEntity))) {
+					else if (targetEntity.getDistanceSq(enderman) > 256.0D && teleportTime++ >= 30 && enderman.teleportToEntity(targetEntity)) {
 						teleportTime = 0;
 					}
 				}
+
 				super.updateTask();
 			}
 		}
 	}
 
 	static class AIPlaceBlock extends EntityAIBase {
-		private final EntityEnderman2 enderman;
+		private final EntityEvolvedEnderman enderman;
 
-		public AIPlaceBlock(EntityEnderman2 p_i45843_1_) {
+		public AIPlaceBlock(EntityEvolvedEnderman p_i45843_1_) {
 			enderman = p_i45843_1_;
 		}
 
@@ -555,9 +577,9 @@ public class EntityEnderman2 extends EntityEnderman {
 	}
 
 	static class AITakeBlock extends EntityAIBase {
-		private final EntityEnderman2 enderman;
+		private final EntityEvolvedEnderman enderman;
 
-		public AITakeBlock(EntityEnderman2 p_i45841_1_) {
+		public AITakeBlock(EntityEvolvedEnderman p_i45841_1_) {
 			enderman = p_i45841_1_;
 		}
 
@@ -585,7 +607,7 @@ public class EntityEnderman2 extends EntityEnderman {
 			RayTraceResult raytraceresult = world.rayTraceBlocks(new Vec3d(MathUtils.floor(enderman.posX) + 0.5F, j + 0.5F, MathUtils.floor(enderman.posZ) + 0.5F), new Vec3d(i + 0.5F, j + 0.5F, k + 0.5F), false, true, false);
 			boolean flag = raytraceresult != null && raytraceresult.getBlockPos().equals(blockpos);
 
-			if (EntityEnderman2.getCarriable(block) && flag) {
+			if (EntityEvolvedEnderman.getCarriable(block) && flag) {
 				enderman.setHeldBlockState(iblockstate);
 				world.setBlockToAir(blockpos);
 			}

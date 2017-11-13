@@ -18,6 +18,7 @@
  */
 package p455w0rd.endermanevo.client.model.layers;
 
+import net.minecraft.block.BlockShulkerBox;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BlockRendererDispatcher;
@@ -49,9 +50,9 @@ public class LayerHeldBlock3 implements LayerRenderer<EntityFrienderman> {
 	}
 
 	@Override
-	public void doRenderLayer(EntityFrienderman entitylivingbaseIn, float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch, float scale) {
-		IBlockState iblockstate = entitylivingbaseIn.getHeldBlockState();
-		ItemStack stack = entitylivingbaseIn.getHeldItemStack();
+	public void doRenderLayer(EntityFrienderman frienderman, float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch, float scale) {
+		IBlockState iblockstate = frienderman.getHeldBlockState();
+		ItemStack stack = frienderman.getHeldItemStack();
 
 		if (iblockstate != null) {
 			if (iblockstate.getBlock() == Blocks.RED_FLOWER) {
@@ -59,10 +60,8 @@ public class LayerHeldBlock3 implements LayerRenderer<EntityFrienderman> {
 				GlStateManager.pushMatrix();
 				GlStateManager.translate(-0.04F, 0.6875F + -0.085F, -1.0F);
 				GlStateManager.rotate(220.0F, 1.0F, 0.0F, 0.0F);
-				//GlStateManager.rotate(45.0F, 0.0F, 1.0F, 0.0F);
-				//GlStateManager.translate(0.25F, 0.1875F, 0.25F);
 				GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
-				Minecraft.getMinecraft().getItemRenderer().renderItem(entitylivingbaseIn, new ItemStack(Blocks.RED_FLOWER), ItemCameraTransforms.TransformType.NONE);
+				Minecraft.getMinecraft().getItemRenderer().renderItem(frienderman, new ItemStack(Blocks.RED_FLOWER), ItemCameraTransforms.TransformType.NONE);
 				GlStateManager.popMatrix();
 				GlStateManager.disableRescaleNormal();
 			}
@@ -74,9 +73,8 @@ public class LayerHeldBlock3 implements LayerRenderer<EntityFrienderman> {
 				GlStateManager.rotate(20.0F, 1.0F, 0.0F, 0.0F);
 				GlStateManager.rotate(45.0F, 0.0F, 1.0F, 0.0F);
 				GlStateManager.translate(0.25F, 0.1875F, 0.25F);
-				float f = 0.5F;
 				GlStateManager.scale(-0.5F, -0.5F, 0.5F);
-				int i = entitylivingbaseIn.getBrightnessForRender();
+				int i = frienderman.getBrightnessForRender();
 				int j = i % 65536;
 				int k = i / 65536;
 				OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, j, k);
@@ -87,23 +85,21 @@ public class LayerHeldBlock3 implements LayerRenderer<EntityFrienderman> {
 				GlStateManager.disableRescaleNormal();
 			}
 		}
-		else if (stack != null) {
-			if (entitylivingbaseIn.deathTime > 0) {
+		else if (!stack.isEmpty()) {
+			if (frienderman.deathTime > 0) {
 				return;
 			}
 			GlStateManager.pushMatrix();
 			GlStateManager.translate(-0.25F, 0.6875F, -0.75F);
 			GlStateManager.rotate(20.0F, 1.0F, 0.0F, 0.0F);
-			//GlStateManager.rotate(45.0F, 0.0F, 1.0F, 0.0F);
 			GlStateManager.translate(0.6F, 0.1F, -0.25F);
-			float f = 0.5F;
 			GlStateManager.scale(-0.7F, -0.7F, 0.7F);
-			if (Mods.ENDERSTORAGE.isLoaded() && entitylivingbaseIn.isHoldingEnderStorageChest()) {
-				EnderStorage.renderItemChest(stack, -entitylivingbaseIn.getLidAngle());
+			if (Mods.ENDERSTORAGE.isLoaded() && frienderman.isHoldingEnderStorageChest()) {
+				EnderStorage.renderItemChest(stack, -frienderman.getLidAngle());
 			}
-			else if (entitylivingbaseIn.isHoldingVanillaChest()) {
+			else if (frienderman.isHoldingVanillaChest()) {
 				ChestType type = null;
-				switch (entitylivingbaseIn.getVanillaChestType()) {
+				switch (frienderman.getVanillaChestType()) {
 				case ENDER:
 					type = ChestType.ENDER;
 					break;
@@ -111,15 +107,20 @@ public class LayerHeldBlock3 implements LayerRenderer<EntityFrienderman> {
 					type = ChestType.NORMAL;
 					break;
 				case TRAPPED:
+				default:
 					type = ChestType.TRAPPED;
 					break;
-				default:
-					break;
 				}
-				CustomChestRenderer.renderChest(type, -entitylivingbaseIn.getLidAngle());
+				CustomChestRenderer.renderChest(type, -frienderman.getLidAngle());
 			}
-			else if (entitylivingbaseIn.isHoldingIronChest()) {
-				IronChests.renderChest(stack, -entitylivingbaseIn.getLidAngle());
+			else if (frienderman.isHoldingVanillaShulkerBox()) {
+				CustomChestRenderer.renderShulkerBox(BlockShulkerBox.getColorFromItem(stack.getItem()).getMetadata(), frienderman.getLidAngle());
+			}
+			else if (frienderman.isHoldingIronChest()) {
+				IronChests.renderChest(stack, -frienderman.getLidAngle());
+			}
+			else if (frienderman.isHoldingIronShulkerBox()) {
+				IronChests.renderShulkerBox(stack, frienderman.getLidAngle());
 			}
 			else {
 				RenderUtils.getRenderItem().renderItem(stack, RenderUtils.getMesher().getItemModel(stack));

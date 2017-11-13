@@ -13,11 +13,11 @@ import p455w0rdslib.util.EasyMappings;
  * @author p455w0rd
  *
  */
-public class EntityEndermite2 extends EntityEndermite {
+public class EntityEvolvedEndermite extends EntityEndermite {
 
 	private int lifetime;
 
-	public EntityEndermite2(World worldIn) {
+	public EntityEvolvedEndermite(World worldIn) {
 		super(worldIn);
 	}
 

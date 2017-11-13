@@ -24,7 +24,7 @@ package p455w0rd.endermanevo.util;
  */
 public enum EnumParticles {
 
-		PORTAL_GREEN("vanilla"), LOVE("vanilla");
+		PORTAL_GREEN("vanilla"), LOVE("vanilla"), PORTAL("vanilla");
 
 	String renderer;
 

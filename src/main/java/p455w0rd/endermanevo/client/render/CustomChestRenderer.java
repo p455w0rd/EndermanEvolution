@@ -3,7 +3,9 @@ package p455w0rd.endermanevo.client.render;
 import java.util.Calendar;
 
 import net.minecraft.client.model.ModelChest;
+import net.minecraft.client.model.ModelShulker;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.entity.RenderShulker;
 import net.minecraft.util.ResourceLocation;
 import p455w0rdslib.util.RenderUtils;
 
@@ -13,7 +15,8 @@ import p455w0rdslib.util.RenderUtils;
  */
 public class CustomChestRenderer {
 
-	private static final ModelChest modelChest = new ModelChest();
+	public static final ModelChest CHEST_MODEL = new ModelChest();
+	public static final ModelShulker SHULKER_BOX_MODEL = new ModelShulker();
 
 	//private ChestType type;
 	/*
@@ -41,9 +44,32 @@ public class CustomChestRenderer {
 		GlStateManager.translate(0.5F, 0.5F, 0.5F);
 		GlStateManager.rotate(2 * 90, 0.0F, 1.0F, 0.0F);
 		GlStateManager.translate(-0.5F, -0.5F, -0.5F);
-		modelChest.chestLid.rotateAngleX = lidAngle;
-		modelChest.renderAll();
+		CHEST_MODEL.chestLid.rotateAngleX = lidAngle;
+		CHEST_MODEL.renderAll();
 		GlStateManager.popMatrix();
+	}
+
+	public static void renderShulkerBox(int color, float lidProgress) {
+		GlStateManager.enableDepth();
+		GlStateManager.depthFunc(515);
+		GlStateManager.depthMask(true);
+		GlStateManager.disableCull();
+		RenderUtils.bindTexture(RenderShulker.SHULKER_ENDERGOLEM_TEXTURE[color]);
+		GlStateManager.pushMatrix();
+		GlStateManager.enableRescaleNormal();
+		GlStateManager.translate(0 + 0.5F, 0 + 1.5F, 0 + 0.5F);
+		GlStateManager.scale(1.0F, -1.0F, -1.0F);
+		GlStateManager.translate(0.0F, 1.0F, 0.0F);
+		GlStateManager.scale(0.9995F, 0.9995F, 0.9995F);
+		GlStateManager.translate(0.0F, -1.0F, 0.0F);
+		SHULKER_BOX_MODEL.base.render(0.0625F);
+		GlStateManager.translate(0.0F, -lidProgress * 0.5F, 0.0F);
+		GlStateManager.rotate(270.0F * lidProgress, 0.0F, 1.0F, 0.0F);
+		SHULKER_BOX_MODEL.lid.render(0.0625F);
+		GlStateManager.enableCull();
+		GlStateManager.disableRescaleNormal();
+		GlStateManager.popMatrix();
+		GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
 	}
 
 	public static enum ChestType {

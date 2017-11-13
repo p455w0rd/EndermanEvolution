@@ -14,7 +14,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import p455w0rd.endermanevo.blocks.tiles.TileBlockSkull;
 import p455w0rd.endermanevo.client.model.ModelSkullBase;
-import p455w0rd.endermanevo.entity.EntityEnderman2;
+import p455w0rd.endermanevo.entity.EntityEvolvedEnderman;
 import p455w0rd.endermanevo.entity.EntityFrienderman;
 import p455w0rd.endermanevo.init.ModItems;
 import p455w0rd.endermanevo.items.ItemSkullBase;
@@ -81,13 +81,13 @@ public class EntityUtils {
 			return new ItemStack(Items.SKULL, 1, 5);
 		}
 		if (entity instanceof EntityEnderman) {
-			if (entity instanceof EntityEnderman2) {
-				//return new ItemStack(ModItems.SKULL_ENDERMAN2);
+			if (entity instanceof EntityEvolvedEnderman) {
+				return new ItemStack(ModItems.SKULL_EVOLVED_ENDERMAN);
 			}
 			return new ItemStack(ModItems.SKULL_ENDERMAN);
 		}
 		if (entity instanceof EntityFrienderman) {
-			//return new ItemStack(ModItems.SKULL_FRIENDERMAN);
+			return new ItemStack(ModItems.SKULL_FRIENDERMAN);
 		}
 		return null;
 	}

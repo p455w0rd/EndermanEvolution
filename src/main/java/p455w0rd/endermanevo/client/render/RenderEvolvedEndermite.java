@@ -24,7 +24,7 @@ import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import p455w0rd.endermanevo.entity.EntityEndermite2;
+import p455w0rd.endermanevo.entity.EntityEvolvedEndermite;
 import p455w0rd.endermanevo.init.ModGlobals;
 
 /**
@@ -32,15 +32,15 @@ import p455w0rd.endermanevo.init.ModGlobals;
  *
  */
 @SideOnly(Side.CLIENT)
-public class RenderEndermite2 extends RenderLiving<EntityEndermite2> {
+public class RenderEvolvedEndermite extends RenderLiving<EntityEvolvedEndermite> {
 	private static final ResourceLocation ENDERMITE_TEXTURES = new ResourceLocation(ModGlobals.MODID, "textures/entity/endermite2.png");
 
-	public RenderEndermite2(RenderManager renderManagerIn) {
+	public RenderEvolvedEndermite(RenderManager renderManagerIn) {
 		super(renderManagerIn, new ModelEnderMite(), 0.3F);
 	}
 
 	@Override
-	protected float getDeathMaxRotation(EntityEndermite2 entityLivingBaseIn) {
+	protected float getDeathMaxRotation(EntityEvolvedEndermite entityLivingBaseIn) {
 		return 180.0F;
 	}
 
@@ -48,7 +48,7 @@ public class RenderEndermite2 extends RenderLiving<EntityEndermite2> {
 	 * Returns the location of an entity's texture. Doesn't seem to be called unless you call Render.bindEntityTexture.
 	 */
 	@Override
-	protected ResourceLocation getEntityTexture(EntityEndermite2 entity) {
+	protected ResourceLocation getEntityTexture(EntityEvolvedEndermite entity) {
 		return ENDERMITE_TEXTURES;
 	}
 }

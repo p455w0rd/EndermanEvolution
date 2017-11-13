@@ -25,52 +25,43 @@ import net.minecraft.client.model.ModelEnderman;
 import net.minecraft.client.renderer.entity.RenderLiving;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.util.ResourceLocation;
-import p455w0rd.endermanevo.client.model.layers.LayerEnderman2Eyes;
+import p455w0rd.endermanevo.client.model.layers.LayerEndermanEvolvedEyes;
 import p455w0rd.endermanevo.client.model.layers.LayerHeldBlock2;
-import p455w0rd.endermanevo.entity.EntityEnderman2;
+import p455w0rd.endermanevo.entity.EntityEvolvedEnderman;
 import p455w0rd.endermanevo.init.ModGlobals;
 
 /**
  * @author p455w0rd
  *
  */
-public class RenderEnderman2 extends RenderLiving<EntityEnderman2> {
+public class RenderEvolvedEnderman extends RenderLiving<EntityEvolvedEnderman> {
 
-	private static final ResourceLocation ENDERMAN_TEXTURES = new ResourceLocation(ModGlobals.MODID, "textures/entity/enderman2.png");
-	/** The model of the enderman */
+	private static final ResourceLocation ENDERMAN_TEXTURES = new ResourceLocation(ModGlobals.MODID, "textures/entity/enderman_evolved.png");
 	private final ModelEnderman endermanModel;
 	private final Random rnd = new Random();
 
-	public RenderEnderman2(RenderManager renderManagerIn) {
+	public RenderEvolvedEnderman(RenderManager renderManagerIn) {
 		super(renderManagerIn, new ModelEnderman(0.0F), 0.5F);
 		endermanModel = (ModelEnderman) super.mainModel;
-		addLayer(new LayerEnderman2Eyes(this));
+		addLayer(new LayerEndermanEvolvedEyes(this));
 		addLayer(new LayerHeldBlock2(this));
 	}
 
-	/**
-	 * Renders the desired {@code T} type Entity.
-	 */
 	@Override
-	public void doRender(EntityEnderman2 entity, double x, double y, double z, float entityYaw, float partialTicks) {
+	public void doRender(EntityEvolvedEnderman entity, double x, double y, double z, float entityYaw, float partialTicks) {
 		IBlockState iblockstate = entity.getHeldBlockState();
 		endermanModel.isCarrying = iblockstate != null;
 		endermanModel.isAttacking = entity.isScreaming();
-
 		if (entity.isScreaming()) {
-			double d0 = 0.02D;
 			x += rnd.nextGaussian() * 0.02D;
 			z += rnd.nextGaussian() * 0.02D;
 		}
-
 		super.doRender(entity, x, y, z, entityYaw, partialTicks);
 	}
 
-	/**
-	 * Returns the location of an entity's texture. Doesn't seem to be called unless you call Render.bindEntityTexture.
-	 */
 	@Override
-	protected ResourceLocation getEntityTexture(EntityEnderman2 entity) {
+	protected ResourceLocation getEntityTexture(EntityEvolvedEnderman entity) {
 		return ENDERMAN_TEXTURES;
 	}
+
 }

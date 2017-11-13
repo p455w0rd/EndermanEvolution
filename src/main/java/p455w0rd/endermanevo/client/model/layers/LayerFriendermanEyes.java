@@ -22,33 +22,29 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.entity.layers.LayerRenderer;
 import net.minecraft.util.ResourceLocation;
-import p455w0rd.endermanevo.client.render.RenderEnderman2;
-import p455w0rd.endermanevo.entity.EntityEnderman2;
-import p455w0rd.endermanevo.init.ModGlobals;
+import p455w0rd.endermanevo.client.render.RenderFrienderman;
+import p455w0rd.endermanevo.entity.EntityFrienderman;
 
 /**
  * @author p455w0rd
  *
  */
-public class LayerEnderman2Eyes implements LayerRenderer<EntityEnderman2> {
-	private static final ResourceLocation RES_ENDERMAN_EYES = new ResourceLocation(ModGlobals.MODID, "textures/entity/enderman2_eyes.png");
-	private final RenderEnderman2 endermanRenderer;
+public class LayerFriendermanEyes implements LayerRenderer<EntityFrienderman> {
+	private static final ResourceLocation RES_ENDERMAN_EYES = new ResourceLocation("textures/entity/enderman/enderman_eyes.png");
+	private final RenderFrienderman endermanRenderer;
 
-	public LayerEnderman2Eyes(RenderEnderman2 endermanRendererIn) {
+	public LayerFriendermanEyes(RenderFrienderman endermanRendererIn) {
 		endermanRenderer = endermanRendererIn;
 	}
 
 	@Override
-	public void doRenderLayer(EntityEnderman2 entitylivingbaseIn, float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch, float scale) {
+	public void doRenderLayer(EntityFrienderman entitylivingbaseIn, float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch, float scale) {
 		endermanRenderer.bindTexture(RES_ENDERMAN_EYES);
 		GlStateManager.enableBlend();
 		GlStateManager.disableAlpha();
 		GlStateManager.blendFunc(GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ONE);
 		GlStateManager.disableLighting();
 		GlStateManager.depthMask(!entitylivingbaseIn.isInvisible());
-		int i = 61680;
-		int j = 61680;
-		int k = 0;
 		OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, 61680.0F, 0.0F);
 		GlStateManager.enableLighting();
 		GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);

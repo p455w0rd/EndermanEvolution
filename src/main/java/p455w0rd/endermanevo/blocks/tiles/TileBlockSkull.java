@@ -67,7 +67,7 @@ public class TileBlockSkull extends TileEntitySkull {
 		Map<String, ModelSkullBase> modelMap = Maps.newHashMap();
 		modelMap.put("enderman_skull", ModelSkullBase.Enderman.getInstance());
 		modelMap.put("frienderman_skull", ModelSkullBase.Frienderman.getInstance());
-		modelMap.put("enderman2_skull", ModelSkullBase.Enderman2.getInstance());
+		modelMap.put("enderman_evolved_skull", ModelSkullBase.Enderman2.getInstance());
 		return modelMap;
 	}
 

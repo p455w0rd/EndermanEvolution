@@ -150,30 +150,30 @@ public class BlockSkullBase extends BlockSkull {
 
 	}
 
-	public static class Enderman2 extends BlockSkullBase {
+	public static class EvolvedEnderman extends BlockSkullBase {
 
-		public Enderman2() {
-			super("enderman2_skull");
+		public EvolvedEnderman() {
+			super("enderman_evolved_skull");
 		}
 
 		@Override
 		public ItemStack getItem(World worldIn, BlockPos pos, IBlockState state) {
-			return new ItemStack(ModItems.SKULL_ENDERMAN2);
+			return new ItemStack(ModItems.SKULL_EVOLVED_ENDERMAN);
 		}
 
 		@Override
 		public Item getItemDropped(IBlockState state, Random rand, int fortune) {
-			return ModItems.SKULL_ENDERMAN2;
+			return ModItems.SKULL_EVOLVED_ENDERMAN;
 		}
 
 		@Override
 		public List<ItemStack> getDrops(IBlockAccess worldIn, BlockPos pos, IBlockState state, int fortune) {
-			return Lists.newArrayList(new ItemStack(ModItems.SKULL_ENDERMAN2));
+			return Lists.newArrayList(new ItemStack(ModItems.SKULL_EVOLVED_ENDERMAN));
 		}
 
 		@Override
 		public ItemStack getPickBlock(IBlockState state, RayTraceResult target, World world, BlockPos pos, EntityPlayer player) {
-			return new ItemStack(ModItems.SKULL_ENDERMAN2);
+			return new ItemStack(ModItems.SKULL_EVOLVED_ENDERMAN);
 		}
 
 	}

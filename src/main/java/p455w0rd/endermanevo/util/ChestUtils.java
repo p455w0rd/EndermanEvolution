@@ -15,16 +15,22 @@
  */
 package p455w0rd.endermanevo.util;
 
+import java.util.List;
+
+import com.google.common.collect.Lists;
+
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockChest;
-import net.minecraft.block.BlockEnderChest;
+import net.minecraft.block.BlockShulkerBox;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
 import net.minecraft.init.Enchantments;
 import net.minecraft.inventory.IInventory;
+import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemShulkerBox;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -39,10 +45,21 @@ import net.minecraft.world.World;
  */
 public class ChestUtils {
 
+	private static List<BlockShulkerBox> SHULKER_BOXES = Lists.<BlockShulkerBox>newArrayList();
+
+	public static List<BlockShulkerBox> getShulkerBoxes() {
+		if (SHULKER_BOXES.isEmpty()) {
+			for (EnumDyeColor color : EnumDyeColor.values()) {
+				SHULKER_BOXES.add((BlockShulkerBox) BlockShulkerBox.getBlockByColor(color));
+			}
+		}
+		return SHULKER_BOXES;
+	}
+
 	public static boolean isVanillaChest(ItemStack stack) {
 		boolean containsPathString = false;
 		for (int i = 0; i < VanillaChestTypes.values().length; i++) {
-			if (stack.getItem().getRegistryName().getResourcePath().toString().equals(VanillaChestTypes.values()[i].getName())) {
+			if (stack.getItem().getRegistryName().getResourcePath().toString().contains(VanillaChestTypes.values()[i].getName())) {
 				containsPathString = true;
 				break;
 			}
@@ -55,7 +72,15 @@ public class ChestUtils {
 	}
 
 	public static boolean isVanillaChest(Block block, boolean includeEnderChest) {
-		return (block instanceof BlockChest) || (includeEnderChest ? (block instanceof BlockEnderChest) : false);
+		return block == Blocks.CHEST || block == Blocks.TRAPPED_CHEST || (includeEnderChest ? block == Blocks.ENDER_CHEST : false);
+	}
+
+	public static boolean isVanillaShulkerBox(ItemStack stack) {
+		return stack.getItem().getRegistryName().getResourceDomain().toString().equals("minecraft") && stack.getItem() instanceof ItemShulkerBox;
+	}
+
+	public static boolean isVanillaShulkerBox(Block block) {
+		return block instanceof BlockShulkerBox && getShulkerBoxes().contains(block);
 	}
 
 	public static VanillaChestTypes getVanillaChestType(ItemStack stack) {

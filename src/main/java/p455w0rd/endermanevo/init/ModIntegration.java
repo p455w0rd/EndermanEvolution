@@ -31,9 +31,9 @@ public class ModIntegration {
 
 	public static enum Mods {
 			TOP("theoneprobe", "The One Probe"),
-			ENDERSTORAGE("EnderStorage", "Ender Storage"),
-			WAILA("Waila", "WAILA"),
-			IRONCHESTS("ironchest", "Iron Chests"), JEI("JEI", "JEI");
+			ENDERSTORAGE("enderstorage", "Ender Storage"),
+			WAILA("waila", "WAILA"),
+			IRONCHESTS("ironchest", "Iron Chests"), JEI("jei", "Just Enough Items");
 
 		private String modid, name;
 

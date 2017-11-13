@@ -41,7 +41,6 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityCreature;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.IEntityOwnable;
-import net.minecraft.entity.MoverType;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.EntityAIAttackMelee;
 import net.minecraft.entity.ai.EntityAIBase;
@@ -103,6 +102,7 @@ import p455w0rd.endermanevo.integration.IronChests;
 import p455w0rd.endermanevo.network.PacketFriendermanRegistrySync;
 import p455w0rd.endermanevo.util.ChestUtils;
 import p455w0rd.endermanevo.util.ChestUtils.VanillaChestTypes;
+import p455w0rd.endermanevo.util.EntityUtils;
 import p455w0rd.endermanevo.util.EnumParticles;
 import p455w0rd.endermanevo.util.FriendermanUtils.ChestType;
 import p455w0rd.endermanevo.util.ParticleUtil;
@@ -161,7 +161,6 @@ public class EntityFrienderman extends EntityCreature implements IEntityOwnable,
 			if (isHoldingChest() && player == getOwner()) {
 				probeInfo.horizontal().text("Sneak+Right-Click to take chest");
 			}
-			//probeInfo.horizontal().text("test");
 		}
 	}
 
@@ -318,8 +317,6 @@ public class EntityFrienderman extends EntityCreature implements IEntityOwnable,
 		tasks.addTask(5, new EntityAIWander(this, 0.5D));
 		tasks.addTask(6, new EntityAIWatchClosest(this, EntityPlayer.class, 8.0F));
 		tasks.addTask(7, new EntityAILookIdle(this));
-		//tasks.addTask(8, new EntityFrienderman.AIPlaceBlock(this));
-		//tasks.addTask(9, new EntityFrienderman.AITakeBlock(this));
 		targetTasks.addTask(1, new EntityAIOwnerHurtByTarget(this));
 		targetTasks.addTask(2, new EntityFrienderman.AIFindPlayer(this));
 		targetTasks.addTask(3, new EntityAIHurtByTarget(this, true, new Class[0]));
@@ -352,7 +349,7 @@ public class EntityFrienderman extends EntityCreature implements IEntityOwnable,
 	}
 
 	public void setHeldBlockState(@Nullable IBlockState state) {
-		if (getHeldItemStack() != null) {
+		if (!getHeldItemStack().isEmpty()) {
 			entityDropItem(getHeldItemStack().copy(), 1.0F);
 		}
 		dataManager.set(CARRIED_ITEM, ItemStack.EMPTY);
@@ -390,7 +387,7 @@ public class EntityFrienderman extends EntityCreature implements IEntityOwnable,
 				}
 			}
 		}
-		if (getHeldItemStack() != null) {
+		if (!getHeldItemStack().isEmpty()) {
 			NBTTagCompound itemStack = new NBTTagCompound();
 			getHeldItemStack().writeToNBT(itemStack);
 			compound.setTag("Item", itemStack);
@@ -398,7 +395,7 @@ public class EntityFrienderman extends EntityCreature implements IEntityOwnable,
 		if (chestInventory != null) {
 			NBTTagList nbtList = new NBTTagList();
 			for (int i = 0; i < chestInventory.getSizeInventory(); i++) {
-				if (chestInventory.getStackInSlot(i) != null) {
+				if (!chestInventory.getStackInSlot(i).isEmpty()) {
 					NBTTagCompound slotNBT = new NBTTagCompound();
 					slotNBT.setInteger("Slot", i);
 					chestInventory.getStackInSlot(i).writeToNBT(slotNBT);
@@ -416,14 +413,14 @@ public class EntityFrienderman extends EntityCreature implements IEntityOwnable,
 	}
 
 	public ItemStack getItemBlockWithInventory(IInventory inventory, ItemStack stack) {
-		if (stack != null && stack.getItem() instanceof ItemBlock && inventory != null && inventory.getSizeInventory() > 0) {
+		if (!stack.isEmpty() && stack.getItem() instanceof ItemBlock && inventory != null && inventory.getSizeInventory() > 0) {
 			if (!stack.hasTagCompound()) {
 				stack.setTagCompound(new NBTTagCompound());
 			}
 			NBTTagCompound stackNBT = stack.getOrCreateSubCompound("BlockEntityTag");
 			NBTTagList stackList = new NBTTagList();
 			for (int i = 0; i < inventory.getSizeInventory(); i++) {
-				if (inventory.getStackInSlot(i) == null) {
+				if (inventory.getStackInSlot(i).isEmpty()) {
 					continue;
 				}
 				NBTTagCompound slotNBT = new NBTTagCompound();
@@ -446,11 +443,6 @@ public class EntityFrienderman extends EntityCreature implements IEntityOwnable,
 	public void readEntityFromNBT(NBTTagCompound compound) {
 		super.readEntityFromNBT(compound);
 		UUID uuid = null;
-		/*
-		if (compound.hasKey("LidAngle")) {
-			setLidAngle(compound.getFloat("LidAngle"));
-		}
-		*/
 		if (compound.hasKey("Owner")) {
 			String s1 = compound.getString("Owner");
 			uuid = getUUID(s1);
@@ -480,7 +472,9 @@ public class EntityFrienderman extends EntityCreature implements IEntityOwnable,
 				}
 			}
 		}
-		setSitting(compound.getBoolean("Sitting"));
+		if (isSitting() != compound.getBoolean("Sitting")) {
+			setSitting(compound.getBoolean("Sitting"));
+		}
 	}
 
 	@Override
@@ -508,6 +502,9 @@ public class EntityFrienderman extends EntityCreature implements IEntityOwnable,
 
 	@Override
 	public boolean processInteract(EntityPlayer player, EnumHand hand) {
+		if (EasyMappings.world(this).isRemote || hand == EnumHand.OFF_HAND) {
+			return true;
+		}
 		ItemStack stack = player.getHeldItem(hand);
 		if (isTamed() && !EasyMappings.world(this).isRemote) {
 			if (!stack.isEmpty()) {
@@ -517,7 +514,6 @@ public class EntityFrienderman extends EntityCreature implements IEntityOwnable,
 							stack.shrink(1);
 						}
 						heal(30.0F);
-						//playTameEffect(true);
 						EasyMappings.world(this).setEntityState(this, (byte) 7);
 						return true;
 					}
@@ -528,12 +524,27 @@ public class EntityFrienderman extends EntityCreature implements IEntityOwnable,
 					if (chestStack.getCount() > 1) {
 						chestStack.setCount(1);
 						leftOverStack = stack.copy();
-						leftOverStack.setCount(stack.getCount() - 1);
+						leftOverStack.shrink(1);
 					}
 					setHeldItemStack(chestStack);
 					chestInventory = new TempChest();
 					ChestUtils.loadInventoryFromStack(chestInventory, getHeldItemStack());
-					stack = ItemStack.EMPTY; // just cleanup
+					stack = ItemStack.EMPTY;
+					player.setHeldItem(hand, leftOverStack);
+					return true;
+				}
+				else if (ChestUtils.isVanillaShulkerBox(stack) && isOwner(player)) {
+					ItemStack shulkerStack = stack.copy();
+					ItemStack leftOverStack = ItemStack.EMPTY;
+					if (shulkerStack.getCount() > 1) {
+						shulkerStack.setCount(1);
+						leftOverStack = stack.copy();
+						leftOverStack.shrink(1);
+					}
+					setHeldItemStack(shulkerStack);
+					chestInventory = new TempChest();
+					ChestUtils.loadInventoryFromStack(chestInventory, getHeldItemStack());
+					stack = ItemStack.EMPTY;
 					player.setHeldItem(hand, leftOverStack);
 					return true;
 				}
@@ -543,11 +554,11 @@ public class EntityFrienderman extends EntityCreature implements IEntityOwnable,
 					if (chestStack.getCount() > 1) {
 						chestStack.setCount(1);
 						leftOverStack = stack.copy();
-						leftOverStack.setCount(stack.getCount() - 1);
+						leftOverStack.shrink(1);
 					}
-					setHeldItemStack(chestStack); // TODO
+					setHeldItemStack(chestStack);
 					player.setHeldItem(hand, leftOverStack);
-					stack = ItemStack.EMPTY; // just cleanup
+					stack = ItemStack.EMPTY;
 					return true;
 				}
 				else if (Mods.IRONCHESTS.isLoaded() && isOwner(player) && IronChests.isIronChest(stack) && IronChests.getChestType(stack) != IronChestType.DIRTCHEST9000) {
@@ -556,22 +567,38 @@ public class EntityFrienderman extends EntityCreature implements IEntityOwnable,
 					if (chestStack.getCount() > 1) {
 						chestStack.setCount(1);
 						leftOverStack = stack.copy();
-						leftOverStack.setCount(stack.getCount() - 1);
+						leftOverStack.shrink(1);
 					}
 					movingTowardItem = null;
 					setHeldItemStack(chestStack);
 					chestInventory = new TempChest(IronChests.getInventorySize(stack));
 					ChestUtils.loadInventoryFromStack(chestInventory, getHeldItemStack());
 					player.setHeldItem(hand, leftOverStack);
-					stack = null; // just cleanup
+					stack = ItemStack.EMPTY;
+					return true;
+				}
+				else if (Mods.IRONCHESTS.isLoaded() && isOwner(player) && IronChests.isIronShulkerBox(stack)) {
+					ItemStack chestStack = stack.copy();
+					ItemStack leftOverStack = ItemStack.EMPTY;
+					if (chestStack.getCount() > 1) {
+						chestStack.setCount(1);
+						leftOverStack = stack.copy();
+						leftOverStack.shrink(1);
+					}
+					movingTowardItem = null;
+					setHeldItemStack(chestStack);
+					chestInventory = new TempChest(IronChests.getShulkerBoxInventorySize(stack));
+					ChestUtils.loadInventoryFromStack(chestInventory, getHeldItemStack());
+					player.setHeldItem(hand, leftOverStack);
+					stack = ItemStack.EMPTY;
 					return true;
 				}
 			}
 			else {
-				if (isOwner(player) && !EasyMappings.world(this).isRemote) {
+				if (isOwner(player)) {
 					if (!player.isSneaking()) {
-						if (player.getHeldItemMainhand() == null) {
-							aiSit.setSitting(!isSitting());
+						if (player.getHeldItemMainhand().isEmpty()) {
+							setSitting(!isSitting());
 							isJumping = false;
 							navigator.clearPath();
 							setAttackTarget((EntityLivingBase) null);
@@ -581,7 +608,7 @@ public class EntityFrienderman extends EntityCreature implements IEntityOwnable,
 						if (Mods.ENDERSTORAGE.isLoaded() && isOwner(player)) {
 							if (isHoldingEnderStorageChest()) {
 								player.inventory.addItemStackToInventory(getHeldItemStack().copy());
-								setHeldItemStack(null);
+								setHeldItemStack(ItemStack.EMPTY);
 								return true;
 							}
 						}
@@ -589,44 +616,77 @@ public class EntityFrienderman extends EntityCreature implements IEntityOwnable,
 							movingTowardItem = null;
 							ItemStack newStack = getHeldItemStack().copy();
 							for (int i = 0; i < getHeldChestInventory().getSizeInventory(); i++) {
-								if (getHeldChestInventory().getStackInSlot(i) != null) {
+								if (!getHeldChestInventory().getStackInSlot(i).isEmpty()) {
 									newStack = writeInventoryToStack(getHeldChestInventory(), getHeldItemStack().copy());
 									break;
 								}
 							}
 							player.inventory.addItemStackToInventory(newStack);
-							setHeldItemStack(null);
+							setHeldItemStack(ItemStack.EMPTY);
+							return true;
+						}
+						if (isHoldingIronShulkerBox() && isOwner(player)) {
+							movingTowardItem = null;
+							ItemStack newStack = getHeldItemStack().copy();
+							for (int i = 0; i < getHeldChestInventory().getSizeInventory(); i++) {
+								if (!getHeldChestInventory().getStackInSlot(i).isEmpty()) {
+									newStack = writeInventoryToStack(getHeldChestInventory(), getHeldItemStack().copy());
+									break;
+								}
+							}
+							player.inventory.addItemStackToInventory(newStack);
+							setHeldItemStack(ItemStack.EMPTY);
 							return true;
 						}
 						if (isHoldingVanillaChest() && isOwner(player)) {
 							ItemStack newStack = getHeldItemStack().copy();
 							for (int i = 0; i < getHeldChestInventory().getSizeInventory(); i++) {
-								if (getHeldChestInventory().getStackInSlot(i) != null) {
+								if (!getHeldChestInventory().getStackInSlot(i).isEmpty()) {
 									newStack = writeInventoryToStack(getHeldChestInventory(), getHeldItemStack().copy());
 									break;
 								}
 							}
 							player.inventory.addItemStackToInventory(newStack);
-							setHeldItemStack(null);
+							setHeldItemStack(ItemStack.EMPTY);
+							chestInventory = null;
+						}
+						if (isHoldingVanillaShulkerBox() && isOwner(player)) {
+							ItemStack newStack = getHeldItemStack().copy();
+							for (int i = 0; i < getHeldChestInventory().getSizeInventory(); i++) {
+								if (!getHeldChestInventory().getStackInSlot(i).isEmpty()) {
+									newStack = writeInventoryToStack(getHeldChestInventory(), getHeldItemStack().copy());
+									break;
+								}
+							}
+							player.inventory.addItemStackToInventory(newStack);
+							setHeldItemStack(ItemStack.EMPTY);
 							chestInventory = null;
 						}
 					}
 				}
 			}
 		}
-		else if (stack != null && stack.getItem() == ModItems.FRIENDER_PEARL) {
+		else if (!stack.isEmpty() && stack.getItem() == ModItems.FRIENDER_PEARL) {
 			if (!player.capabilities.isCreativeMode) {
 				stack.shrink(1);
 			}
 
 			if (!EasyMappings.world(this).isRemote) {
-				if (rand.nextInt(10) == 0 || player.capabilities.isCreativeMode) {
+				int random = 0;
+				if (!player.capabilities.isCreativeMode) {
+					if (EntityUtils.isWearingCustomSkull(player) && EntityUtils.getSkullItem(player) == ModItems.SKULL_FRIENDERMAN) {
+						random = rand.nextInt(2);
+					}
+					else {
+						random = rand.nextInt(10);
+					}
+				}
+				if (random == 0) {
 					ModRegistries.registerTamedFrienderman(player, this);
 					ModNetworking.INSTANCE.sendToAll(new PacketFriendermanRegistrySync(ModRegistries.getTamedFriendermanRegistry()));
 					setTamed(true);
 					navigator.clearPath();
 					setAttackTarget((EntityLivingBase) null);
-					//aiSit.setSitting(true);
 					setHealth(30.0F);
 					if (MCUtils.isSSP(FMLCommonHandler.instance().getMinecraftServerInstance())) {
 						setOwnerId(player.getUniqueID());
@@ -634,17 +694,11 @@ public class EntityFrienderman extends EntityCreature implements IEntityOwnable,
 					else {
 						setOwnerId(getUUID(player.getName()));
 					}
-					//playTameEffect(true);
 					EasyMappings.world(this).setEntityState(this, (byte) 7);
 				}
-				else {
-					//playTameEffect(false);
-					EasyMappings.world(this).setEntityState(this, (byte) 6);
-				}
 			}
-			return true;
 		}
-		return super.processInteract(player, hand);
+		return true;
 	}
 
 	@Override
@@ -708,12 +762,19 @@ public class EntityFrienderman extends EntityCreature implements IEntityOwnable,
 	}
 
 	public boolean isHoldingChest() {
-		return isHoldingEnderStorageChest() || isHoldingVanillaChest() || isHoldingIronChest();
+		return isHoldingEnderStorageChest() || isHoldingVanillaChest() || isHoldingIronChest() || isHoldingVanillaShulkerBox() || isHoldingIronShulkerBox();
 	}
 
 	public boolean isHoldingIronChest() {
 		if (Mods.IRONCHESTS.isLoaded()) {
-			return getHeldItemStack() != null && IronChests.isIronChest(getHeldItemStack());
+			return !getHeldItemStack().isEmpty() && IronChests.isIronChest(getHeldItemStack());
+		}
+		return false;
+	}
+
+	public boolean isHoldingIronShulkerBox() {
+		if (Mods.IRONCHESTS.isLoaded()) {
+			return !getHeldItemStack().isEmpty() && IronChests.isIronShulkerBox(getHeldItemStack());
 		}
 		return false;
 	}
@@ -723,7 +784,7 @@ public class EntityFrienderman extends EntityCreature implements IEntityOwnable,
 	}
 
 	public int testInventoryInsertion(IInventory inventory, ItemStack item) {
-		if (item == null || item.getCount() == 0) {
+		if (item.isEmpty() || item.getCount() == 0) {
 			return 0;
 		}
 		if (inventory == null) {
@@ -737,7 +798,7 @@ public class EntityFrienderman extends EntityCreature implements IEntityOwnable,
 				continue;
 			}
 			ItemStack inventorySlot = inventory.getStackInSlot(i);
-			if (inventorySlot == null) {
+			if (inventorySlot.isEmpty()) {
 				itemSizeCounter -= Math.min(Math.min(itemSizeCounter, inventory.getInventoryStackLimit()), item.getMaxStackSize());
 			}
 			else if (areMergeCandidates(item, inventorySlot)) {
@@ -758,7 +819,11 @@ public class EntityFrienderman extends EntityCreature implements IEntityOwnable,
 	}
 
 	public boolean isHoldingVanillaChest() {
-		return getHeldItemStack() != null && ChestUtils.isVanillaChest(getHeldItemStack());
+		return !getHeldItemStack().isEmpty() && ChestUtils.isVanillaChest(getHeldItemStack());
+	}
+
+	public boolean isHoldingVanillaShulkerBox() {
+		return !getHeldItemStack().isEmpty() && ChestUtils.isVanillaShulkerBox(getHeldItemStack());
 	}
 
 	public VanillaChestTypes getVanillaChestType() {
@@ -779,13 +844,16 @@ public class EntityFrienderman extends EntityCreature implements IEntityOwnable,
 			else if (isHoldingEnderStorageChest()) {
 				return ChestType.ENDERSTORAGE;
 			}
+			else if (isHoldingVanillaShulkerBox()) {
+				return ChestType.VANILLA_SHULKER;
+			}
 		}
 		return null;
 	}
 
 	public boolean isHoldingEnderStorageChest() {
 		if (Mods.ENDERSTORAGE.isLoaded()) {
-			return getHeldItemStack() != null && getHeldItemStack().getItem() == EnderStorage.getEnderStorageItem() && getHeldItemStack().getItemDamage() == 0;
+			return !getHeldItemStack().isEmpty() && getHeldItemStack().getItem() == EnderStorage.getEnderStorageItem() && getHeldItemStack().getItemDamage() == 0;
 		}
 		return false;
 	}
@@ -803,9 +871,8 @@ public class EntityFrienderman extends EntityCreature implements IEntityOwnable,
 			default:
 				return chestInventory;
 			}
-
 		}
-		else if (isHoldingIronChest()) {
+		else if (isHoldingIronChest() || isHoldingVanillaShulkerBox() || isHoldingIronShulkerBox()) {
 			return chestInventory;
 		}
 		return null;
@@ -831,9 +898,6 @@ public class EntityFrienderman extends EntityCreature implements IEntityOwnable,
 		return entityIn == getOwner();
 	}
 
-	/**
-	 * Returns the AITask responsible of the sit logic
-	 */
 	public EntityAISit getAISit() {
 		return aiSit;
 	}
@@ -939,29 +1003,6 @@ public class EntityFrienderman extends EntityCreature implements IEntityOwnable,
 
 	@Override
 	public void onLivingUpdate() {
-		/*
-		World w = EasyMappings.world(this);
-		if (isTamed() && w != null && w.getMinecraftServer() != null) {
-			boolean ownerIsOnline = false;
-			GameProfile[] onlineProfiles = w.getMinecraftServer().getOnlinePlayerProfiles();
-			for (GameProfile onlineProfile : onlineProfiles) {
-				if (onlineProfile.getId().equals(getOwnerId())) {
-					ownerIsOnline = true;
-					break;
-				}
-			}
-			if (ownerIsOnline) {
-				if (getOwner() != null) {
-					System.out.println(getOwner().dimension + " : " + dimension);
-					if (getOwner().dimension != dimension) {
-						TeleportUtils.teleportEntity(this, getOwner().dimension, getOwner().posX + 3, getOwner().posY + 1, getOwner().posZ + 3);
-						return;
-					}
-				}
-			}
-		}
-		*/
-		//for (int i = 0; i < 2; ++i) {
 		if (getEntityWorld() != null && getEntityWorld().isRemote) {
 			double x = posX + (rand.nextDouble() - 0.5D) * width;
 			double y = posY + rand.nextDouble() * height - 0.25D;
@@ -971,7 +1012,6 @@ public class EntityFrienderman extends EntityCreature implements IEntityOwnable,
 			double sz = (rand.nextDouble() - 0.5D) * 2.0D;
 			ParticleUtil.spawn(EnumParticles.LOVE, getEntityWorld(), x, y, z, sx, sy, sz);
 		}
-		//}
 
 		if (!lidClosed) {
 			if (getLidAngle() >= 1.5F) {
@@ -1070,8 +1110,8 @@ public class EntityFrienderman extends EntityCreature implements IEntityOwnable,
 		moveStrafing *= 0.98F;
 		moveForward *= 0.98F;
 		randomYawVelocity *= 0.9F;
-		//this.updateElytra();
-		move(MoverType.SELF, moveStrafing, randomYawVelocity, moveForward);
+		//move(MoverType.SELF, moveStrafing, randomYawVelocity, moveForward);
+		travel(moveStrafing, randomYawVelocity, moveForward);
 		EasyMappings.world(this).profiler.endSection();
 		EasyMappings.world(this).profiler.startSection("push");
 		collideWithNearbyEntities();
@@ -1079,25 +1119,23 @@ public class EntityFrienderman extends EntityCreature implements IEntityOwnable,
 
 		EasyMappings.world(this).profiler.startSection("looting");
 
-		if ((canPickUpLoot() && !dead || (isHoldingChest() && isSitting()))) {
-			//for (EntityItem entityitem : worldObj.getEntitiesWithinAABB(EntityItem.class, getEntityBoundingBox().expand(0.0D, -1.0D, 0.0D).expand(6.0D, 2.0D, 6.0D))) {
-			List<EntityItem> nearList = getEntityWorld().getEntitiesWithinAABB(EntityItem.class, getEntityBoundingBox().expand(0.0D, -1.0D, 0.0D).expand(6.0D, 2.0D, 6.0D));
+		if (!dead || (isHoldingChest() && isSitting())) {
+			List<EntityItem> nearList = getEntityWorld().getEntitiesWithinAABB(EntityItem.class, getEntityBoundingBox().grow(6.0));
 			for (EntityItem entityitem : nearList) {
-				if (!entityitem.isDead && entityitem.getItem() != null && canFriendermanPickupItem(entityitem.getItem())) {
-					//entityitem.setInfinitePickupDelay();
+				if (!entityitem.isDead && !entityitem.getItem().isEmpty() && canFriendermanPickupItem(entityitem.getItem())) {
 					if (movingTowardItem == null || movingTowardItem.isDead || !nearList.contains(movingTowardItem)) {
 						movingTowardItem = entityitem;
 					}
-					List<EntityItem> itemListNear = getEntityWorld().getEntitiesWithinAABB(EntityItem.class, getEntityBoundingBox().expand(0.0D, -1.0D, 0.0D).expand(6.0, 2.0D, 6.0D));
+					List<EntityItem> itemListNear = getEntityWorld().getEntitiesWithinAABB(EntityItem.class, getEntityBoundingBox().grow(6.0));
 					if (movingTowardItem != null && itemListNear.contains(movingTowardItem)) {
 						updateEquipmentIfNeeded(movingTowardItem);
 					}
 				}
 			}
-			//movingTowardItem = null;
 		}
 
 		EasyMappings.world(this).profiler.endSection();
+
 	}
 
 	@Override
@@ -1108,10 +1146,10 @@ public class EntityFrienderman extends EntityCreature implements IEntityOwnable,
 				lidClosed = false;
 				lidOpening = true;
 			}
-			ItemStack itemstack1 = null;
+			ItemStack itemstack1 = ItemStack.EMPTY;
 			if (!lidClosed && !lidOpening) {
 				itemstack1 = InventoryUtils.addItem(getHeldChestInventory(), stack);
-				if (itemstack1 == null) {
+				if (itemstack1.isEmpty()) {
 					if (movingTowardItem != null) {
 						movingTowardItem = null;
 					}
@@ -1219,84 +1257,8 @@ public class EntityFrienderman extends EntityCreature implements IEntityOwnable,
 		return dataManager.get(CARRIED_ITEM);
 	}
 
-	/*
-		static class AIPlaceBlock extends EntityAIBase {
-			private final EntityFrienderman enderman;
-	
-			public AIPlaceBlock(EntityFrienderman p_i45843_1_) {
-				enderman = p_i45843_1_;
-			}
-	
-			@Override
-			public boolean shouldExecute() {
-				return enderman.getHeldBlockState() == null;
-			}
-	
-			@Override
-			public void updateTask() {
-				Random random = enderman.getRNG();
-				World world = enderman.worldObj;
-				int i = MathHelper.floor_double(enderman.posX - 1.0D + random.nextDouble() * 2.0D);
-				int j = MathHelper.floor_double(enderman.posY + random.nextDouble() * 2.0D);
-				int k = MathHelper.floor_double(enderman.posZ - 1.0D + random.nextDouble() * 2.0D);
-				BlockPos blockpos = new BlockPos(i, j, k);
-				IBlockState iblockstate = world.getBlockState(blockpos);
-				IBlockState iblockstate1 = world.getBlockState(blockpos.down());
-				IBlockState iblockstate2 = enderman.getHeldBlockState();
-				if ((iblockstate2 != null) && (canPlaceBlock(world, blockpos, iblockstate2.getBlock(), iblockstate, iblockstate1))) {
-					world.setBlockState(blockpos, iblockstate2, 3);
-					enderman.setHeldBlockState((IBlockState) null);
-				}
-			}
-	
-			private boolean canPlaceBlock(World p_188518_1_, BlockPos p_188518_2_, Block p_188518_3_, IBlockState p_188518_4_, IBlockState p_188518_5_) {
-				return p_188518_5_.getMaterial() == Material.AIR ? false : p_188518_4_.getMaterial() != Material.AIR ? false : !p_188518_3_.canPlaceBlockAt(p_188518_1_, p_188518_2_) ? false : p_188518_5_.isFullCube();
-			}
-		}
-	
-		static class AITakeBlock extends EntityAIBase {
-			private final EntityFrienderman enderman;
-	
-			public AITakeBlock(EntityFrienderman p_i45841_1_) {
-				enderman = p_i45841_1_;
-			}
-	
-			@Override
-			public boolean shouldExecute() {
-				//return enderman.getHeldBlockState() != null ? false : (!enderman.worldObj.getGameRules().getBoolean("mobGriefing") ? false : enderman.worldObj.rand.nextInt(1) == 0);
-				return enderman.getHeldBlockState() != null ? false : (!enderman.worldObj.getGameRules().getBoolean("mobGriefing") ? false : true);
-			}
-	
-			@Override
-			public void updateTask() {
-				Random random = enderman.getRNG();
-				World world = enderman.worldObj;
-				int i = MathHelper.floor_double(enderman.posX - 2.0D + random.nextDouble() * 4.0D);
-				int j = MathHelper.floor_double(enderman.posY + random.nextDouble() * 3.0D);
-				int k = MathHelper.floor_double(enderman.posZ - 2.0D + random.nextDouble() * 4.0D);
-				BlockPos blockpos = new BlockPos(i, j, k);
-				BlockPos blockpos2 = new BlockPos(i, j + 1, k);
-				IBlockState iblockstate = world.getBlockState(blockpos);
-				IBlockState iblockstate2 = world.getBlockState(blockpos2);
-				Block block = iblockstate.getBlock();
-				Block block2 = iblockstate2.getBlock();
-				RayTraceResult raytraceresult = world.rayTraceBlocks(new Vec3d(MathHelper.floor_double(enderman.posX) + 0.5F, j + 0.5F, MathHelper.floor_double(enderman.posZ) + 0.5F), new Vec3d(i + 0.5F, j + 0.5F, k + 0.5F), false, true, false);
-				boolean flag = raytraceresult != null && raytraceresult.getBlockPos().equals(blockpos);
-	
-				if (EntityFrienderman.CARRIABLE_BLOCKS.contains(block) && flag) {
-					enderman.setHeldBlockState(iblockstate);
-					world.setBlockToAir(blockpos);
-				}
-				else if (EntityFrienderman.CARRIABLE_BLOCKS.contains(block2) && flag) {
-					enderman.setHeldBlockState(iblockstate2);
-					world.setBlockToAir(blockpos2);
-				}
-			}
-		}
-	*/
 	static class EntityAISit extends EntityAIBase {
 		private final EntityFrienderman theEntity;
-		/** If the EntityTameable is sitting. */
 		private boolean isSitting;
 
 		public EntityAISit(EntityFrienderman entityIn) {
@@ -1304,9 +1266,6 @@ public class EntityFrienderman extends EntityCreature implements IEntityOwnable,
 			setMutexBits(5);
 		}
 
-		/**
-		 * Returns whether the EntityAIBase should begin execution.
-		 */
 		@Override
 		public boolean shouldExecute() {
 			if (!theEntity.isTamed()) {
@@ -1324,26 +1283,17 @@ public class EntityFrienderman extends EntityCreature implements IEntityOwnable,
 			}
 		}
 
-		/**
-		 * Execute a one shot task or start executing a continuous task
-		 */
 		@Override
 		public void startExecuting() {
 			theEntity.getNavigator().clearPath();
 			theEntity.setSitting(true);
 		}
 
-		/**
-		 * Resets the task
-		 */
 		@Override
 		public void resetTask() {
 			theEntity.setSitting(false);
 		}
 
-		/**
-		 * Sets the sitting flag.
-		 */
 		public void setSitting(boolean sitting) {
 			isSitting = sitting;
 		}
@@ -1418,18 +1368,8 @@ public class EntityFrienderman extends EntityCreature implements IEntityOwnable,
 				if (targetItem != null && thePet.getDistanceSq(targetItem) < 1.0) {
 					ItemStack stack = targetItem.getItem();
 					int preEatSize = stack.getCount();
-					//ItemDistribution.insertItemIntoInventory(luggage.getInventory(), stack);
 					InventoryUtils.addItem(thePet.getHeldChestInventory(), stack);
-					// Check that the size changed
 					if (preEatSize != stack.getCount()) {
-						/*
-						if (luggage.lastSound > 15) {
-							boolean isFood = stack.getItem() instanceof ItemFood;
-							luggage.playSound(isFood? "openblocks:luggage.eat.food" : "openblocks:luggage.eat.item",
-									0.5f, 1.0f + (luggage.worldObj.rand.nextFloat() * 0.2f));
-							luggage.lastSound = 0;
-						}
-						*/
 						if (stack.getCount() == 0) {
 							targetItem.setDead();
 						}
@@ -1439,40 +1379,6 @@ public class EntityFrienderman extends EntityCreature implements IEntityOwnable,
 		}
 	}
 
-	/**
-		public EntityItem currentTargetItem = null;
-	
-		public void pickupItem(EntityItem itemEntity) {
-			ItemStack stack = itemEntity.getEntityItem();
-			//if (canFriendermanPickupItem(stack)) {
-			if (InventoryUtils.canInsertStack(getHeldChestInventory(), stack)) {
-				if (lidClosed) {
-					lidClosed = false;
-					lidOpening = true;
-				}
-				if (!lidClosed && !lidOpening) {
-					ItemStack itemstack1 = InventoryUtils.insertItem(getHeldChestInventory(), stack);
-					//ItemStack itemstack1 = stack;
-					if (itemstack1 == null) {
-						if (currentTargetItem != null) {
-							currentTargetItem.setDead();
-							currentTargetItem = null;
-						}
-						if (itemEntity != null) {
-							itemEntity.setDead();
-							itemEntity = null;
-						}
-					}
-					else {
-						stack.stackSize -= itemstack1.stackSize;
-						if (stack.stackSize <= 0) {
-							stack = null;
-						}
-					}
-				}
-			}
-		}
-	*/
 	static class EntityAIMoveToEntityItem extends EntityAIBase {
 		private final EntityFrienderman thePet;
 		World theWorld;
@@ -1497,9 +1403,6 @@ public class EntityFrienderman extends EntityCreature implements IEntityOwnable,
 			}
 		}
 
-		/**
-		 * Returns whether the EntityAIBase should begin execution.
-		 */
 		@Override
 		public boolean shouldExecute() {
 			//EntityLivingBase entitylivingbase = thePet.getOwner();
@@ -1517,10 +1420,10 @@ public class EntityFrienderman extends EntityCreature implements IEntityOwnable,
 					thePet.lidClosed = false;
 					thePet.lidOpening = true;
 				}
-				ItemStack itemstack1 = null;
+				ItemStack itemstack1 = ItemStack.EMPTY;
 				if (!thePet.lidClosed && !thePet.lidOpening) {
 					itemstack1 = InventoryUtils.addItem(thePet.getHeldChestInventory(), stack);
-					if (itemstack1 == null) {
+					if (itemstack1.isEmpty()) {
 						if (currentTargetItem != null) {
 							currentTargetItem = null;
 						}
@@ -1533,17 +1436,11 @@ public class EntityFrienderman extends EntityCreature implements IEntityOwnable,
 			}
 		}
 
-		/**
-		 * Returns whether an in-progress EntityAIBase should continue executing
-		 */
 		@Override
 		public boolean shouldContinueExecuting() {
 			return !petPathfinder.noPath() && thePet.isTamed() && (itemsNear.size() > 0 && thePet.getDistanceSq(itemsNear.get(0)) <= 6 * 6);
 		}
 
-		/**
-		 * Execute a one shot task or start executing a continuous task
-		 */
 		@Override
 		public void startExecuting() {
 			timeToRecalcPath = 0;
@@ -1551,24 +1448,12 @@ public class EntityFrienderman extends EntityCreature implements IEntityOwnable,
 			thePet.setPathPriority(PathNodeType.WATER, 0.0F);
 		}
 
-		/**
-		 * Resets the task
-		 */
 		@Override
 		public void resetTask() {
 			petPathfinder.clearPath();
 			thePet.setPathPriority(PathNodeType.WATER, oldWaterCost);
 		}
 
-		/*
-				private boolean isEmptyBlock(BlockPos pos) {
-					IBlockState iblockstate = theWorld.getBlockState(pos);
-					return iblockstate.getMaterial() == Material.AIR ? true : !iblockstate.isFullCube();
-				}
-		*/
-		/**
-		 * Updates the task
-		 */
 		@Override
 		public void updateTask() {
 			if (itemsNear.size() <= 0) {
@@ -1576,35 +1461,9 @@ public class EntityFrienderman extends EntityCreature implements IEntityOwnable,
 			}
 			currentTargetItem = itemsNear.get(0);
 			thePet.getLookHelper().setLookPositionWithEntity(currentTargetItem, 10.0F, thePet.getVerticalFaceSpeed());
-
-			//if (!thePet.isSitting()) {
 			if (currentTargetItem != null) {
 				if (--timeToRecalcPath <= 0) {
 					timeToRecalcPath = 10;
-					/*
-					double x = itemsNear.get(0).posX;
-					double y = itemsNear.get(0).posY;
-					double z = itemsNear.get(0).posZ;
-					if (!petPathfinder.tryMoveToXYZ(x, y, z, 2.0)) {
-						if (!thePet.getLeashed()) {
-							if (thePet.getDistanceSq(currentTargetItem) > 144.0D) {
-								int i = MathUtils.floor(currentTargetItem.posX) - 2;
-								int j = MathUtils.floor(currentTargetItem.posZ) - 2;
-								int k = MathUtils.floor(currentTargetItem.getEntityBoundingBox().minY);
-					
-								for (int l = 0; l <= 4; ++l) {
-									for (int i1 = 0; i1 <= 4; ++i1) {
-										if ((l < 1 || i1 < 1 || l > 3 || i1 > 3) && theWorld.getBlockState(new BlockPos(i + l, k - 1, j + i1)).isSideSolid(theWorld, new BlockPos(i + l, k - 1, j + i1), EnumFacing.UP) && isEmptyBlock(new BlockPos(i + l, k, j + i1)) && isEmptyBlock(new BlockPos(i + l, k + 1, j + i1))) {
-											thePet.setLocationAndAngles(i + l + 0.5F, k, j + i1 + 0.5F, thePet.rotationYaw, thePet.rotationPitch);
-											petPathfinder.clearPath();
-											return;
-										}
-									}
-								}
-							}
-						}
-					}
-					*/
 					double x = itemsNear.get(0).posX;
 					double y = itemsNear.get(0).posY;
 					double z = itemsNear.get(0).posZ;
@@ -1618,19 +1477,8 @@ public class EntityFrienderman extends EntityCreature implements IEntityOwnable,
 
 					}
 					if (thePet.getDistanceSq(currentTargetItem) <= 6) {
-						//thePet.getLookHelper().setLookPositionWithEntity(currentTargetItem, 10.0F, thePet.getVerticalFaceSpeed());
-						double d0 = thePet.posX - currentTargetItem.posX;
-						double d2 = thePet.posZ - currentTargetItem.posZ;
-						float f = (float) (MathHelper.atan2(d2, d0) * (180D / Math.PI) + 90.0D);
-						//thePet.setRotation(f, 10);
 						pickupItem(currentTargetItem);
 						petPathfinder.clearPath();
-						/*
-						pickupItem(currentTargetItem);
-						//thePet.currentTargetItem.setDead();
-						//thePet.currentTargetItem = null;
-						petPathfinder.clearPath();
-						*/
 					}
 				}
 			}
@@ -1867,7 +1715,7 @@ public class EntityFrienderman extends EntityCreature implements IEntityOwnable,
 
 		@Override
 		public void setInventorySlotContents(int index, ItemStack stack) {
-			if (stack != null && stack.getCount() > getInventoryStackLimit()) {
+			if (!stack.isEmpty() && stack.getCount() > getInventoryStackLimit()) {
 				stack.setCount(getInventoryStackLimit());
 			}
 			invList.set(index, stack);

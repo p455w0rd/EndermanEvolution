@@ -1,0 +1,11 @@
+entity.frienderman.name=Frienderman
+entity.evolved_enderman.name=Evolved Enderman
+entity.evolved_endermite.name=Evolved Endermite
+entity.friender_pearl.name=Friender Pearl
+
+item.friender_pearl.name=Friender Pearl
+item.enderman_skull.name=Enderman Head
+item.frienderman_skull.name=Frienderman Head
+item.enderman_evolved_skull.name=Evolved Enderman Head
+
+itemGroup.endermanevo=Enderman Evolution

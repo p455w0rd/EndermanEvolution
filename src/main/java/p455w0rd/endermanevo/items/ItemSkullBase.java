@@ -35,14 +35,11 @@ import p455w0rdslib.util.MathUtils;
 public class ItemSkullBase extends ItemArmor implements IModelHolder {
 
 	private BlockSkullBase skullBlock;
-	private String NAME = "";
 
 	public ItemSkullBase(String name, BlockSkullBase block) {
 		super(ModMaterials.SKULL_MATERIAL, 0, EntityEquipmentSlot.HEAD);
-		//BlockDispenser.DISPENSE_BEHAVIOR_REGISTRY.putObject(this, ItemArmor.DISPENSER_BEHAVIOR);
-		NAME = name;
-		setRegistryName(NAME);
-		setUnlocalizedName(NAME);
+		setRegistryName(name);
+		setUnlocalizedName(name);
 		setMaxStackSize(64);
 		setMaxDamage(0);
 		skullBlock = block;
@@ -61,7 +58,6 @@ public class ItemSkullBase extends ItemArmor implements IModelHolder {
 			IBlockState iblockstate = worldIn.getBlockState(pos);
 			Block block = iblockstate.getBlock();
 			boolean flag = block.isReplaceable(worldIn, pos);
-
 			if (!flag) {
 				if (!worldIn.getBlockState(pos).getMaterial().isSolid() && !worldIn.isSideSolid(pos, facing, true)) {
 					return EnumActionResult.FAIL;
@@ -81,9 +77,7 @@ public class ItemSkullBase extends ItemArmor implements IModelHolder {
 					if (facing == EnumFacing.UP) {
 						i = MathUtils.floor(player.rotationYaw * 16.0F / 360.0F + 0.5D) & 15;
 					}
-
 					TileEntity tileentity = worldIn.getTileEntity(pos);
-
 					if (tileentity instanceof TileBlockSkull) {
 						TileBlockSkull tileentityskull = (TileBlockSkull) tileentity;
 						tileentityskull.setSkullRotation(i);
@@ -101,19 +95,18 @@ public class ItemSkullBase extends ItemArmor implements IModelHolder {
 	@Override
 	@SideOnly(Side.CLIENT)
 	public ModelBiped getArmorModel(EntityLivingBase entityLiving, ItemStack stack, EntityEquipmentSlot armorSlot, ModelBiped original) {
-		return TileBlockSkull.getModel(NAME);
+		return TileBlockSkull.getModel(getRegistryName().getResourcePath());
 	}
 
 	@Override
 	@SideOnly(Side.CLIENT)
 	public String getArmorTexture(ItemStack stack, Entity entity, EntityEquipmentSlot slot, String layer) {
-		return TileBlockSkull.getModel(NAME).getTexture().getResourceDomain() + ":" + TileBlockSkull.getModel(NAME).getTexture().getResourcePath();
+		return TileBlockSkull.getModel(getRegistryName().getResourcePath()).getTexture().getResourceDomain() + ":" + TileBlockSkull.getModel(getRegistryName().getResourcePath()).getTexture().getResourcePath();
 	}
 
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void initModel() {
-		//ModelLoader.setCustomModelResourceLocation(this, 0, new ModelResourceLocation(getRegistryName(), "inventory"));
 		ModelRegistryHelper.registerItemRenderer(this, ItemSkullRenderer.getInstance());
 	}
 
@@ -134,10 +127,10 @@ public class ItemSkullBase extends ItemArmor implements IModelHolder {
 
 	}
 
-	public static class Enderman2 extends ItemSkullBase {
+	public static class EvolvedEnderman extends ItemSkullBase {
 
-		public Enderman2() {
-			super("enderman2_skull", ModBlocks.ENDERMAN2_SKULL);
+		public EvolvedEnderman() {
+			super("enderman_evolved_skull", ModBlocks.ENDERMAN2_SKULL);
 		}
 
 		@Override

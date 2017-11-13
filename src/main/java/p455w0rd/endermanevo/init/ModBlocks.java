@@ -18,7 +18,7 @@ public class ModBlocks {
 
 	public static final BlockSkullBase.Enderman ENDERMAN_SKULL = new BlockSkullBase.Enderman();
 	public static final BlockSkullBase.Frienderman FRIENDERMAN_SKULL = new BlockSkullBase.Frienderman();
-	public static final BlockSkullBase.Enderman2 ENDERMAN2_SKULL = new BlockSkullBase.Enderman2();
+	public static final BlockSkullBase.EvolvedEnderman ENDERMAN2_SKULL = new BlockSkullBase.EvolvedEnderman();
 
 	public static void init() {
 		GameRegistry.registerTileEntity(TileBlockSkull.class, ModGlobals.MODID + ":tile_pskull");

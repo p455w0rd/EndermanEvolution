@@ -9,12 +9,9 @@ import p455w0rd.endermanevo.api.IModelHolder;
 
 public class ItemBase extends Item implements IModelHolder {
 
-	private String name = "";
-
 	public ItemBase(String name) {
-		this.name = name;
-		setRegistryName(this.name);
-		setUnlocalizedName(this.name);
+		setRegistryName(name);
+		setUnlocalizedName(name);
 		setMaxStackSize(64);
 		setMaxDamage(0);
 	}

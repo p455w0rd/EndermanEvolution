@@ -35,7 +35,6 @@ public class TESRBlockSkull extends TileEntitySpecialRenderer<TileBlockSkull> {
 
 	public void renderSkull(float x, float y, float z, EnumFacing facing, float rot, ModelSkullBase modelIn, int destroyStage, float animateTicks) {
 		ModelSkullBase modelbase = modelIn;
-
 		if (destroyStage >= 0) {
 			bindTexture(DESTROY_STAGES[destroyStage]);
 			GlStateManager.matrixMode(5890);
@@ -47,10 +46,8 @@ public class TESRBlockSkull extends TileEntitySpecialRenderer<TileBlockSkull> {
 		else {
 			bindTexture(modelbase.getTexture());
 		}
-
 		GlStateManager.pushMatrix();
 		GlStateManager.disableCull();
-
 		if (facing == EnumFacing.UP) {
 			GlStateManager.translate(x + 0.5F, y, z + 0.5F);
 		}
@@ -73,32 +70,22 @@ public class TESRBlockSkull extends TileEntitySpecialRenderer<TileBlockSkull> {
 				rot = 90.0F;
 			}
 		}
-
-		float f = 0.0625F;
 		GlStateManager.enableRescaleNormal();
 		GlStateManager.scale(-1.0F, -1.0F, 1.0F);
 		GlStateManager.enableAlpha();
-
 		modelbase.render((Entity) null, animateTicks, 0.0F, 0.0F, rot, 0.0F, 0.0625F);
-		//modelbase.render(rot);
-		//modelbase.renderOverlay(rot);
-
 		if (modelbase.getLightMap() != null) {
 			bindTexture(modelbase.getLightMap());
 			modelbase.renderLightMap(rot);
 		}
-
 		GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
 		GlStateManager.enableRescaleNormal();
-
 		GlStateManager.popMatrix();
-
 		if (destroyStage >= 0) {
 			GlStateManager.matrixMode(5890);
 			GlStateManager.popMatrix();
 			GlStateManager.matrixMode(5888);
 		}
-
 	}
 
 }

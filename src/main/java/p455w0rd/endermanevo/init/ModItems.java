@@ -19,7 +19,7 @@ public class ModItems {
 	public static final ItemFrienderPearl FRIENDER_PEARL = new ItemFrienderPearl();
 	public static final ItemSkullBase.Enderman SKULL_ENDERMAN = new ItemSkullBase.Enderman();
 	public static final ItemSkullBase.Frienderman SKULL_FRIENDERMAN = new ItemSkullBase.Frienderman();
-	public static final ItemSkullBase.Enderman2 SKULL_ENDERMAN2 = new ItemSkullBase.Enderman2();
+	public static final ItemSkullBase.EvolvedEnderman SKULL_EVOLVED_ENDERMAN = new ItemSkullBase.EvolvedEnderman();
 
 	@SideOnly(Side.CLIENT)
 	public static void preInitModels() {
@@ -32,7 +32,7 @@ public class ModItems {
 
 	public static List<Item> getList() {
 		if (ITEM_LIST.isEmpty()) {
-			ITEM_LIST.addAll(Lists.newArrayList(FRIENDER_PEARL, SKULL_ENDERMAN, SKULL_FRIENDERMAN, SKULL_ENDERMAN2));
+			ITEM_LIST.addAll(Lists.newArrayList(FRIENDER_PEARL, SKULL_ENDERMAN, SKULL_FRIENDERMAN, SKULL_EVOLVED_ENDERMAN));
 		}
 		return ITEM_LIST;
 	}

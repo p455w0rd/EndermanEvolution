@@ -25,22 +25,22 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.entity.layers.LayerRenderer;
 import net.minecraft.client.renderer.texture.TextureMap;
-import p455w0rd.endermanevo.client.render.RenderEnderman2;
-import p455w0rd.endermanevo.entity.EntityEnderman2;
+import p455w0rd.endermanevo.client.render.RenderEvolvedEnderman;
+import p455w0rd.endermanevo.entity.EntityEvolvedEnderman;
 
 /**
  * @author p455w0rd
  *
  */
-public class LayerHeldBlock2 implements LayerRenderer<EntityEnderman2> {
-	private final RenderEnderman2 endermanRenderer;
+public class LayerHeldBlock2 implements LayerRenderer<EntityEvolvedEnderman> {
+	private final RenderEvolvedEnderman endermanRenderer;
 
-	public LayerHeldBlock2(RenderEnderman2 endermanRendererIn) {
+	public LayerHeldBlock2(RenderEvolvedEnderman endermanRendererIn) {
 		endermanRenderer = endermanRendererIn;
 	}
 
 	@Override
-	public void doRenderLayer(EntityEnderman2 entitylivingbaseIn, float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch, float scale) {
+	public void doRenderLayer(EntityEvolvedEnderman entitylivingbaseIn, float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch, float scale) {
 		IBlockState iblockstate = entitylivingbaseIn.getHeldBlockState();
 
 		if (iblockstate != null) {
@@ -51,7 +51,6 @@ public class LayerHeldBlock2 implements LayerRenderer<EntityEnderman2> {
 			GlStateManager.rotate(20.0F, 1.0F, 0.0F, 0.0F);
 			GlStateManager.rotate(45.0F, 0.0F, 1.0F, 0.0F);
 			GlStateManager.translate(0.25F, 0.1875F, 0.25F);
-			float f = 0.5F;
 			GlStateManager.scale(-0.5F, -0.5F, 0.5F);
 			int i = entitylivingbaseIn.getBrightnessForRender();
 			int j = i % 65536;
