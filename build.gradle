@@ -15,11 +15,11 @@ apply plugin: "net.minecraftforge.gradle.forge"
 
 version = "1.12.2-" + getVersion("VERSION")
 group = "p455w0rd"
-archivesBaseName = "WirelessCraftingTerminal"
+archivesBaseName = "EndermanEvolution"
 sourceCompatibility = targetCompatibility = "1.8"
 
 minecraft {
-	version = "1.12.2-14.23.0.2532"
+	version = "1.12.2-14.23.0.2546"
 	runDir = "run"
 	mappings = "snapshot_20171003"
 	useDepAts = true

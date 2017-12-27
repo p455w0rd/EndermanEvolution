@@ -24,8 +24,10 @@ public class JEI implements IModPlugin {
 
 	@Override
 	public void register(@Nonnull IModRegistry registry) {
-		registry.addIngredientInfo(new ItemStack(ModItems.FRIENDER_PEARL), ItemStack.class, "jei.frienderpearl.desc");
-
+		registry.addIngredientInfo(new ItemStack(ModItems.FRIENDER_PEARL), ItemStack.class, "jei.friender_pearl.desc");
+		registry.addIngredientInfo(new ItemStack(ModItems.SKULL_ENDERMAN), ItemStack.class, "jei.skull_enderman.desc");
+		registry.addIngredientInfo(new ItemStack(ModItems.SKULL_EVOLVED_ENDERMAN), ItemStack.class, "jei.skull_evolved_enderman.desc");
+		registry.addIngredientInfo(new ItemStack(ModItems.SKULL_FRIENDERMAN), ItemStack.class, "jei.skull_frienderman.desc");
 	}
 
 	@Override

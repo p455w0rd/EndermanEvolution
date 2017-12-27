@@ -1,6 +1,5 @@
 package p455w0rd.endermanevo.entity;
 
-import net.minecraft.entity.MoverType;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.monster.EntityEndermite;
 import net.minecraft.util.math.MathHelper;
@@ -101,7 +100,7 @@ public class EntityEvolvedEndermite extends EntityEndermite {
 		moveStrafing *= 0.98F;
 		moveForward *= 0.98F;
 		randomYawVelocity *= 0.9F;
-		move(MoverType.SELF, moveStrafing, randomYawVelocity, moveForward);
+		travel(moveStrafing, randomYawVelocity, moveForward);
 		EasyMappings.world(this).profiler.endSection();
 		EasyMappings.world(this).profiler.startSection("push");
 		collideWithNearbyEntities();

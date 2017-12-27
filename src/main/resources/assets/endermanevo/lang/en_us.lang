@@ -9,3 +9,8 @@ item.frienderman_skull.name=Frienderman Head
 item.enderman_evolved_skull.name=Evolved Enderman Head
 
 itemGroup.endermanevo=Enderman Evolution
+
+jei.friender_pearl.desc=Used to tame Friendermen. Randomly dropped by Evolved Enderman.
+jei.skull_enderman.desc=Dropped by Enderman. When worn will prevent Enderman attacks.
+jei.skull_evolved_enderman.desc=Dropped by Evolved Enderman. When worn will prevent Enderman attacks.
+jei.skull_frienderman.desc=Dropped by Frienderman. When worn will prevent Enderman Attacks. Also greatly improves odds of taming a Frienderman with a Friender Pearl.

@@ -136,6 +136,8 @@ public class EntityFrienderman extends EntityCreature implements IEntityOwnable,
 	private boolean lidClosed = true;
 	private boolean lidOpening = false;
 	private IInventory chestInventory = null;
+	private boolean isPartying;
+	private BlockPos jukeboxPosition;
 
 	public EntityFrienderman(World worldIn) {
 		super(worldIn);
@@ -587,7 +589,8 @@ public class EntityFrienderman extends EntityCreature implements IEntityOwnable,
 					}
 					movingTowardItem = null;
 					setHeldItemStack(chestStack);
-					chestInventory = new TempChest(IronChests.getShulkerBoxInventorySize(stack));
+					int numSlots = IronChests.getShulkerBoxInventorySize(stack);
+					chestInventory = new TempChest(numSlots);
 					ChestUtils.loadInventoryFromStack(chestInventory, getHeldItemStack());
 					player.setHeldItem(hand, leftOverStack);
 					stack = ItemStack.EMPTY;
@@ -1002,6 +1005,18 @@ public class EntityFrienderman extends EntityCreature implements IEntityOwnable,
 	}
 
 	@Override
+	@SideOnly(Side.CLIENT)
+	public void setPartying(BlockPos pos, boolean shouldParty) {
+		jukeboxPosition = pos;
+		isPartying = shouldParty;
+	}
+
+	@SideOnly(Side.CLIENT)
+	public boolean isPartying() {
+		return isPartying;
+	}
+
+	@Override
 	public void onLivingUpdate() {
 		if (getEntityWorld() != null && getEntityWorld().isRemote) {
 			double x = posX + (rand.nextDouble() - 0.5D) * width;
@@ -1011,6 +1026,11 @@ public class EntityFrienderman extends EntityCreature implements IEntityOwnable,
 			double sy = -rand.nextDouble();
 			double sz = (rand.nextDouble() - 0.5D) * 2.0D;
 			ParticleUtil.spawn(EnumParticles.LOVE, getEntityWorld(), x, y, z, sx, sy, sz);
+		}
+
+		if (jukeboxPosition == null || jukeboxPosition.distanceSq(posX, posY, posZ) > 12.0D || world.getBlockState(jukeboxPosition).getBlock() != Blocks.JUKEBOX) {
+			isPartying = false;
+			jukeboxPosition = null;
 		}
 
 		if (!lidClosed) {
@@ -1690,7 +1710,7 @@ public class EntityFrienderman extends EntityCreature implements IEntityOwnable,
 
 		@Override
 		public int getSizeInventory() {
-			return 27;
+			return invList.size();
 		}
 
 		@Override

@@ -57,7 +57,7 @@ public class RenderFrienderman extends RenderLiving<EntityFrienderman> {
 			endermanModel.carriedBlock = iblockstate.getBlock();
 		}
 		endermanModel.isAttacking = entity.isScreaming();
-
+		endermanModel.isPartying = entity.isPartying();
 		if (entity.isScreaming()) {
 			x += rnd.nextGaussian() * 0.02D;
 			z += rnd.nextGaussian() * 0.02D;

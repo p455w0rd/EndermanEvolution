@@ -18,7 +18,9 @@
  */
 package p455w0rd.endermanevo.entity;
 
+import net.minecraft.entity.EntityCreature;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.monster.EntityMob;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.entity.projectile.EntityThrowable;
@@ -70,6 +72,15 @@ public class EntityFrienderPearl extends EntityThrowable {
 		if (result.entityHit != null) {
 			if (result.entityHit == thrower) {
 				return;
+			}
+			else {
+				if (entitylivingbase != null && result.entityHit instanceof EntityCreature && !(result.entityHit instanceof EntityMob)) {
+					EntityCreature passiveEntity = (EntityCreature) result.entityHit;
+					passiveEntity.setPositionAndUpdate(entitylivingbase.posX, entitylivingbase.posY, entitylivingbase.posZ);
+					passiveEntity.fallDistance = 0.0F;
+					setDead();
+					return;
+				}
 			}
 		}
 

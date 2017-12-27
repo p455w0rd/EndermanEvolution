@@ -22,7 +22,9 @@ import net.minecraft.block.Block;
 import net.minecraft.client.model.ModelBiped;
 import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.init.Blocks;
+import p455w0rd.endermanevo.entity.EntityFrienderman;
 
 /**
  * @author p455w0rd
@@ -32,6 +34,7 @@ public class ModelFrienderman extends ModelBiped {
 	public Block carriedBlock;
 	public boolean isCarrying;
 	public boolean isAttacking;
+	public boolean isPartying;
 
 	public ModelFrienderman(float scale) {
 		super(0.0F, -14.0F, 64, 32);
@@ -123,6 +126,23 @@ public class ModelFrienderman extends ModelBiped {
 			}
 		}
 
+		if (isPartying) {
+			bipedHead.rotateAngleY = ageInTicks;
+			if (!isCarrying) {
+				//this.tail.rotateAngleX = 1.5388988F;
+				//this.tail.rotationPointY = 22.97F;
+				//bipedBody.rotationPointY = -18.4F;
+				bipedLeftArm.rotateAngleX = ageInTicks;
+				//bipedLeftArm.rotationPointY = 18.84F;
+				bipedRightArm.rotateAngleX = -ageInTicks;
+				//bipedRightArm.rotationPointY = 18.84F;
+				//++bipedLeftLeg.rotationPointY;
+				//++bipedRightLeg.rotationPointY;
+				//++bipedLeftLeg.rotateAngleX;
+				//++bipedRightLeg.rotateAngleX;
+			}
+		}
+
 		bipedRightArm.rotationPointZ = 0.0F;
 		bipedLeftArm.rotationPointZ = 0.0F;
 		bipedRightLeg.rotationPointZ = 0.0F;
@@ -142,4 +162,14 @@ public class ModelFrienderman extends ModelBiped {
 			bipedHead.rotationPointY -= 5.0F;
 		}
 	}
+
+	@Override
+	public void setLivingAnimations(EntityLivingBase entity, float limbSwing, float limbSwingAmount, float partialTickTime) {
+		if (entity instanceof EntityFrienderman) {
+			EntityFrienderman frienderman = (EntityFrienderman) entity;
+			isCarrying = frienderman.getHeldBlockState() != null || !frienderman.getHeldItemStack().isEmpty();
+			isPartying = frienderman.isPartying();
+		}
+	}
+
 }

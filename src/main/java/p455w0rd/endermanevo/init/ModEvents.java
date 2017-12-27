@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Random;
 
 import net.minecraft.block.Block;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.ModelBiped;
 import net.minecraft.client.renderer.entity.RenderLivingBase;
 import net.minecraft.client.renderer.entity.layers.LayerRenderer;
@@ -40,6 +41,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import p455w0rd.endermanevo.client.model.layers.LayerSkullEyes;
 import p455w0rd.endermanevo.client.render.ParticleRenderer;
 import p455w0rd.endermanevo.entity.EntityFrienderman;
+import p455w0rd.endermanevo.init.ModConfig.ConfigOptions;
 import p455w0rd.endermanevo.items.ItemSkullBase;
 import p455w0rd.endermanevo.util.EntityUtils;
 import p455w0rd.endermanevo.util.EnumParticles;
@@ -108,7 +110,22 @@ public class ModEvents {
 				}
 			}
 		}
+		/* later
+				if (event.getEntity() instanceof EntityPlayer) {
+					if (!PLAYERS_WITH_FRIENDERMAN.contains(((EntityPlayer) event.getEntity()).getUniqueID())) {
+						for (RenderLivingBase<? extends EntityLivingBase> renderPlayer : Minecraft.getMinecraft().getRenderManager().getSkinMap().values()) {
+							if (renderPlayer instanceof RenderPlayer) {
+								renderPlayer.addLayer(new LayerMiniFrienderman());
+								PLAYERS_WITH_FRIENDERMAN.add(((EntityPlayer) event.getEntity()).getUniqueID());
+								break;
+							}
+						}
+					}
+				}
+				*/
 	}
+
+	//private static final ArrayList<UUID> PLAYERS_WITH_FRIENDERMAN = Lists.<UUID>newArrayList();
 
 	@SubscribeEvent
 	@SideOnly(Side.CLIENT)
@@ -255,25 +272,28 @@ public class ModEvents {
 	}
 
 	@SubscribeEvent
+	@SideOnly(Side.CLIENT)
 	public void onPlayerTick(PlayerTickEvent event) {
 		EntityPlayer player = event.player;
 		if (event.player.world.isRemote) {
-			if (EntityUtils.isWearingCustomSkull(player)) {
-				Random rand = player.world.rand;
-				double x = player.posX + (rand.nextDouble() - 0.5D) * player.width;
-				double y = player.posY + rand.nextDouble() * player.height - 0.25D;
-				double z = player.posZ + (rand.nextDouble() - 0.5D) * player.width;
-				double sx = (rand.nextDouble() - 0.5D) * 2.0D;
-				double sy = -rand.nextDouble();
-				double sz = (rand.nextDouble() - 0.5D) * 2.0D;
-				if (EntityUtils.getSkullItem(player) == ModItems.SKULL_FRIENDERMAN) {
-					ParticleUtil.spawn(EnumParticles.LOVE, player.getEntityWorld(), x, y, z, sx, sy, sz);
-				}
-				else if (EntityUtils.getSkullItem(player) == ModItems.SKULL_EVOLVED_ENDERMAN) {
-					ParticleUtil.spawn(EnumParticles.PORTAL_GREEN, player.getEntityWorld(), x, y, z, sx, sy, sz);
-				}
-				else if (EntityUtils.getSkullItem(player) == ModItems.SKULL_ENDERMAN) {
-					ParticleUtil.spawn(EnumParticles.PORTAL, player.getEntityWorld(), x, y, z, sx, sy, sz);
+			if (player == Minecraft.getMinecraft().player && ConfigOptions.SHOW_SKULL_PARTICLES) {
+				if (EntityUtils.isWearingCustomSkull(player)) {
+					Random rand = player.world.rand;
+					double x = player.posX + (rand.nextDouble() - 0.5D) * player.width;
+					double y = player.posY + rand.nextDouble() * player.height - 0.25D;
+					double z = player.posZ + (rand.nextDouble() - 0.5D) * player.width;
+					double sx = (rand.nextDouble() - 0.5D) * 2.0D;
+					double sy = -rand.nextDouble();
+					double sz = (rand.nextDouble() - 0.5D) * 2.0D;
+					if (EntityUtils.getSkullItem(player) == ModItems.SKULL_FRIENDERMAN) {
+						ParticleUtil.spawn(EnumParticles.LOVE, player.getEntityWorld(), x, y, z, sx, sy, sz);
+					}
+					else if (EntityUtils.getSkullItem(player) == ModItems.SKULL_EVOLVED_ENDERMAN) {
+						ParticleUtil.spawn(EnumParticles.PORTAL_GREEN, player.getEntityWorld(), x, y, z, sx, sy, sz);
+					}
+					else if (EntityUtils.getSkullItem(player) == ModItems.SKULL_ENDERMAN) {
+						ParticleUtil.spawn(EnumParticles.PORTAL, player.getEntityWorld(), x, y, z, sx, sy, sz);
+					}
 				}
 			}
 		}
