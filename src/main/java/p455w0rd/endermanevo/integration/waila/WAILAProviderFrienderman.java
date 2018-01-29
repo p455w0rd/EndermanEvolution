@@ -62,7 +62,7 @@ public class WAILAProviderFrienderman implements IWailaEntityProvider {
 		currenttip.add(WAILA.toolTipEnclose);
 		if (isTame) {
 			UUID ownerUUID = friend.getOwnerId();
-			if (MCUtils.isSMP(FMLCommonHandler.instance().getMinecraftServerInstance())) {
+			if (FMLCommonHandler.instance().getMinecraftServerInstance() != null && MCUtils.isSMP(FMLCommonHandler.instance().getMinecraftServerInstance())) {
 				owner = PlayerUUIDUtils.getPlayerName(ownerUUID);
 				if (owner == "") {
 					owner = "404 Error: Name not found!";

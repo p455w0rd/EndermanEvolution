@@ -508,93 +508,95 @@ public class EntityFrienderman extends EntityCreature implements IEntityOwnable,
 			return true;
 		}
 		ItemStack stack = player.getHeldItem(hand);
-		if (isTamed() && !EasyMappings.world(this).isRemote) {
+		if (isTamed()) {
 			if (!stack.isEmpty()) {
-				if (stack.getItem() == ModItems.FRIENDER_PEARL) {
-					if (dataManager.get(DATA_HEALTH_ID).floatValue() < 30.0F) {
-						if (!player.capabilities.isCreativeMode) {
-							stack.shrink(1);
+				if (isOwner(player)) {
+					if (stack.getItem() == ModItems.FRIENDER_PEARL) {
+						if (dataManager.get(DATA_HEALTH_ID).floatValue() < 30.0F) {
+							if (!player.capabilities.isCreativeMode) {
+								stack.shrink(1);
+							}
+							heal(30.0F);
+							EasyMappings.world(this).setEntityState(this, (byte) 7);
+							return true;
 						}
-						heal(30.0F);
-						EasyMappings.world(this).setEntityState(this, (byte) 7);
+					}
+					else if (ChestUtils.isVanillaChest(stack)) {
+						ItemStack chestStack = stack.copy();
+						ItemStack leftOverStack = ItemStack.EMPTY;
+						if (chestStack.getCount() > 1) {
+							chestStack.setCount(1);
+							leftOverStack = stack.copy();
+							leftOverStack.shrink(1);
+						}
+						setHeldItemStack(chestStack);
+						chestInventory = new TempChest();
+						ChestUtils.loadInventoryFromStack(chestInventory, getHeldItemStack());
+						stack = ItemStack.EMPTY;
+						player.setHeldItem(hand, leftOverStack);
 						return true;
 					}
-				}
-				else if (ChestUtils.isVanillaChest(stack) && isOwner(player)) {
-					ItemStack chestStack = stack.copy();
-					ItemStack leftOverStack = ItemStack.EMPTY;
-					if (chestStack.getCount() > 1) {
-						chestStack.setCount(1);
-						leftOverStack = stack.copy();
-						leftOverStack.shrink(1);
+					else if (ChestUtils.isVanillaShulkerBox(stack)) {
+						ItemStack shulkerStack = stack.copy();
+						ItemStack leftOverStack = ItemStack.EMPTY;
+						if (shulkerStack.getCount() > 1) {
+							shulkerStack.setCount(1);
+							leftOverStack = stack.copy();
+							leftOverStack.shrink(1);
+						}
+						setHeldItemStack(shulkerStack);
+						chestInventory = new TempChest();
+						ChestUtils.loadInventoryFromStack(chestInventory, getHeldItemStack());
+						stack = ItemStack.EMPTY;
+						player.setHeldItem(hand, leftOverStack);
+						return true;
 					}
-					setHeldItemStack(chestStack);
-					chestInventory = new TempChest();
-					ChestUtils.loadInventoryFromStack(chestInventory, getHeldItemStack());
-					stack = ItemStack.EMPTY;
-					player.setHeldItem(hand, leftOverStack);
-					return true;
-				}
-				else if (ChestUtils.isVanillaShulkerBox(stack) && isOwner(player)) {
-					ItemStack shulkerStack = stack.copy();
-					ItemStack leftOverStack = ItemStack.EMPTY;
-					if (shulkerStack.getCount() > 1) {
-						shulkerStack.setCount(1);
-						leftOverStack = stack.copy();
-						leftOverStack.shrink(1);
+					else if (Mods.ENDERSTORAGE.isLoaded() && stack.getItem() == EnderStorage.getEnderStorageItem() && stack.getItemDamage() == 0) {
+						ItemStack chestStack = stack.copy();
+						ItemStack leftOverStack = ItemStack.EMPTY;
+						if (chestStack.getCount() > 1) {
+							chestStack.setCount(1);
+							leftOverStack = stack.copy();
+							leftOverStack.shrink(1);
+						}
+						setHeldItemStack(chestStack);
+						player.setHeldItem(hand, leftOverStack);
+						stack = ItemStack.EMPTY;
+						return true;
 					}
-					setHeldItemStack(shulkerStack);
-					chestInventory = new TempChest();
-					ChestUtils.loadInventoryFromStack(chestInventory, getHeldItemStack());
-					stack = ItemStack.EMPTY;
-					player.setHeldItem(hand, leftOverStack);
-					return true;
-				}
-				else if (Mods.ENDERSTORAGE.isLoaded() && isOwner(player) && stack.getItem() == EnderStorage.getEnderStorageItem() && stack.getItemDamage() == 0) {
-					ItemStack chestStack = stack.copy();
-					ItemStack leftOverStack = ItemStack.EMPTY;
-					if (chestStack.getCount() > 1) {
-						chestStack.setCount(1);
-						leftOverStack = stack.copy();
-						leftOverStack.shrink(1);
+					else if (Mods.IRONCHESTS.isLoaded() && IronChests.isIronChest(stack) && IronChests.getChestType(stack) != IronChestType.DIRTCHEST9000) {
+						ItemStack chestStack = stack.copy();
+						ItemStack leftOverStack = ItemStack.EMPTY;
+						if (chestStack.getCount() > 1) {
+							chestStack.setCount(1);
+							leftOverStack = stack.copy();
+							leftOverStack.shrink(1);
+						}
+						movingTowardItem = null;
+						setHeldItemStack(chestStack);
+						chestInventory = new TempChest(IronChests.getInventorySize(stack));
+						ChestUtils.loadInventoryFromStack(chestInventory, getHeldItemStack());
+						player.setHeldItem(hand, leftOverStack);
+						stack = ItemStack.EMPTY;
+						return true;
 					}
-					setHeldItemStack(chestStack);
-					player.setHeldItem(hand, leftOverStack);
-					stack = ItemStack.EMPTY;
-					return true;
-				}
-				else if (Mods.IRONCHESTS.isLoaded() && isOwner(player) && IronChests.isIronChest(stack) && IronChests.getChestType(stack) != IronChestType.DIRTCHEST9000) {
-					ItemStack chestStack = stack.copy();
-					ItemStack leftOverStack = ItemStack.EMPTY;
-					if (chestStack.getCount() > 1) {
-						chestStack.setCount(1);
-						leftOverStack = stack.copy();
-						leftOverStack.shrink(1);
+					else if (Mods.IRONCHESTS.isLoaded() && IronChests.isIronShulkerBox(stack)) {
+						ItemStack chestStack = stack.copy();
+						ItemStack leftOverStack = ItemStack.EMPTY;
+						if (chestStack.getCount() > 1) {
+							chestStack.setCount(1);
+							leftOverStack = stack.copy();
+							leftOverStack.shrink(1);
+						}
+						movingTowardItem = null;
+						setHeldItemStack(chestStack);
+						int numSlots = IronChests.getShulkerBoxInventorySize(stack);
+						chestInventory = new TempChest(numSlots);
+						ChestUtils.loadInventoryFromStack(chestInventory, getHeldItemStack());
+						player.setHeldItem(hand, leftOverStack);
+						stack = ItemStack.EMPTY;
+						return true;
 					}
-					movingTowardItem = null;
-					setHeldItemStack(chestStack);
-					chestInventory = new TempChest(IronChests.getInventorySize(stack));
-					ChestUtils.loadInventoryFromStack(chestInventory, getHeldItemStack());
-					player.setHeldItem(hand, leftOverStack);
-					stack = ItemStack.EMPTY;
-					return true;
-				}
-				else if (Mods.IRONCHESTS.isLoaded() && isOwner(player) && IronChests.isIronShulkerBox(stack)) {
-					ItemStack chestStack = stack.copy();
-					ItemStack leftOverStack = ItemStack.EMPTY;
-					if (chestStack.getCount() > 1) {
-						chestStack.setCount(1);
-						leftOverStack = stack.copy();
-						leftOverStack.shrink(1);
-					}
-					movingTowardItem = null;
-					setHeldItemStack(chestStack);
-					int numSlots = IronChests.getShulkerBoxInventorySize(stack);
-					chestInventory = new TempChest(numSlots);
-					ChestUtils.loadInventoryFromStack(chestInventory, getHeldItemStack());
-					player.setHeldItem(hand, leftOverStack);
-					stack = ItemStack.EMPTY;
-					return true;
 				}
 			}
 			else {
@@ -890,7 +892,7 @@ public class EntityFrienderman extends EntityCreature implements IEntityOwnable,
 	public EntityLivingBase getOwner() {
 		try {
 			UUID uuid = getOwnerId();
-			return uuid == null ? null : EasyMappings.world(this).getPlayerEntityByUUID(uuid);
+			return uuid == null ? null : getEntityWorld().getPlayerEntityByUUID(uuid);
 		}
 		catch (IllegalArgumentException var2) {
 			return null;
@@ -898,7 +900,7 @@ public class EntityFrienderman extends EntityCreature implements IEntityOwnable,
 	}
 
 	public boolean isOwner(EntityLivingBase entityIn) {
-		return entityIn == getOwner();
+		return entityIn.getUniqueID().equals(getOwnerId());
 	}
 
 	public EntityAISit getAISit() {

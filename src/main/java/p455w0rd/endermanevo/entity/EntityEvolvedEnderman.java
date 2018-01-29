@@ -39,6 +39,7 @@ import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.EnumDifficulty;
 import net.minecraft.world.World;
+import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -132,6 +133,9 @@ public class EntityEvolvedEnderman extends EntityEnderman {
 
 	@Override
 	public boolean attackEntityFrom(DamageSource source, float amount) {
+		if (isEntityInvulnerable(source) || world.isRemote || ForgeHooks.onLivingAttack(this, source, amount)) {
+			return false;
+		}
 		if (source instanceof EntityDamageSourceIndirect && !isInWater()) {
 			for (int i = 0; i < 64; ++i) {
 				if (teleportRandomly()) {
@@ -144,118 +148,112 @@ public class EntityEvolvedEnderman extends EntityEnderman {
 		//return false;
 		//}
 		else {
-			if (isEntityInvulnerable(source)) {
+			idleTime = 0;
+
+			if (getHealth() <= 0.0F) {
 				return false;
 			}
-
+			else if (source.isFireDamage() && isPotionActive(MobEffects.FIRE_RESISTANCE)) {
+				return false;
+			}
 			else {
-				idleTime = 0;
-
-				if (getHealth() <= 0.0F) {
-					return false;
+				if ((source == DamageSource.ANVIL || source == DamageSource.FALLING_BLOCK) && getItemStackFromSlot(EntityEquipmentSlot.HEAD) != null) {
+					getItemStackFromSlot(EntityEquipmentSlot.HEAD).damageItem((int) (amount * 4.0F + rand.nextFloat() * amount * 2.0F), this);
+					amount *= 0.75F;
 				}
-				else if (source.isFireDamage() && isPotionActive(MobEffects.FIRE_RESISTANCE)) {
-					return false;
+
+				boolean flag = false;
+
+				limbSwingAmount = 1.5F;
+				boolean flag1 = true;
+
+				if (hurtResistantTime > maxHurtResistantTime / 2.0F) {
+					if (amount <= lastDamage) {
+						return false;
+					}
+
+					damageEntity(source, amount - lastDamage);
+					lastDamage = amount;
+					flag1 = false;
 				}
 				else {
-					if ((source == DamageSource.ANVIL || source == DamageSource.FALLING_BLOCK) && getItemStackFromSlot(EntityEquipmentSlot.HEAD) != null) {
-						getItemStackFromSlot(EntityEquipmentSlot.HEAD).damageItem((int) (amount * 4.0F + rand.nextFloat() * amount * 2.0F), this);
-						amount *= 0.75F;
+					lastDamage = amount;
+					hurtResistantTime = maxHurtResistantTime;
+					damageEntity(source, amount);
+					maxHurtTime = 10;
+					hurtTime = maxHurtTime;
+				}
+
+				attackedAtYaw = 0.0F;
+				Entity entity = source.getTrueSource();
+
+				if (entity != null) {
+					if (entity instanceof EntityLivingBase) {
+						setRevengeTarget((EntityLivingBase) entity);
 					}
 
-					boolean flag = false;
+					if (entity instanceof EntityPlayer) {
+						recentlyHit = 100;
+						attackingPlayer = (EntityPlayer) entity;
+					}
+				}
 
-					limbSwingAmount = 1.5F;
-					boolean flag1 = true;
-
-					if (hurtResistantTime > maxHurtResistantTime / 2.0F) {
-						if (amount <= lastDamage) {
-							return false;
-						}
-
-						damageEntity(source, amount - lastDamage);
-						lastDamage = amount;
-						flag1 = false;
+				if (flag1) {
+					if (flag) {
+						EasyMappings.world(this).setEntityState(this, (byte) 29);
+					}
+					else if (source instanceof EntityDamageSource && ((EntityDamageSource) source).getIsThornsDamage()) {
+						EasyMappings.world(this).setEntityState(this, (byte) 33);
 					}
 					else {
-						lastDamage = amount;
-						hurtResistantTime = maxHurtResistantTime;
-						damageEntity(source, amount);
-						maxHurtTime = 10;
-						hurtTime = maxHurtTime;
+						EasyMappings.world(this).setEntityState(this, (byte) 2);
 					}
 
-					attackedAtYaw = 0.0F;
-					Entity entity = source.getTrueSource();
+					if (source != DamageSource.DROWN && (!flag || amount > 0.0F)) {
+						markVelocityChanged();
+					}
 
 					if (entity != null) {
-						if (entity instanceof EntityLivingBase) {
-							setRevengeTarget((EntityLivingBase) entity);
+						double d1 = entity.posX - posX;
+						double d0;
+
+						for (d0 = entity.posZ - posZ; d1 * d1 + d0 * d0 < 1.0E-4D; d0 = (Math.random() - Math.random()) * 0.01D) {
+							d1 = (Math.random() - Math.random()) * 0.01D;
 						}
 
-						if (entity instanceof EntityPlayer) {
-							recentlyHit = 100;
-							attackingPlayer = (EntityPlayer) entity;
-						}
-					}
-
-					if (flag1) {
-						if (flag) {
-							EasyMappings.world(this).setEntityState(this, (byte) 29);
-						}
-						else if (source instanceof EntityDamageSource && ((EntityDamageSource) source).getIsThornsDamage()) {
-							EasyMappings.world(this).setEntityState(this, (byte) 33);
+						attackedAtYaw = (float) (MathHelper.atan2(d0, d1) * (180D / Math.PI) - rotationYaw);
+						if (source.isProjectile()) {
+							source.getImmediateSource().setDead();
 						}
 						else {
-							EasyMappings.world(this).setEntityState(this, (byte) 2);
+							knockBack(entity, 0.4F, d1, d0);
 						}
-
-						if (source != DamageSource.DROWN && (!flag || amount > 0.0F)) {
-							markVelocityChanged();
-						}
-
-						if (entity != null) {
-							double d1 = entity.posX - posX;
-							double d0;
-
-							for (d0 = entity.posZ - posZ; d1 * d1 + d0 * d0 < 1.0E-4D; d0 = (Math.random() - Math.random()) * 0.01D) {
-								d1 = (Math.random() - Math.random()) * 0.01D;
-							}
-
-							attackedAtYaw = (float) (MathHelper.atan2(d0, d1) * (180D / Math.PI) - rotationYaw);
-							if (source.isProjectile()) {
-								source.getImmediateSource().setDead();
-							}
-							else {
-								knockBack(entity, 0.4F, d1, d0);
-							}
-							//entity.setDead();
-						}
-						else {
-							attackedAtYaw = (int) (Math.random() * 2.0D) * 180;
-						}
+						//entity.setDead();
 					}
-
-					if (getHealth() <= 0.0F) {
-						SoundEvent soundevent = getDeathSound();
-
-						if (flag1 && soundevent != null) {
-							playSound(soundevent, getSoundVolume(), getSoundPitch());
-						}
-
-						onDeath(source);
+					else {
+						attackedAtYaw = (int) (Math.random() * 2.0D) * 180;
 					}
-					else if (flag1) {
-						playHurtSound(source);
-					}
-
-					if (!flag || amount > 0.0F) {
-						MCPrivateUtils.setLastDamageSource(this, source);
-						MCPrivateUtils.setLastDamageStamp(this, EasyMappings.world(this).getTotalWorldTime());
-					}
-
-					return !flag || amount > 0.0F;
 				}
+
+				if (getHealth() <= 0.0F) {
+					SoundEvent soundevent = getDeathSound();
+
+					if (flag1 && soundevent != null) {
+						playSound(soundevent, getSoundVolume(), getSoundPitch());
+					}
+
+					onDeath(source);
+				}
+				else if (flag1) {
+					playHurtSound(source);
+				}
+
+				if (!flag || amount > 0.0F) {
+					MCPrivateUtils.setLastDamageSource(this, source);
+					MCPrivateUtils.setLastDamageStamp(this, EasyMappings.world(this).getTotalWorldTime());
+				}
+
+				return !flag || amount > 0.0F;
 			}
 		}
 	}
