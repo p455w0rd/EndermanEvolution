@@ -133,7 +133,7 @@ public class EntityEvolvedEnderman extends EntityEnderman {
 
 	@Override
 	public boolean attackEntityFrom(DamageSource source, float amount) {
-		if (isEntityInvulnerable(source) || world.isRemote || ForgeHooks.onLivingAttack(this, source, amount)) {
+		if (isEntityInvulnerable(source) || world.isRemote || !ForgeHooks.onLivingAttack(this, source, amount)) {
 			return false;
 		}
 		if (source instanceof EntityDamageSourceIndirect && !isInWater()) {
