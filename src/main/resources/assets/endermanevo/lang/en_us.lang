@@ -1,7 +1,7 @@
-entity.frienderman.name=Frienderman
-entity.evolved_enderman.name=Evolved Enderman
-entity.evolved_endermite.name=Evolved Endermite
-entity.friender_pearl.name=Friender Pearl
+entity.endermanevo:frienderman.name=Frienderman
+entity.endermanevo:evolved_enderman.name=Evolved Enderman
+entity.endermanevo:evolved_endermite.name=Evolved Endermite
+entity.endermanevo:friender_pearl.name=Friender Pearl
 
 item.friender_pearl.name=Friender Pearl
 item.enderman_skull.name=Enderman Head

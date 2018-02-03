@@ -26,10 +26,10 @@ public class ModEntities {
 	public static void init() {
 		int endermanEggColor1 = new Color(254, 85, 176).getRGB();
 		int endermanEggColor2 = new Color(97, 230, 150).getRGB();
-		EntityRegistry.registerModEntity(new ResourceLocation(ModGlobals.MODID, "enderman_evolved"), EntityEvolvedEnderman.class, "evolved_enderman", 0, EndermanEvolution.INSTANCE, 80, 3, false, 0, endermanEggColor2);
-		EntityRegistry.registerModEntity(new ResourceLocation(ModGlobals.MODID, "frienderman"), EntityFrienderman.class, "frienderman", 1, EndermanEvolution.INSTANCE, 80, 3, false, 0, endermanEggColor1);
-		EntityRegistry.registerModEntity(new ResourceLocation(ModGlobals.MODID, "friender_pearl"), EntityFrienderPearl.class, "friender_pearl", 2, EndermanEvolution.INSTANCE, 80, 3, true);
-		EntityRegistry.registerModEntity(new ResourceLocation(ModGlobals.MODID, "evolved_endermite"), EntityEvolvedEndermite.class, "evolved_endermite", 4, EndermanEvolution.INSTANCE, 80, 3, false, new Color(1, 66, 16).getRGB(), endermanEggColor2);
+		EntityRegistry.registerModEntity(new ResourceLocation(ModGlobals.MODID, "enderman_evolved"), EntityEvolvedEnderman.class, ModGlobals.MODID + ":evolved_enderman", 0, EndermanEvolution.INSTANCE, 80, 3, false, 0, endermanEggColor2);
+		EntityRegistry.registerModEntity(new ResourceLocation(ModGlobals.MODID, "frienderman"), EntityFrienderman.class, ModGlobals.MODID + ":frienderman", 1, EndermanEvolution.INSTANCE, 80, 3, false, 0, endermanEggColor1);
+		EntityRegistry.registerModEntity(new ResourceLocation(ModGlobals.MODID, "friender_pearl"), EntityFrienderPearl.class, ModGlobals.MODID + ":friender_pearl", 2, EndermanEvolution.INSTANCE, 80, 3, true);
+		EntityRegistry.registerModEntity(new ResourceLocation(ModGlobals.MODID, "evolved_endermite"), EntityEvolvedEndermite.class, ModGlobals.MODID + ":evolved_endermite", 4, EndermanEvolution.INSTANCE, 80, 3, false, new Color(1, 66, 16).getRGB(), endermanEggColor2);
 
 		EntitySpawnPlacementRegistry.setPlacementType(EntityEvolvedEnderman.class, SpawnPlacementType.ON_GROUND);
 		EntitySpawnPlacementRegistry.setPlacementType(EntityFrienderman.class, SpawnPlacementType.ON_GROUND);
