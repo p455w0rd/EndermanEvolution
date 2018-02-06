@@ -21,6 +21,8 @@ package p455w0rd.endermanevo.client.particle;
 import net.minecraft.client.particle.IParticleFactory;
 import net.minecraft.client.particle.Particle;
 import net.minecraft.client.renderer.BufferBuilder;
+import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
@@ -73,7 +75,11 @@ public class ParticlePortal2 extends Particle {
 		f = f * f;
 		f = 1.0F - f;
 		particleScale = portalParticleScale * f;
+		GlStateManager.pushMatrix();
+		GlStateManager.disableLighting();
+		OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, 260f, 260f);
 		super.renderParticle(worldRendererIn, entityIn, partialTicks, rotationX, rotationZ, rotationYZ, rotationXY, rotationXZ);
+		GlStateManager.popMatrix();
 	}
 
 	@Override
@@ -91,7 +97,7 @@ public class ParticlePortal2 extends Particle {
 			k = 240;
 		}
 
-		return j | k << 16;
+		return j | k << 16 / 200;
 	}
 
 	@Override

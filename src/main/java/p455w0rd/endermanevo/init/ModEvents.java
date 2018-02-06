@@ -31,6 +31,7 @@ import net.minecraftforge.event.LootTableLoadEvent;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.event.entity.living.LivingDropsEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
+import net.minecraftforge.event.entity.living.LivingPackSizeEvent;
 import net.minecraftforge.event.entity.living.LivingSetAttackTargetEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
@@ -38,8 +39,10 @@ import net.minecraftforge.fml.common.gameevent.TickEvent.PlayerTickEvent;
 import net.minecraftforge.fml.relauncher.ReflectionHelper;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import p455w0rd.endermanevo.client.model.layers.LayerEntityCharge;
 import p455w0rd.endermanevo.client.model.layers.LayerSkullEyes;
 import p455w0rd.endermanevo.client.render.ParticleRenderer;
+import p455w0rd.endermanevo.entity.EntityEvolvedEnderman;
 import p455w0rd.endermanevo.entity.EntityFrienderman;
 import p455w0rd.endermanevo.init.ModConfig.ConfigOptions;
 import p455w0rd.endermanevo.items.ItemSkullBase;
@@ -78,19 +81,37 @@ public class ModEvents {
 		ModItems.preInitModels();
 	}
 
+	@SubscribeEvent
+	public void onSpawnPackSize(LivingPackSizeEvent event) {
+		if (event.getEntityLiving() instanceof EntityEvolvedEnderman) {
+			event.setMaxPackSize(ConfigOptions.ENDERMAN_MAX_SPAWN);
+		}
+		else if (event.getEntityLiving() instanceof EntityFrienderman) {
+			event.setMaxPackSize(ConfigOptions.FRIENDERMAN_MAX_SPAWN);
+		}
+	}
+
 	@SideOnly(Side.CLIENT)
 	@SubscribeEvent
 	public void renderLivingBase(RenderLivingEvent.Pre<EntityLivingBase> event) {
 		RenderLivingBase<EntityLivingBase> renderer = event.getRenderer();
 		List<LayerRenderer<EntityLivingBase>> layers = ReflectionHelper.getPrivateValue(RenderLivingBase.class, renderer, ReflectionUtils.determineSRG("layerRenderers"));
 		boolean isEyesLayerAdded = false;
+		boolean isChargeLayerAdded = false;
 		for (LayerRenderer<EntityLivingBase> layer : layers) {
+			if (layer instanceof LayerEntityCharge) {
+				isChargeLayerAdded = true;
+				continue;
+			}
 			if (layer instanceof LayerSkullEyes) {
 				isEyesLayerAdded = true;
 			}
 		}
 		if (!isEyesLayerAdded) {
 			renderer.addLayer(new LayerSkullEyes(renderer));
+		}
+		if (!isChargeLayerAdded && event.getEntity() instanceof EntityEvolvedEnderman) {
+			renderer.addLayer(new LayerEntityCharge(renderer, renderer.getMainModel()));
 		}
 		if (EntityUtils.isWearingCustomSkull(event.getEntity())) {
 			if (renderer.getMainModel() instanceof ModelBiped) {

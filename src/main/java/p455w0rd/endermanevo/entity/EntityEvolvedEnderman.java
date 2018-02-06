@@ -24,9 +24,11 @@ import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.monster.EntityEnderman;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
 import net.minecraft.init.MobEffects;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemElytra;
 import net.minecraft.item.ItemStack;
 import net.minecraft.scoreboard.Team;
 import net.minecraft.util.DamageSource;
@@ -49,7 +51,6 @@ import p455w0rd.endermanevo.util.EnumParticles;
 import p455w0rd.endermanevo.util.ParticleUtil;
 import p455w0rdslib.util.EasyMappings;
 import p455w0rdslib.util.MCPrivateUtils;
-import p455w0rdslib.util.MathUtils;
 
 public class EntityEvolvedEnderman extends EntityEnderman {
 
@@ -82,8 +83,8 @@ public class EntityEvolvedEnderman extends EntityEnderman {
 		tasks.addTask(7, new EntityAIWander(this, 1.0D));
 		tasks.addTask(8, new EntityAIWatchClosest(this, EntityPlayer.class, 8.0F));
 		tasks.addTask(8, new EntityAILookIdle(this));
-		//tasks.addTask(10, new EntityEnderman2.AIPlaceBlock(this));
-		//tasks.addTask(11, new EntityEnderman2.AITakeBlock(this));
+		tasks.addTask(10, new EntityEvolvedEnderman.AIPlaceBlock(this));
+		tasks.addTask(11, new EntityEvolvedEnderman.AITakeBlock(this));
 		targetTasks.addTask(1, new EntityEvolvedEnderman.AIFindPlayer(this));
 		targetTasks.addTask(2, new EntityAIHurtByTarget(this, false, new Class[0]));
 		targetTasks.addTask(3, new EntityAINearestAttackableTarget<EntityEvolvedEndermite>(this, EntityEvolvedEndermite.class, 10, true, false, (@Nullable EntityEvolvedEndermite p_apply_1_) -> p_apply_1_.isSpawnedByPlayer()));
@@ -325,7 +326,7 @@ public class EntityEvolvedEnderman extends EntityEnderman {
 
 	@Override
 	protected boolean isValidLightLevel() {
-		return true;
+		return ConfigOptions.ENDERMAN_DAY_SPAWN ? true : super.isValidLightLevel();
 	}
 
 	@Override
@@ -429,7 +430,31 @@ public class EntityEvolvedEnderman extends EntityEnderman {
 		moveStrafing *= 0.98F;
 		moveForward *= 0.98F;
 		randomYawVelocity *= 0.9F;
-		//this.updateElytra();
+		// updateElytra()
+		boolean flag = getFlag(7);
+
+		if (flag && !onGround && !isRiding()) {
+			ItemStack itemstack = getItemStackFromSlot(EntityEquipmentSlot.CHEST);
+
+			if (itemstack.getItem() == Items.ELYTRA && ItemElytra.isUsable(itemstack)) {
+				flag = true;
+
+				if (!world.isRemote && (ticksElytraFlying + 1) % 20 == 0) {
+					itemstack.damageItem(1, this);
+				}
+			}
+			else {
+				flag = false;
+			}
+		}
+		else {
+			flag = false;
+		}
+
+		if (!world.isRemote) {
+			setFlag(7, flag);
+		}
+		//updateElytra() end
 		travel(moveStrafing, randomYawVelocity, moveForward);
 		EasyMappings.world(this).profiler.endSection();
 		EasyMappings.world(this).profiler.startSection("push");
@@ -541,43 +566,69 @@ public class EntityEvolvedEnderman extends EntityEnderman {
 	}
 
 	static class AIPlaceBlock extends EntityAIBase {
-		private final EntityEvolvedEnderman enderman;
+		private final EntityEnderman enderman;
 
-		public AIPlaceBlock(EntityEvolvedEnderman p_i45843_1_) {
+		public AIPlaceBlock(EntityEnderman p_i45843_1_) {
 			enderman = p_i45843_1_;
 		}
 
+		/**
+		 * Returns whether the EntityAIBase should begin execution.
+		 */
 		@Override
 		public boolean shouldExecute() {
-			return enderman.getHeldBlockState() != null;
+			if (enderman.getHeldBlockState() == null) {
+				return false;
+			}
+			else if (!enderman.world.getGameRules().getBoolean("mobGriefing")) {
+				return false;
+			}
+			else {
+				return enderman.getRNG().nextInt(2000) == 0;
+			}
 		}
 
+		/**
+		 * Keep ticking a continuous task that has already been started
+		 */
 		@Override
 		public void updateTask() {
 			Random random = enderman.getRNG();
-			World world = EasyMappings.world(enderman);
-			int i = MathUtils.floor(enderman.posX - 1.0D + random.nextDouble() * 2.0D);
-			int j = MathUtils.floor(enderman.posY + random.nextDouble() * 2.0D);
-			int k = MathUtils.floor(enderman.posZ - 1.0D + random.nextDouble() * 2.0D);
+			World world = enderman.world;
+			int i = MathHelper.floor(enderman.posX - 1.0D + random.nextDouble() * 2.0D);
+			int j = MathHelper.floor(enderman.posY + random.nextDouble() * 2.0D);
+			int k = MathHelper.floor(enderman.posZ - 1.0D + random.nextDouble() * 2.0D);
 			BlockPos blockpos = new BlockPos(i, j, k);
 			IBlockState iblockstate = world.getBlockState(blockpos);
 			IBlockState iblockstate1 = world.getBlockState(blockpos.down());
 			IBlockState iblockstate2 = enderman.getHeldBlockState();
-			if ((iblockstate2 != null) && (canPlaceBlock(world, blockpos, iblockstate2.getBlock(), iblockstate, iblockstate1))) {
+
+			if (iblockstate2 != null && canPlaceBlock(world, blockpos, iblockstate2.getBlock(), iblockstate, iblockstate1)) {
 				world.setBlockState(blockpos, iblockstate2, 3);
 				enderman.setHeldBlockState((IBlockState) null);
 			}
 		}
 
 		private boolean canPlaceBlock(World p_188518_1_, BlockPos p_188518_2_, Block p_188518_3_, IBlockState p_188518_4_, IBlockState p_188518_5_) {
-			return p_188518_5_.getMaterial() == Material.AIR ? false : p_188518_4_.getMaterial() != Material.AIR ? false : !p_188518_3_.canPlaceBlockAt(p_188518_1_, p_188518_2_) ? false : p_188518_5_.isFullCube();
+			if (!p_188518_3_.canPlaceBlockAt(p_188518_1_, p_188518_2_)) {
+				return false;
+			}
+			else if (p_188518_4_.getMaterial() != Material.AIR) {
+				return false;
+			}
+			else if (p_188518_5_.getMaterial() == Material.AIR) {
+				return false;
+			}
+			else {
+				return p_188518_5_.isFullCube();
+			}
 		}
 	}
 
 	static class AITakeBlock extends EntityAIBase {
-		private final EntityEvolvedEnderman enderman;
+		private final EntityEnderman enderman;
 
-		public AITakeBlock(EntityEvolvedEnderman p_i45841_1_) {
+		public AITakeBlock(EntityEnderman p_i45841_1_) {
 			enderman = p_i45841_1_;
 		}
 
@@ -586,23 +637,31 @@ public class EntityEvolvedEnderman extends EntityEnderman {
 		 */
 		@Override
 		public boolean shouldExecute() {
-			return enderman.getHeldBlockState() != null ? false : (!EasyMappings.world(enderman).getGameRules().getBoolean("mobGriefing") ? false : enderman.getRNG().nextInt(20) == 0);
+			if (enderman.getHeldBlockState() != null) {
+				return false;
+			}
+			else if (!enderman.world.getGameRules().getBoolean("mobGriefing")) {
+				return false;
+			}
+			else {
+				return enderman.getRNG().nextInt(20) == 0;
+			}
 		}
 
 		/**
-		 * Updates the task
+		 * Keep ticking a continuous task that has already been started
 		 */
 		@Override
 		public void updateTask() {
 			Random random = enderman.getRNG();
-			World world = EasyMappings.world(enderman);
-			int i = MathUtils.floor(enderman.posX - 2.0D + random.nextDouble() * 4.0D);
-			int j = MathUtils.floor(enderman.posY + random.nextDouble() * 3.0D);
-			int k = MathUtils.floor(enderman.posZ - 2.0D + random.nextDouble() * 4.0D);
+			World world = enderman.world;
+			int i = MathHelper.floor(enderman.posX - 2.0D + random.nextDouble() * 4.0D);
+			int j = MathHelper.floor(enderman.posY + random.nextDouble() * 3.0D);
+			int k = MathHelper.floor(enderman.posZ - 2.0D + random.nextDouble() * 4.0D);
 			BlockPos blockpos = new BlockPos(i, j, k);
 			IBlockState iblockstate = world.getBlockState(blockpos);
 			Block block = iblockstate.getBlock();
-			RayTraceResult raytraceresult = world.rayTraceBlocks(new Vec3d(MathUtils.floor(enderman.posX) + 0.5F, j + 0.5F, MathUtils.floor(enderman.posZ) + 0.5F), new Vec3d(i + 0.5F, j + 0.5F, k + 0.5F), false, true, false);
+			RayTraceResult raytraceresult = world.rayTraceBlocks(new Vec3d(MathHelper.floor(enderman.posX) + 0.5F, j + 0.5F, MathHelper.floor(enderman.posZ) + 0.5F), new Vec3d(i + 0.5F, j + 0.5F, k + 0.5F), false, true, false);
 			boolean flag = raytraceresult != null && raytraceresult.getBlockPos().equals(blockpos);
 
 			if (EntityEvolvedEnderman.getCarriable(block) && flag) {

@@ -144,14 +144,16 @@ public class ModelSkullBase extends ModelBiped {
 	}
 
 	public void renderLightMap(float skullRotation, float skullPitch, EntityLivingBase entity) {
+
 		GlStateManager.pushMatrix();
 		GlStateManager.enableBlend();
 		GlStateManager.blendFunc(GL11.GL_ONE, GL11.GL_ONE);
 		GlStateManager.depthMask(true);
+		GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
 		float brightnessX = OpenGlHelper.lastBrightnessX;
 		float brightnessY = OpenGlHelper.lastBrightnessY;
-		OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, 61680, 0);
-
+		//OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, 61680f, 0f);
+		OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, 240f, 240f);
 		if (entity != null && entity instanceof EntityLivingBase) {
 			render(skullRotation, skullPitch, entity);
 		}
@@ -172,8 +174,10 @@ public class ModelSkullBase extends ModelBiped {
 		GlStateManager.depthMask(true);
 		float brightnessX = OpenGlHelper.lastBrightnessX;
 		float brightnessY = OpenGlHelper.lastBrightnessY;
-		OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, 61680, 0);
-		head.render(0.01F);
+		GlStateManager.disableLighting();
+		OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, 240f, 240f);
+		//head.render(0.01F);
+		render(wearer.getRotationYawHead(), wearer.rotationPitch, wearer);
 		OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, brightnessX, brightnessY);
 		GlStateManager.disableBlend();
 		GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);

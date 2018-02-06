@@ -63,12 +63,15 @@ public class TileBlockSkull extends TileEntitySkull {
 		return getModels().get(name);
 	}
 
+	private static Map<String, ModelSkullBase> SKULL_MODELS = Maps.newHashMap();
+
 	private static Map<String, ModelSkullBase> getModels() {
-		Map<String, ModelSkullBase> modelMap = Maps.newHashMap();
-		modelMap.put("enderman_skull", ModelSkullBase.Enderman.getInstance());
-		modelMap.put("frienderman_skull", ModelSkullBase.Frienderman.getInstance());
-		modelMap.put("enderman_evolved_skull", ModelSkullBase.Enderman2.getInstance());
-		return modelMap;
+		if (SKULL_MODELS.isEmpty()) {
+			SKULL_MODELS.put("enderman_skull", ModelSkullBase.Enderman.getInstance());
+			SKULL_MODELS.put("frienderman_skull", ModelSkullBase.Frienderman.getInstance());
+			SKULL_MODELS.put("enderman_evolved_skull", ModelSkullBase.Enderman2.getInstance());
+		}
+		return SKULL_MODELS;
 	}
 
 }

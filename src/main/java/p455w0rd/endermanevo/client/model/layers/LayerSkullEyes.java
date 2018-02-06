@@ -29,7 +29,7 @@ public class LayerSkullEyes implements LayerRenderer<EntityLivingBase> {
 
 	@Override
 	public boolean shouldCombineTextures() {
-		return true;
+		return false;
 	}
 
 }

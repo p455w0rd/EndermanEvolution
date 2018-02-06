@@ -39,7 +39,7 @@ public class EntityUtils {
 	}
 
 	public static boolean isWearingCustomSkull(EntityLivingBase entity) {
-		return entity.getItemStackFromSlot(EntityEquipmentSlot.HEAD) != null && entity.getItemStackFromSlot(EntityEquipmentSlot.HEAD).getItem() instanceof ItemSkullBase;
+		return !entity.getItemStackFromSlot(EntityEquipmentSlot.HEAD).isEmpty() && entity.getItemStackFromSlot(EntityEquipmentSlot.HEAD).getItem() instanceof ItemSkullBase;
 	}
 
 	public static ItemSkullBase getSkullItem(EntityLivingBase entity) {
