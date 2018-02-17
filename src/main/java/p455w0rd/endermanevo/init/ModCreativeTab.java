@@ -29,6 +29,8 @@ public class ModCreativeTab extends CreativeTabs {
 		items.add(new ItemStack(ModItems.SKULL_ENDERMAN));
 		items.add(new ItemStack(ModItems.SKULL_FRIENDERMAN));
 		items.add(new ItemStack(ModItems.SKULL_EVOLVED_ENDERMAN));
+		items.add(new ItemStack(ModItems.ENDER_FLOWER));
+		items.add(new ItemStack(ModItems.ENDER_FRAGMENT));
 
 		ItemStack evolvedEndermanEgg = new ItemStack(Items.SPAWN_EGG);
 		NBTTagCompound evolvedEndermanTag = new NBTTagCompound();

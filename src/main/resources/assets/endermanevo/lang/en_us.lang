@@ -7,6 +7,8 @@ item.friender_pearl.name=Friender Pearl
 item.enderman_skull.name=Enderman Head
 item.frienderman_skull.name=Frienderman Head
 item.enderman_evolved_skull.name=Evolved Enderman Head
+item.ender_flower.name=Ender Daisy
+item.ender_fragment.name=Ender Fragment
 
 itemGroup.endermanevo=Enderman Evolution
 

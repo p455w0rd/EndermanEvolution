@@ -45,7 +45,8 @@ public class LayerEntityCharge implements LayerRenderer<EntityLivingBase> {
 			float g = 0.35F;
 			float b = 0;
 			//GlStateManager.color(0.5F, 0.5F, 0.5F, 1.0F);
-			GlStateManager.color(r, g, b, 0.5F);
+
+			GlStateManager.color(r, g, b, 1.0F);
 			GlStateManager.disableLighting();
 			GlStateManager.blendFunc(GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ONE);
 			if (entitylivingbaseIn instanceof EntitySlime) {

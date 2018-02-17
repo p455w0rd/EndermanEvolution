@@ -137,17 +137,25 @@ public class EntityEvolvedEnderman extends EntityEnderman {
 		if (isEntityInvulnerable(source) || world.isRemote || !ForgeHooks.onLivingAttack(this, source, amount)) {
 			return false;
 		}
-		if (source instanceof EntityDamageSourceIndirect && !isInWater()) {
-			for (int i = 0; i < 64; ++i) {
-				if (teleportRandomly()) {
+		if ((source instanceof EntityDamageSourceIndirect || source.isProjectile()) && !isInWater()) {
+			if (source.isProjectile()) {
+				Entity sourceEntity = source.getTrueSource();
+				if (attemptTeleport(sourceEntity.posX + (rand.nextInt(3) == 2 ? -1 : 1), sourceEntity.posY, sourceEntity.posZ + (rand.nextInt(3) == 2 ? -1 : 1))) {
+					if (sourceEntity instanceof EntityLivingBase) {
+						setRevengeTarget((EntityLivingBase) sourceEntity);
+					}
 					return true;
+				}
+			}
+			else {
+				for (int i = 0; i < 64; ++i) {
+					if (teleportRandomly()) {
+						return true;
+					}
 				}
 			}
 			return false;
 		}
-		//else if (EasyMappings.world(this).isRemote) {
-		//return false;
-		//}
 		else {
 			idleTime = 0;
 

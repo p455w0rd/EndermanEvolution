@@ -23,7 +23,6 @@ import java.util.Random;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.model.ModelEnderman;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.entity.RenderLiving;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.util.ResourceLocation;
@@ -60,7 +59,6 @@ public class RenderEvolvedEnderman extends RenderLiving<EntityEvolvedEnderman> {
 		}
 		GlStateManager.pushMatrix();
 		GlStateManager.disableLighting();
-		OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, 260f, 260f);
 		super.doRender(entity, x, y, z, entityYaw, partialTicks);
 		GlStateManager.popMatrix();
 	}

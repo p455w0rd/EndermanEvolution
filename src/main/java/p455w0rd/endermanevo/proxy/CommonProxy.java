@@ -9,6 +9,7 @@ import p455w0rd.endermanevo.init.ModEntities;
 import p455w0rd.endermanevo.init.ModEvents;
 import p455w0rd.endermanevo.init.ModIntegration;
 import p455w0rd.endermanevo.init.ModNetworking;
+import p455w0rd.endermanevo.init.ModWorldGeneration;
 
 public class CommonProxy {
 
@@ -23,6 +24,7 @@ public class CommonProxy {
 	public void init(FMLInitializationEvent e) {
 		ModEntities.init();
 		ModIntegration.init();
+		ModWorldGeneration.init();
 	}
 
 	public EntityPlayer getPlayer() {

@@ -54,7 +54,8 @@ public class LayerEndermanEvolvedEyes implements LayerRenderer<EntityEvolvedEnde
 		endermanRenderer.setLightmap(entitylivingbaseIn);
 		GlStateManager.depthMask(true);
 		GlStateManager.disableBlend();
-		GlStateManager.enableAlpha();
+		GlStateManager.disableAlpha();
+		GlStateManager.color(1.0f, 1.0f, 1.0f, 1.0f);
 	}
 
 	@Override

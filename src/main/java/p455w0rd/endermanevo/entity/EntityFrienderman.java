@@ -958,8 +958,9 @@ public class EntityFrienderman extends EntityCreature implements IEntityOwnable,
 		if (isEntityInvulnerable(source)) {
 			return false;
 		}
-		if ((source instanceof EntityDamageSourceIndirect)) {
+		if (source instanceof EntityDamageSourceIndirect || source.isProjectile()) {
 			for (int i = 0; i < 64; i++) {
+				teleportRandomly();
 			}
 			return false;
 		}
