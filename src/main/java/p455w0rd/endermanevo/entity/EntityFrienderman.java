@@ -505,7 +505,7 @@ public class EntityFrienderman extends EntityCreature implements IEntityOwnable,
 	@Override
 	public boolean processInteract(EntityPlayer player, EnumHand hand) {
 		if (EasyMappings.world(this).isRemote || hand == EnumHand.OFF_HAND) {
-			return true;
+			return false;
 		}
 		ItemStack stack = player.getHeldItem(hand);
 		if (isTamed()) {
@@ -703,7 +703,7 @@ public class EntityFrienderman extends EntityCreature implements IEntityOwnable,
 				}
 			}
 		}
-		return true;
+		return super.processInteract(player, hand);
 	}
 
 	@Override
