@@ -34,7 +34,7 @@ public class ModConfig {
 		ConfigOptions.ENDERMAN_MAX_SPAWN = CONFIG.getInt("EndermanMaxSpawnPerGroup", DEF_CAT, 2, 1, 4, "When the game decides to spawn an Evolved Enderman, what is the max that should spawn in the group?");
 		ConfigOptions.FRIENDERMAN_MAX_SPAWN = CONFIG.getInt("FriendermanMaxSpawnPerGroup", DEF_CAT, 2, 1, 4, "When the game decides to spawn a Frienderman, what is the max that should spawn in the group?");
 		ConfigOptions.SHOW_SKULL_PARTICLES = CONFIG.getBoolean("DisplaySkullParticles", CLIENT_CAT, true, "Whether or not to spawn particles when wearing an enderman skull");
-		ConfigOptions.ENABLE_ENDERFLOWER_WORLDGEN = CONFIG.getBoolean("EnableEnderDaisyWorldGen", CLIENT_CAT, true, "Whether or not Ender Daisies generate naturally");
+		ConfigOptions.ENABLE_ENDERFLOWER_WORLDGEN = CONFIG.getBoolean("EnableEnderDaisyWorldGen", DEF_CAT, true, "Whether or not Ender Daisies generate naturally");
 
 		if (CONFIG.hasChanged() || reloadConfigs) {
 			CONFIG.save();

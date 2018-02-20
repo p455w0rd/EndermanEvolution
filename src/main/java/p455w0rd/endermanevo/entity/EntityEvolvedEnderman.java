@@ -1,5 +1,6 @@
 package p455w0rd.endermanevo.entity;
 
+import java.util.List;
 import java.util.Random;
 
 import javax.annotation.Nullable;
@@ -12,6 +13,7 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityCreature;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.IEntityLivingData;
 import net.minecraft.entity.ai.EntityAIAttackMelee;
 import net.minecraft.entity.ai.EntityAIBase;
 import net.minecraft.entity.ai.EntityAIHurtByTarget;
@@ -35,10 +37,12 @@ import net.minecraft.util.DamageSource;
 import net.minecraft.util.EntityDamageSource;
 import net.minecraft.util.EntityDamageSourceIndirect;
 import net.minecraft.util.SoundEvent;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.EnumDifficulty;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeHooks;
@@ -99,6 +103,21 @@ public class EntityEvolvedEnderman extends EntityEnderman {
 	@Override
 	public Team getTeam() {
 		return null;
+	}
+
+	@Override
+	@Nullable
+	public IEntityLivingData onInitialSpawn(DifficultyInstance difficulty, @Nullable IEntityLivingData livingdata) {
+		int radius = 32;
+		List<EntityEvolvedEnderman> endermanList = world.getEntitiesWithinAABB(EntityEvolvedEnderman.class, new AxisAlignedBB(posX - radius, 0, posZ - radius, posX + radius, world.getHeight(), posZ + radius));
+		if (endermanList.size() >= ConfigOptions.ENDERMAN_MAX_SPAWN) {
+			return null;
+			//setDead();
+		}
+		if (!getCanSpawnHere()) {
+			//setDead();
+		}
+		return super.onInitialSpawn(difficulty, livingdata);
 	}
 
 	@SideOnly(Side.CLIENT)
@@ -334,12 +353,12 @@ public class EntityEvolvedEnderman extends EntityEnderman {
 
 	@Override
 	protected boolean isValidLightLevel() {
-		return ConfigOptions.ENDERMAN_DAY_SPAWN ? true : super.isValidLightLevel();
+		return ConfigOptions.ENDERMAN_DAY_SPAWN ? true : EasyMappings.world(this).getLightBrightness(new BlockPos(this)) < 0.53f;
 	}
 
 	@Override
 	public boolean getCanSpawnHere() {
-		if (EasyMappings.world(this).getWorldInfo().getDifficulty() == EnumDifficulty.PEACEFUL || (!ConfigOptions.ENDERMAN_DAY_SPAWN && EasyMappings.world(this).getLightBrightness(new BlockPos(this)) > 0.53f)) {
+		if (EasyMappings.world(this).getWorldInfo().getDifficulty() == EnumDifficulty.PEACEFUL || !isValidLightLevel()) {
 			return false;
 		}
 		return EasyMappings.world(this).getBlockState((new BlockPos(this)).down()).canEntitySpawn(this);

@@ -61,7 +61,6 @@ public class RenderEvolvedEnderman extends RenderLiving<EntityEvolvedEnderman> {
 		GlStateManager.disableLighting();
 		super.doRender(entity, x, y, z, entityYaw, partialTicks);
 		GlStateManager.popMatrix();
-		GlStateManager.enableAlpha();
 	}
 
 	@Override

@@ -17,6 +17,7 @@ import net.minecraft.entity.monster.EntityEnderman;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.world.World;
 import net.minecraft.world.storage.loot.LootEntryItem;
 import net.minecraft.world.storage.loot.LootPool;
@@ -33,6 +34,8 @@ import net.minecraftforge.event.entity.living.LivingDropsEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.living.LivingPackSizeEvent;
 import net.minecraftforge.event.entity.living.LivingSetAttackTargetEvent;
+import net.minecraftforge.event.entity.living.LivingSpawnEvent;
+import net.minecraftforge.fml.common.eventhandler.Event.Result;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.PlayerTickEvent;
@@ -155,9 +158,9 @@ public class ModEvents {
 	}
 
 	@SubscribeEvent
-	public void onLiving(LivingEvent.LivingUpdateEvent e) {
-		if (e.getEntityLiving() instanceof EntityEnderman) {
-			EntityEnderman enderman = (EntityEnderman) e.getEntityLiving();
+	public void onLivingUpdate(LivingEvent.LivingUpdateEvent event) {
+		if (event.getEntityLiving() instanceof EntityEnderman) {
+			EntityEnderman enderman = (EntityEnderman) event.getEntityLiving();
 			if (enderman.getAttackTarget() == null) {
 				MCPrivateUtils.setEndermanScreaming(enderman, false);
 			}
@@ -165,9 +168,32 @@ public class ModEvents {
 	}
 
 	@SubscribeEvent
-	public void onTargetSelect(LivingSetAttackTargetEvent e) {
-		if (e.getEntityLiving() instanceof EntityEnderman && e.getTarget() instanceof EntityPlayer) {
-			EntityPlayer player = (EntityPlayer) e.getTarget();
+	public void onEntitySpawn(LivingSpawnEvent.CheckSpawn event) {
+		if (event.getWorld().isRemote || !(event.getEntityLiving() instanceof EntityEvolvedEnderman)) {
+			return;
+		}
+		World world = event.getWorld();
+		int radius = 32;
+		List<EntityEvolvedEnderman> endermanList = world.getEntitiesWithinAABB(EntityEvolvedEnderman.class, new AxisAlignedBB(event.getX() - radius, 0, event.getZ() - radius, event.getX() + radius, world.getHeight(), event.getZ() + radius));
+		if (endermanList.size() >= ConfigOptions.ENDERMAN_MAX_SPAWN) {
+			event.setResult(Result.DENY);
+		}
+	}
+
+	@SubscribeEvent
+	public void onSetEntitySpawnGroupSize(LivingPackSizeEvent event) {
+		if (event.getEntityLiving() instanceof EntityEvolvedEnderman) {
+			event.setMaxPackSize(ConfigOptions.ENDERMAN_MAX_SPAWN);
+		}
+		else if (event.getEntityLiving() instanceof EntityFrienderman) {
+			event.setMaxPackSize(ConfigOptions.FRIENDERMAN_MAX_SPAWN);
+		}
+	}
+
+	@SubscribeEvent
+	public void onTargetSelect(LivingSetAttackTargetEvent event) {
+		if (event.getEntityLiving() instanceof EntityEnderman && event.getTarget() instanceof EntityPlayer) {
+			EntityPlayer player = (EntityPlayer) event.getTarget();
 			ItemStack stack = player.inventory.armorInventory.get(3);
 			boolean stopAttack = false;
 			if (!stack.isEmpty() && stack.getItem() instanceof ItemSkullBase) {
@@ -177,7 +203,7 @@ public class ModEvents {
 				}
 			}
 			if (stopAttack) {
-				((EntityLiving) e.getEntityLiving()).setAttackTarget(null);
+				((EntityLiving) event.getEntityLiving()).setAttackTarget(null);
 			}
 		}
 	}
@@ -245,7 +271,7 @@ public class ModEvents {
 	// rainbow colors
 
 	@SubscribeEvent
-	public void tickEvent(TickEvent e) {
+	public void tickEvent(TickEvent event) {
 		ModGlobals.TIME_LONG++;
 
 		if (ModGlobals.TIME % 0.5 == 0) {

@@ -94,7 +94,7 @@ public class EnderFlowerGenerator implements IWorldGenerator {
 			for (int i = 0; i < topPos.getY(); i++) {
 				pos.move(EnumFacing.UP);
 				IBlockState tmpState = world.getBlockState(pos);
-				if (BlockEnderFlower.VALID_SOILS.contains(tmpState.getBlock()) && world.getBlockState(pos.up()).getBlock() == Blocks.AIR) {
+				if (BlockEnderFlower.isValidSoil(tmpState.getBlock()) && world.getBlockState(pos.up()).getBlock() == Blocks.AIR) {
 					break;
 				}
 			}

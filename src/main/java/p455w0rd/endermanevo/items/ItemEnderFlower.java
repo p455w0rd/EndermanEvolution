@@ -1,6 +1,7 @@
 package p455w0rd.endermanevo.items;
 
 import net.minecraft.advancements.CriteriaTriggers;
+import net.minecraft.block.BlockCrops;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -30,9 +31,12 @@ public class ItemEnderFlower extends ItemBase implements IPlantable {
 	public EnumActionResult onItemUse(EntityPlayer player, World worldIn, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
 		ItemStack itemstack = player.getHeldItem(hand);
 		IBlockState state = worldIn.getBlockState(pos);
-		if (facing == EnumFacing.UP && player.canPlayerEdit(pos.offset(facing), facing, itemstack) && (state.getBlock().canSustainPlant(state, worldIn, pos, EnumFacing.UP, this) || (BlockEnderFlower.VALID_SOILS.contains(state.getBlock()) && worldIn.isAirBlock(pos.up())))) {
-			worldIn.setBlockState(pos.up(), ModBlocks.ENDER_FLOWER.getDefaultState());
-
+		if (facing == EnumFacing.UP && player.canPlayerEdit(pos.offset(facing), facing, itemstack) && (state.getBlock().canSustainPlant(state, worldIn, pos, EnumFacing.UP, this) || (BlockEnderFlower.isValidSoil(state.getBlock()) && worldIn.isAirBlock(pos.up())))) {
+			IBlockState placedFlowerState = ModBlocks.ENDER_FLOWER.getDefaultState();
+			if (player.capabilities.isCreativeMode) {
+				placedFlowerState = placedFlowerState.withProperty(BlockCrops.AGE, Integer.valueOf(7));
+			}
+			worldIn.setBlockState(pos.up(), placedFlowerState);
 			if (player instanceof EntityPlayerMP) {
 				CriteriaTriggers.PLACED_BLOCK.trigger((EntityPlayerMP) player, pos.up(), itemstack);
 			}

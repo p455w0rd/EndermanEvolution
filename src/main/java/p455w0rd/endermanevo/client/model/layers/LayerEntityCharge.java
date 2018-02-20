@@ -2,6 +2,7 @@ package p455w0rd.endermanevo.client.model.layers;
 
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.entity.RenderLivingBase;
 import net.minecraft.client.renderer.entity.layers.LayerRenderer;
 import net.minecraft.entity.EntityLivingBase;
@@ -42,12 +43,15 @@ public class LayerEntityCharge implements LayerRenderer<EntityLivingBase> {
 			GlStateManager.enableBlend();
 			//float f1 = 0.5F;
 			float r = 0;
-			float g = 0.35F;
+			float g = 0.75F;
 			float b = 0;
 			//GlStateManager.color(0.5F, 0.5F, 0.5F, 1.0F);
 
 			GlStateManager.color(r, g, b, 1.0F);
 			GlStateManager.disableLighting();
+			float oldTexX = OpenGlHelper.lastBrightnessX;
+			float oldTexY = OpenGlHelper.lastBrightnessY;
+			OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, 61680.0F, 0.0F);
 			GlStateManager.blendFunc(GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ONE);
 			if (entitylivingbaseIn instanceof EntitySlime) {
 				GlStateManager.scale(1.3F, 1.5F, 1.3F);
@@ -67,6 +71,7 @@ public class LayerEntityCharge implements LayerRenderer<EntityLivingBase> {
 			GlStateManager.enableLighting();
 			GlStateManager.disableBlend();
 			GlStateManager.depthMask(flag);
+			OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, oldTexX, oldTexY);
 		}
 	}
 
