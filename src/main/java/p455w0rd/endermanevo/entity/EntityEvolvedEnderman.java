@@ -352,16 +352,13 @@ public class EntityEvolvedEnderman extends EntityEnderman {
 	}
 
 	@Override
-	protected boolean isValidLightLevel() {
-		return ConfigOptions.ENDERMAN_DAY_SPAWN ? true : EasyMappings.world(this).getLightBrightness(new BlockPos(this)) < 0.53f;
+	public float getBlockPathWeight(BlockPos pos) {
+		return ConfigOptions.ENDERMAN_DAY_SPAWN ? 0.0F : super.getBlockPathWeight(pos);
 	}
 
 	@Override
-	public boolean getCanSpawnHere() {
-		if (EasyMappings.world(this).getWorldInfo().getDifficulty() == EnumDifficulty.PEACEFUL || !isValidLightLevel()) {
-			return false;
-		}
-		return EasyMappings.world(this).getBlockState((new BlockPos(this)).down()).canEntitySpawn(this);
+	protected boolean isValidLightLevel() {
+		return ConfigOptions.ENDERMAN_DAY_SPAWN ? true : super.isValidLightLevel();
 	}
 
 	@Override
