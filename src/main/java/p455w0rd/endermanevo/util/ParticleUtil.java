@@ -16,7 +16,7 @@ import p455w0rd.endermanevo.client.render.ParticleRenderer;
 public class ParticleUtil {
 
 	public static void spawn(EnumParticles particleType, World world, double xCoordIn, double yCoordIn, double zCoordIn, double xSpeedIn, double ySpeedIn, double zSpeedIn) {
-		if (world == null || FMLCommonHandler.instance().getSide().isServer()) {
+		if (world == null || FMLCommonHandler.instance().getSide().isServer() || Minecraft.getMinecraft().gameSettings.particleSetting > 0) {
 			return;
 		}
 		Particle particle = null;

@@ -56,6 +56,7 @@ import net.minecraft.entity.ai.attributes.IAttributeInstance;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.monster.EntityCreeper;
 import net.minecraft.entity.monster.EntityGhast;
+import net.minecraft.entity.monster.IMob;
 import net.minecraft.entity.passive.EntityHorse;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
@@ -116,7 +117,7 @@ import p455w0rdslib.util.PlayerUUIDUtils;
  * @author p455w0rd
  *
  */
-public class EntityFrienderman extends EntityCreature implements IEntityOwnable, ITOPEntityInfoProvider {
+public class EntityFrienderman extends EntityCreature implements IMob, IEntityOwnable, ITOPEntityInfoProvider {
 
 	private static final UUID ATTACKING_SPEED_BOOST_ID = UUID.fromString("020E0DFB-87AE-4653-9556-831010E291A0");
 	private static final AttributeModifier ATTACKING_SPEED_BOOST = (new AttributeModifier(ATTACKING_SPEED_BOOST_ID, "Attacking speed boost", 0.15000000596046448D, 0)).setSaved(false);

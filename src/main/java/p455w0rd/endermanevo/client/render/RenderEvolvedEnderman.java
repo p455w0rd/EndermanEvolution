@@ -27,6 +27,7 @@ import net.minecraft.client.renderer.entity.RenderLiving;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.util.ResourceLocation;
 import p455w0rd.endermanevo.client.model.layers.LayerEndermanEvolvedEyes;
+import p455w0rd.endermanevo.client.model.layers.LayerEntityCharge;
 import p455w0rd.endermanevo.client.model.layers.LayerHeldBlock2;
 import p455w0rd.endermanevo.entity.EntityEvolvedEnderman;
 import p455w0rd.endermanevo.init.ModGlobals;
@@ -46,6 +47,7 @@ public class RenderEvolvedEnderman extends RenderLiving<EntityEvolvedEnderman> {
 		endermanModel = (ModelEnderman) super.mainModel;
 		addLayer(new LayerEndermanEvolvedEyes(this));
 		addLayer(new LayerHeldBlock2(this));
+		addLayer(new LayerEntityCharge<EntityEvolvedEnderman>(this, endermanModel));
 	}
 
 	@Override

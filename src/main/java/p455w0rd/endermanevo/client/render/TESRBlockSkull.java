@@ -24,7 +24,9 @@ public class TESRBlockSkull extends TileEntitySpecialRenderer<TileBlockSkull> {
 		EnumFacing enumfacing = EnumFacing.getFront(te.getBlockMetadata() & 7);
 		float f = te.getAnimationProgress(partialTicks);
 		ModelSkullBase model = te.getModel();
+
 		renderSkull((float) x, (float) y, (float) z, enumfacing, te.getSkullRotation() * 360 / 16.0F, model, destroyStage, f);
+
 	}
 
 	@Override
@@ -34,7 +36,7 @@ public class TESRBlockSkull extends TileEntitySpecialRenderer<TileBlockSkull> {
 	}
 
 	public void renderSkull(float x, float y, float z, EnumFacing facing, float rot, ModelSkullBase modelIn, int destroyStage, float animateTicks) {
-		ModelSkullBase modelbase = modelIn;
+		ModelSkullBase model = modelIn;
 		if (destroyStage >= 0) {
 			bindTexture(DESTROY_STAGES[destroyStage]);
 			GlStateManager.matrixMode(5890);
@@ -44,10 +46,10 @@ public class TESRBlockSkull extends TileEntitySpecialRenderer<TileBlockSkull> {
 			GlStateManager.matrixMode(5888);
 		}
 		else {
-			bindTexture(modelbase.getTexture());
+			bindTexture(model.getTexture());
 		}
 		GlStateManager.pushMatrix();
-		GlStateManager.disableCull();
+
 		if (facing == EnumFacing.UP) {
 			GlStateManager.translate(x + 0.5F, y, z + 0.5F);
 		}
@@ -73,19 +75,56 @@ public class TESRBlockSkull extends TileEntitySpecialRenderer<TileBlockSkull> {
 		GlStateManager.enableRescaleNormal();
 		GlStateManager.scale(-1.0F, -1.0F, 1.0F);
 		GlStateManager.enableAlpha();
-		modelbase.render((Entity) null, animateTicks, 0.0F, 0.0F, rot, 0.0F, 0.0625F);
-		if (modelbase.getLightMap() != null) {
-			bindTexture(modelbase.getLightMap());
-			modelbase.renderLightMap(rot);
+		model.render((Entity) null, animateTicks, 0.0F, 0.0F, rot, 0.0F, 0.0625F);
+		if (model.getLightMap() != null) {
+			bindTexture(model.getLightMap());
+			model.renderLightMap(rot);
 		}
 		GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
 		GlStateManager.enableRescaleNormal();
+
+		//===============================
+		/*
+		if (model instanceof Enderman2) {
+			GlStateManager.pushMatrix();
+			float oldTexX = OpenGlHelper.lastBrightnessX;
+			float oldTexY = OpenGlHelper.lastBrightnessY;
+			GlStateManager.depthMask(true);
+			bindTexture(new ResourceLocation(ModGlobals.MODID, "textures/entity/charge_nocolor.png"));
+			GlStateManager.matrixMode(5890);
+			GlStateManager.loadIdentity();
+			float f2 = Minecraft.getMinecraft().player.ticksExisted + Minecraft.getMinecraft().getRenderPartialTicks();
+			GlStateManager.translate(f2 * 0.01F, f2 * 0.01F, 0.0F);
+			GlStateManager.matrixMode(5888);
+			GlStateManager.enableBlend();
+			float r = 0;
+			float g = 0.75F;
+			float b = 0;
+			GlStateManager.color(0.5F, 0.5F, 0.5F, 1.0F);
+			GlStateManager.color(r, g, b, 1.0F);
+			GlStateManager.disableLighting();
+			OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, 61680.0F, 0.0F);
+			GlStateManager.blendFunc(GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ONE);
+			GlStateManager.scale(1.1F, 1.1F, 1.1F);
+			model.render(rot);
+			GlStateManager.matrixMode(5890);
+			GlStateManager.loadIdentity();
+			GlStateManager.matrixMode(5888);
+			GlStateManager.enableLighting();
+			GlStateManager.disableBlend();
+			OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, oldTexX, oldTexY);
+			GlStateManager.popMatrix();
+		}
+		*/
+		//=========================
+
 		GlStateManager.popMatrix();
 		if (destroyStage >= 0) {
 			GlStateManager.matrixMode(5890);
 			GlStateManager.popMatrix();
 			GlStateManager.matrixMode(5888);
 		}
+
 	}
 
 }

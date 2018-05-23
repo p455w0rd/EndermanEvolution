@@ -42,6 +42,9 @@ public class ParticleRenderer {
 	}
 
 	public void renderParticles(EntityPlayer dumbplayer, float partialTicks) {
+		if (Minecraft.getMinecraft().gameSettings.particleSetting == 2) {
+			return;
+		}
 		float f = ActiveRenderInfo.getRotationX();
 		float f1 = ActiveRenderInfo.getRotationZ();
 		float f2 = ActiveRenderInfo.getRotationYZ();

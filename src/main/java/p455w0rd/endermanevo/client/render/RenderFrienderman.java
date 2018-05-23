@@ -37,7 +37,7 @@ import p455w0rd.endermanevo.init.ModGlobals;
  */
 public class RenderFrienderman extends RenderLiving<EntityFrienderman> {
 
-	private static final ResourceLocation ENDERMAN_TEXTURES = new ResourceLocation(ModGlobals.MODID, "textures/entity/enderman3.png");
+	private static final ResourceLocation ENDERMAN_TEXTURES = new ResourceLocation(ModGlobals.MODID, "textures/entity/frienderman.png");
 	private final ModelFrienderman endermanModel;
 	private final Random rnd = new Random();
 

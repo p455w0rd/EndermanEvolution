@@ -5,6 +5,7 @@ import java.util.Map;
 import com.google.common.collect.Maps;
 
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntitySkull;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraftforge.fml.relauncher.Side;
@@ -45,10 +46,23 @@ public class TileBlockSkull extends TileEntitySkull {
 		return true;
 	}
 
+	/*
+		@Override
+		@SideOnly(Side.CLIENT)
+		public AxisAlignedBB getRenderBoundingBox() {
+			return new AxisAlignedBB(getPos().add(-1, -1, -1), getPos().add(2, 2, 2));
+		}
+		*/
+	@Override
+	@SideOnly(Side.CLIENT)
+	public double getMaxRenderDistanceSquared() {
+		return Double.MAX_VALUE;
+	}
+
 	@Override
 	@SideOnly(Side.CLIENT)
 	public AxisAlignedBB getRenderBoundingBox() {
-		return new AxisAlignedBB(getPos().add(-1, -1, -1), getPos().add(2, 2, 2));
+		return TileEntity.INFINITE_EXTENT_AABB;
 	}
 
 	public String getEntity() {

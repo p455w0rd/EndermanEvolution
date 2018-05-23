@@ -22,7 +22,7 @@ public class ModelSkullBase extends ModelBiped {
 
 	private static ModelEnderman ENDERMAN_MODEL_INSTANCE = new ModelEnderman(0.0F);
 
-	protected ModelRenderer head;
+	public ModelRenderer head;
 	protected ModelRenderer overlay;
 	private boolean renderOverlay;
 	private ResourceLocation TEXTURE = null;
@@ -107,6 +107,42 @@ public class ModelSkullBase extends ModelBiped {
 		else {
 			GlStateManager.translate(0.0F, -0.02F, 0.0F);
 		}
+		if (this instanceof Enderman2) {
+			GlStateManager.pushMatrix();
+			float oldTexX = OpenGlHelper.lastBrightnessX;
+			float oldTexY = OpenGlHelper.lastBrightnessY;
+			GlStateManager.depthMask(true);
+			bindTexture(new ResourceLocation(ModGlobals.MODID, "textures/entity/charge_nocolor.png"));
+			GlStateManager.matrixMode(5890);
+			GlStateManager.loadIdentity();
+			float f = Minecraft.getMinecraft().player.ticksExisted + Minecraft.getMinecraft().getRenderPartialTicks();
+			GlStateManager.translate(f * 0.01F, f * 0.01F, 0.0F);
+			GlStateManager.matrixMode(5888);
+			GlStateManager.enableBlend();
+			float r = 0;
+			float g = 0.75F;
+			float b = 0;
+			GlStateManager.color(r, g, b, 0.5F);
+			GlStateManager.disableLighting();
+			OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, 260.0F, 260.0F);
+			GlStateManager.blendFunc(GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ONE);
+			//GlStateManager.translate(0.5F, 0.1F, 0.5F);
+			GlStateManager.scale(1.1F, 1.1F, 1.1F);
+			//modelbase.render(rot);
+			head.render(0.0625F);
+			GlStateManager.translate(-0.5F, -0.5F, -0.5F);
+			GlStateManager.matrixMode(5890);
+			GlStateManager.loadIdentity();
+			GlStateManager.matrixMode(5888);
+			GlStateManager.blendFunc(GlStateManager.SourceFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.DestFactor.DST_ALPHA);
+			GlStateManager.enableLighting();
+			GlStateManager.disableBlend();
+			//GlStateManager.disableAlpha();
+			GlStateManager.depthMask(true);
+			OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, oldTexX, oldTexY);
+			GlStateManager.color(1.0f, 1.0f, 1.0f, 1.0F);
+			GlStateManager.popMatrix();
+		}
 	}
 
 	public void bindTexture(ResourceLocation texture) {
@@ -121,6 +157,7 @@ public class ModelSkullBase extends ModelBiped {
 		else {
 			render(netHeadYaw, headPitch, null);
 		}
+
 	}
 
 	public void renderOverlay(float rotationX) {
@@ -209,7 +246,7 @@ public class ModelSkullBase extends ModelBiped {
 
 	public static class Frienderman extends ModelSkullBase {
 
-		protected static final ResourceLocation TEXTURE_ENDERMAN = new ResourceLocation(ModGlobals.MODID, "textures/entity/enderman3.png");
+		protected static final ResourceLocation TEXTURE_ENDERMAN = new ResourceLocation(ModGlobals.MODID, "textures/entity/frienderman.png");
 		protected static final ResourceLocation LIGHTMAP_ENDERMAN = new ResourceLocation("textures/entity/enderman/enderman_eyes.png");
 		private static Frienderman INSTANCE = new Frienderman();
 

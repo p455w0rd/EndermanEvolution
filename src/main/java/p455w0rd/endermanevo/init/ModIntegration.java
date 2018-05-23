@@ -33,7 +33,8 @@ public class ModIntegration {
 			TOP("theoneprobe", "The One Probe"),
 			ENDERSTORAGE("enderstorage", "Ender Storage"),
 			WAILA("waila", "WAILA"),
-			IRONCHESTS("ironchest", "Iron Chests"), JEI("jei", "Just Enough Items");
+			IRONCHESTS("ironchest", "Iron Chests"), JEI("jei", "Just Enough Items"),
+			TINKERS("tconstruct", "Tinkers Construct");
 
 		private String modid, name;
 

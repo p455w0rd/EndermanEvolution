@@ -159,7 +159,7 @@ public class EntityEvolvedEnderman extends EntityEnderman {
 		if ((source instanceof EntityDamageSourceIndirect || source.isProjectile()) && !isInWater()) {
 			if (source.isProjectile()) {
 				Entity sourceEntity = source.getTrueSource();
-				if (attemptTeleport(sourceEntity.posX + (rand.nextInt(3) == 2 ? -1 : 1), sourceEntity.posY, sourceEntity.posZ + (rand.nextInt(3) == 2 ? -1 : 1))) {
+				if (sourceEntity != null && attemptTeleport(sourceEntity.posX + (rand.nextInt(3) == 2 ? -1 : 1), sourceEntity.posY, sourceEntity.posZ + (rand.nextInt(3) == 2 ? -1 : 1))) {
 					if (sourceEntity instanceof EntityLivingBase) {
 						setRevengeTarget((EntityLivingBase) sourceEntity);
 					}

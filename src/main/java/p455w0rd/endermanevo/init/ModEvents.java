@@ -1,5 +1,6 @@
 package p455w0rd.endermanevo.init;
 
+import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 
@@ -15,6 +16,8 @@ import net.minecraft.entity.boss.EntityWither;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.monster.EntityEnderman;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Items;
+import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -35,6 +38,7 @@ import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.living.LivingPackSizeEvent;
 import net.minecraftforge.event.entity.living.LivingSetAttackTargetEvent;
 import net.minecraftforge.event.entity.living.LivingSpawnEvent;
+import net.minecraftforge.event.entity.player.PlayerInteractEvent.RightClickBlock;
 import net.minecraftforge.fml.common.eventhandler.Event.Result;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
@@ -42,12 +46,15 @@ import net.minecraftforge.fml.common.gameevent.TickEvent.PlayerTickEvent;
 import net.minecraftforge.fml.relauncher.ReflectionHelper;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import p455w0rd.endermanevo.blocks.BlockEnderFlower;
 import p455w0rd.endermanevo.client.model.layers.LayerEntityCharge;
 import p455w0rd.endermanevo.client.model.layers.LayerSkullEyes;
 import p455w0rd.endermanevo.client.render.ParticleRenderer;
 import p455w0rd.endermanevo.entity.EntityEvolvedEnderman;
 import p455w0rd.endermanevo.entity.EntityFrienderman;
 import p455w0rd.endermanevo.init.ModConfig.ConfigOptions;
+import p455w0rd.endermanevo.init.ModIntegration.Mods;
+import p455w0rd.endermanevo.integration.TiC;
 import p455w0rd.endermanevo.items.ItemSkullBase;
 import p455w0rd.endermanevo.util.EntityUtils;
 import p455w0rd.endermanevo.util.EnumParticles;
@@ -85,6 +92,14 @@ public class ModEvents {
 	}
 
 	@SubscribeEvent
+	public void onItemUse(RightClickBlock event) {
+		ItemStack stack = event.getItemStack();
+		if (stack.getItem() == Items.DYE && EnumDyeColor.WHITE == EnumDyeColor.byDyeDamage(stack.getMetadata())) {
+			BlockEnderFlower.tryBonemeal(stack, event.getWorld(), event.getPos(), event.getEntityPlayer(), event.getHand());
+		}
+	}
+
+	@SubscribeEvent
 	public void onSpawnPackSize(LivingPackSizeEvent event) {
 		if (event.getEntityLiving() instanceof EntityEvolvedEnderman) {
 			event.setMaxPackSize(ConfigOptions.ENDERMAN_MAX_SPAWN);
@@ -113,15 +128,19 @@ public class ModEvents {
 		if (!isEyesLayerAdded) {
 			renderer.addLayer(new LayerSkullEyes(renderer));
 		}
-		if (!isChargeLayerAdded && event.getEntity() instanceof EntityEvolvedEnderman) {
-			renderer.addLayer(new LayerEntityCharge(renderer, renderer.getMainModel()));
-		}
+
 		if (EntityUtils.isWearingCustomSkull(event.getEntity())) {
 			if (renderer.getMainModel() instanceof ModelBiped) {
 				ModelBiped bipedModel = (ModelBiped) renderer.getMainModel();
 				if (!bipedModel.bipedHead.isHidden || !bipedModel.bipedHeadwear.isHidden) {
 					bipedModel.bipedHead.isHidden = true;
 					bipedModel.bipedHeadwear.isHidden = true;
+				}
+			}
+			if (!isChargeLayerAdded && event.getEntity() instanceof EntityPlayer) {
+				ItemSkullBase skull = EntityUtils.getSkullItem(event.getEntity());
+				if (skull == ModItems.SKULL_EVOLVED_ENDERMAN) {
+					renderer.addLayer(new LayerEntityCharge<>(renderer, renderer.getMainModel()));
 				}
 			}
 		}
@@ -131,6 +150,20 @@ public class ModEvents {
 				if (bipedModel.bipedHead.isHidden || bipedModel.bipedHeadwear.isHidden) {
 					bipedModel.bipedHead.isHidden = false;
 					bipedModel.bipedHeadwear.isHidden = false;
+				}
+			}
+			if (isChargeLayerAdded && event.getEntity() instanceof EntityPlayer) {
+				Iterator<LayerRenderer<EntityLivingBase>> iterator = layers.iterator();
+				LayerEntityCharge<EntityLivingBase> layerToRemove = null;
+				while (iterator.hasNext()) {
+					LayerRenderer<EntityLivingBase> currentLayer = iterator.next();
+					if (currentLayer instanceof LayerEntityCharge) {
+						layerToRemove = (LayerEntityCharge<EntityLivingBase>) currentLayer;
+						break;
+					}
+				}
+				if (layerToRemove != null) {
+					layers.remove(layerToRemove);
 				}
 			}
 		}
@@ -242,12 +275,21 @@ public class ModEvents {
 				ItemStack skullDrop = EntityUtils.getSkullDrop(event.getEntityLiving());
 
 				if (attacker != null && attacker instanceof EntityLivingBase && skullDrop != null) {
-					double r = Math.random();
 					ItemStack attackItem = attacker.getHeldItemMainhand();
 					if (attackItem != null) {
-						EntityItem skullEntity = new EntityItem(world, x, y, z, skullDrop);
-						if (r <= (0.05D * (event.getLootingLevel() * 5))) {
-							event.getDrops().add(skullEntity);
+						if (Mods.TINKERS.isLoaded() && TiC.isTinkersItem(attackItem) && TiC.hasBeheading(attackItem)) {
+							int beheadingLevel = TiC.getBeheadingLevel(attackItem);
+							if (beheadingLevel > event.getSource().getTrueSource().getEntityWorld().rand.nextInt(10)) {
+								EntityItem skullEntity = new EntityItem(world, x, y, z, skullDrop);
+								skullEntity.setDefaultPickupDelay();
+								event.getDrops().add(skullEntity);
+							}
+						}
+						else {
+							EntityItem skullEntity = new EntityItem(world, x, y, z, skullDrop);
+							if (event.getLootingLevel() > event.getSource().getTrueSource().getEntityWorld().rand.nextInt(3)) {
+								event.getDrops().add(skullEntity);
+							}
 						}
 					}
 				}
@@ -322,27 +364,29 @@ public class ModEvents {
 	@SideOnly(Side.CLIENT)
 	public void onPlayerTick(PlayerTickEvent event) {
 		EntityPlayer player = event.player;
-		if (event.player.world.isRemote) {
-			if (player == Minecraft.getMinecraft().player && ConfigOptions.SHOW_SKULL_PARTICLES) {
-				if (EntityUtils.isWearingCustomSkull(player)) {
-					Random rand = player.world.rand;
-					double x = player.posX + (rand.nextDouble() - 0.5D) * player.width;
-					double y = player.posY + rand.nextDouble() * player.height - 0.25D;
-					double z = player.posZ + (rand.nextDouble() - 0.5D) * player.width;
-					double sx = (rand.nextDouble() - 0.5D) * 2.0D;
-					double sy = -rand.nextDouble();
-					double sz = (rand.nextDouble() - 0.5D) * 2.0D;
-					if (EntityUtils.getSkullItem(player) == ModItems.SKULL_FRIENDERMAN) {
-						ParticleUtil.spawn(EnumParticles.LOVE, player.getEntityWorld(), x, y, z, sx, sy, sz);
-					}
-					else if (EntityUtils.getSkullItem(player) == ModItems.SKULL_EVOLVED_ENDERMAN) {
-						ParticleUtil.spawn(EnumParticles.PORTAL_GREEN, player.getEntityWorld(), x, y, z, sx, sy, sz);
-					}
-					else if (EntityUtils.getSkullItem(player) == ModItems.SKULL_ENDERMAN) {
-						ParticleUtil.spawn(EnumParticles.PORTAL, player.getEntityWorld(), x, y, z, sx, sy, sz);
-					}
+		if (player.world.isRemote) {
+			if (player == Minecraft.getMinecraft().player && Minecraft.getMinecraft().gameSettings.thirdPersonView == 0 && !ConfigOptions.SHOW_SKULL_PARTICLES) {
+				return;
+			}
+			if (EntityUtils.isWearingCustomSkull(player)) {
+				Random rand = player.world.rand;
+				double x = player.posX + (rand.nextDouble() - 0.5D) * player.width;
+				double y = player.posY + rand.nextDouble() * player.height - 0.25D;
+				double z = player.posZ + (rand.nextDouble() - 0.5D) * player.width;
+				double sx = (rand.nextDouble() - 0.5D) * 2.0D;
+				double sy = -rand.nextDouble();
+				double sz = (rand.nextDouble() - 0.5D) * 2.0D;
+				if (EntityUtils.getSkullItem(player) == ModItems.SKULL_FRIENDERMAN) {
+					ParticleUtil.spawn(EnumParticles.LOVE, player.getEntityWorld(), x, y, z, sx, sy, sz);
+				}
+				else if (EntityUtils.getSkullItem(player) == ModItems.SKULL_EVOLVED_ENDERMAN) {
+					ParticleUtil.spawn(EnumParticles.PORTAL_GREEN, player.getEntityWorld(), x, y, z, sx, sy, sz);
+				}
+				else if (EntityUtils.getSkullItem(player) == ModItems.SKULL_ENDERMAN) {
+					ParticleUtil.spawn(EnumParticles.PORTAL, player.getEntityWorld(), x, y, z, sx, sy, sz);
 				}
 			}
+			//}
 		}
 	}
 
