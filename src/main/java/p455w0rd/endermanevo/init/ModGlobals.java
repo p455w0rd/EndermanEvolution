@@ -6,7 +6,7 @@ import codechicken.lib.CodeChickenLib;
 
 public class ModGlobals {
 	public static final String MODID = "endermanevo";
-	public static final String VERSION = "1.0.11";
+	public static final String VERSION = "1.0.12";
 	public static final String NAME = "Enderman Evolution";
 	public static final String SERVER_PROXY = "p455w0rd.endermanevo.proxy.CommonProxy";
 	public static final String CLIENT_PROXY = "p455w0rd.endermanevo.proxy.ClientProxy";
