@@ -53,14 +53,7 @@ public class BlockEnderFlower extends Block implements IGrowable, IPlantable {
 	private static final PropertyInteger STAGE = PropertyInteger.create("age", 0, 7);
 	private static final String NAME = "ender_flower";
 	public static final AxisAlignedBB[] FLOWER_AABB = new AxisAlignedBB[] {
-			new AxisAlignedBB(0.33D, 0.0D, 0.33D, 0.67D, 0.063D, 0.67D),
-			new AxisAlignedBB(0.33D, 0.0D, 0.33D, 0.67D, 0.126D, 0.67D),
-			new AxisAlignedBB(0.33D, 0.0D, 0.33D, 0.67D, 0.189D, 0.67D),
-			new AxisAlignedBB(0.33D, 0.0D, 0.33D, 0.67D, 0.252D, 0.67D),
-			new AxisAlignedBB(0.33D, 0.0D, 0.33D, 0.67D, 0.315D, 0.67D),
-			new AxisAlignedBB(0.33D, 0.0D, 0.33D, 0.67D, 0.378D, 0.67D),
-			new AxisAlignedBB(0.33D, 0.0D, 0.33D, 0.67D, 0.441D, 0.67D),
-			new AxisAlignedBB(0.33D, 0.0D, 0.33D, 0.67D, 0.75D, 0.67D)
+			new AxisAlignedBB(0.33D, 0.0D, 0.33D, 0.67D, 0.063D, 0.67D), new AxisAlignedBB(0.33D, 0.0D, 0.33D, 0.67D, 0.126D, 0.67D), new AxisAlignedBB(0.33D, 0.0D, 0.33D, 0.67D, 0.189D, 0.67D), new AxisAlignedBB(0.33D, 0.0D, 0.33D, 0.67D, 0.252D, 0.67D), new AxisAlignedBB(0.33D, 0.0D, 0.33D, 0.67D, 0.315D, 0.67D), new AxisAlignedBB(0.33D, 0.0D, 0.33D, 0.67D, 0.378D, 0.67D), new AxisAlignedBB(0.33D, 0.0D, 0.33D, 0.67D, 0.441D, 0.67D), new AxisAlignedBB(0.33D, 0.0D, 0.33D, 0.67D, 0.75D, 0.67D)
 	};
 	public static final List<Block> VALID_SOILS = Lists.newArrayList(Blocks.NETHERRACK, Blocks.DIRT, Blocks.GRASS, Blocks.FARMLAND);
 	public static final List<Block> VALID_BONEMEAL_SOILS = Lists.newArrayList(Blocks.END_STONE, Blocks.END_BRICKS, Blocks.END_PORTAL_FRAME);
@@ -98,6 +91,11 @@ public class BlockEnderFlower extends Block implements IGrowable, IPlantable {
 				return true;
 			}
 		}
+		return false;
+	}
+
+	@Override
+	public boolean canSustainPlant(IBlockState state, IBlockAccess world, BlockPos pos, EnumFacing direction, net.minecraftforge.common.IPlantable plantable) {
 		return false;
 	}
 

@@ -25,6 +25,7 @@ import net.minecraft.entity.ai.EntityAIWatchClosest;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.monster.EntityEnderman;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.projectile.EntitySnowball;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.init.MobEffects;
@@ -43,7 +44,6 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.DifficultyInstance;
-import net.minecraft.world.EnumDifficulty;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.fml.common.FMLCommonHandler;
@@ -157,7 +157,7 @@ public class EntityEvolvedEnderman extends EntityEnderman {
 			return false;
 		}
 		if ((source instanceof EntityDamageSourceIndirect || source.isProjectile()) && !isInWater()) {
-			if (source.isProjectile()) {
+			if (source.isProjectile() && !(source.getImmediateSource() instanceof EntitySnowball)) {
 				Entity sourceEntity = source.getTrueSource();
 				if (sourceEntity != null && attemptTeleport(sourceEntity.posX + (rand.nextInt(3) == 2 ? -1 : 1), sourceEntity.posY, sourceEntity.posZ + (rand.nextInt(3) == 2 ? -1 : 1))) {
 					if (sourceEntity instanceof EntityLivingBase) {
