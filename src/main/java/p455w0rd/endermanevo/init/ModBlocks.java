@@ -1,10 +1,9 @@
 package p455w0rd.endermanevo.init;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 import net.minecraft.block.Block;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -23,7 +22,7 @@ public class ModBlocks {
 	public static final BlockEnderFlower ENDER_FLOWER = new BlockEnderFlower();
 
 	public static void init() {
-		GameRegistry.registerTileEntity(TileBlockSkull.class, ModGlobals.MODID + ":tile_pskull");
+		GameRegistry.registerTileEntity(TileBlockSkull.class, new ResourceLocation(ModGlobals.MODID, ":tile_pskull"));
 	}
 
 	@SideOnly(Side.CLIENT)

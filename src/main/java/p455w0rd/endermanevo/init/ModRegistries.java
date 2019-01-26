@@ -15,9 +15,7 @@
  */
 package p455w0rd.endermanevo.init;
 
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 import com.google.common.collect.Maps;
 

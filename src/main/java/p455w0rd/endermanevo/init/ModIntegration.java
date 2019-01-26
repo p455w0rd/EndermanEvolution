@@ -2,9 +2,7 @@ package p455w0rd.endermanevo.init;
 
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.Loader;
-import p455w0rd.endermanevo.integration.EnderStorage;
-import p455w0rd.endermanevo.integration.TOP;
-import p455w0rd.endermanevo.integration.WAILA;
+import p455w0rd.endermanevo.integration.*;
 
 /**
  * @author p455w0rd

@@ -13,13 +13,13 @@ public class ClientProxy extends CommonProxy {
 	public void preInit(FMLPreInitializationEvent e) {
 		super.preInit(e);
 		ModCreativeTab.init();
-		ModRendering.preInit();
+		ModRendering.registerTileEntityRenderers();
 	}
 
 	@Override
 	public void init(FMLInitializationEvent e) {
 		super.init(e);
-		ModRendering.init();
+		ModRendering.registerEntityRenderers();
 	}
 
 	@Override

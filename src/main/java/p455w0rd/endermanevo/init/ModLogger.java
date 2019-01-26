@@ -5,8 +5,8 @@ import org.apache.logging.log4j.Logger;
 
 public class ModLogger {
 	private static Logger LOGGER = LogManager.getLogger(ModGlobals.NAME);
-	public static String LOG_PREFIX = "==========[p455w0rd's Things %s]==========";
-	public static String LOG_SUFFIX = "==========[/p455w0rd's Things %s]==========";
+	public static String LOG_PREFIX = "==========[Enderman Evolution %s]==========";
+	public static String LOG_SUFFIX = "==========[/Enderman Evolution %s]==========";
 
 	public static void warn(String msg) {
 		LOGGER.warn(msg);

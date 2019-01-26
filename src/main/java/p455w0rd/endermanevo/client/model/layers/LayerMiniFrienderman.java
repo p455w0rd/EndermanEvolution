@@ -5,7 +5,7 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.entity.layers.LayerRenderer;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
-import p455w0rd.endermanevo.client.model.ModelFrienderman;
+import p455w0rd.endermanevo.client.model.ModelEndermanBase;
 import p455w0rd.endermanevo.init.ModGlobals;
 
 /**
@@ -15,10 +15,10 @@ import p455w0rd.endermanevo.init.ModGlobals;
 public class LayerMiniFrienderman implements LayerRenderer<EntityPlayer> {
 
 	private static final ResourceLocation ENDERMAN_TEXTURES = new ResourceLocation(ModGlobals.MODID, "textures/entity/enderman3.png");
-	private final ModelFrienderman endermanModel;
+	private final ModelEndermanBase endermanModel;
 
 	public LayerMiniFrienderman() {
-		endermanModel = new ModelFrienderman(0.00001F);
+		endermanModel = new ModelEndermanBase(0.00001F);
 	}
 
 	@Override

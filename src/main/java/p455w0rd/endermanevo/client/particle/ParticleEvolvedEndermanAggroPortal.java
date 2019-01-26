@@ -1,26 +1,8 @@
-/*
- * This file is part of Enderman Evolution.
- * Copyright (c) 2016, p455w0rd (aka TheRealp455w0rd), All rights reserved
- * unless
- * otherwise stated.
- *
- * Enderman Evolution is free software: you can redistribute it and/or modify
- * it under the terms of the MIT License.
- *
- * Enderman Evolution is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * MIT License for more details.
- *
- * You should have received a copy of the MIT License
- * along with Enderman Evolution. If not, see
- * <https://opensource.org/licenses/MIT>.
- */
 package p455w0rd.endermanevo.client.particle;
 
 import net.minecraft.client.particle.IParticleFactory;
 import net.minecraft.client.particle.Particle;
-import net.minecraft.client.renderer.BufferBuilder;
+import net.minecraft.client.renderer.*;
 import net.minecraft.entity.Entity;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
@@ -30,13 +12,13 @@ import net.minecraftforge.fml.relauncher.SideOnly;
  * @author p455w0rd
  *
  */
-public class ParticleLove extends Particle {
+public class ParticleEvolvedEndermanAggroPortal extends Particle {
 	private final float portalParticleScale;
 	private final double portalPosX;
 	private final double portalPosY;
 	private final double portalPosZ;
 
-	public ParticleLove(World worldIn, double xCoordIn, double yCoordIn, double zCoordIn, double xSpeedIn, double ySpeedIn, double zSpeedIn) {
+	public ParticleEvolvedEndermanAggroPortal(World worldIn, double xCoordIn, double yCoordIn, double zCoordIn, double xSpeedIn, double ySpeedIn, double zSpeedIn) {
 		super(worldIn, xCoordIn, yCoordIn, zCoordIn, xSpeedIn, ySpeedIn, zSpeedIn);
 		motionX = xSpeedIn;
 		motionY = ySpeedIn;
@@ -51,10 +33,10 @@ public class ParticleLove extends Particle {
 		particleScale = rand.nextFloat() * 0.2F + 0.5F;
 		portalParticleScale = particleScale;
 		particleRed = f * 1.0F;
-		particleGreen = f * 0.0F;
+		particleGreen = f * 0.1F;
 		particleBlue = f * 0.2F;
 		particleMaxAge = (int) (Math.random() * 10.0D) + 40;
-		setParticleTextureIndex(80);
+		setParticleTextureIndex((int) (Math.random() * 8.0D));
 	}
 
 	@Override
@@ -73,12 +55,17 @@ public class ParticleLove extends Particle {
 		f = f * f;
 		f = 1.0F - f;
 		particleScale = portalParticleScale * f;
+		GlStateManager.pushMatrix();
+		GlStateManager.disableLighting();
+		OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, 260f, 260f);
 		super.renderParticle(worldRendererIn, entityIn, partialTicks, rotationX, rotationZ, rotationYZ, rotationXY, rotationXZ);
+		GlStateManager.popMatrix();
 	}
 
 	@Override
-	public int getBrightnessForRender(float p_189214_1_) {
-		int i = super.getBrightnessForRender(p_189214_1_);
+	public int getBrightnessForRender(float brightness) {
+		int i = super.getBrightnessForRender(brightness);
+
 		float f = (float) particleAge / (float) particleMaxAge;
 		f = f * f;
 		f = f * f;
@@ -90,7 +77,7 @@ public class ParticleLove extends Particle {
 			k = 240;
 		}
 
-		return j | k << 16;
+		return j | k << 16 / 200;
 	}
 
 	@Override
@@ -114,7 +101,7 @@ public class ParticleLove extends Particle {
 	public static class Factory implements IParticleFactory {
 		@Override
 		public Particle createParticle(int particleID, World worldIn, double xCoordIn, double yCoordIn, double zCoordIn, double xSpeedIn, double ySpeedIn, double zSpeedIn, int... p_178902_15_) {
-			return new ParticleLove(worldIn, xCoordIn, yCoordIn, zCoordIn, xSpeedIn, ySpeedIn, zSpeedIn);
+			return new ParticleEvolvedEndermanPortal(worldIn, xCoordIn, yCoordIn, zCoordIn, xSpeedIn, ySpeedIn, zSpeedIn);
 		}
 	}
 }

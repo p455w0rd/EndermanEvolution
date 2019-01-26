@@ -4,9 +4,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.particle.Particle;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.FMLCommonHandler;
-import p455w0rd.endermanevo.client.particle.ParticleLove;
-import p455w0rd.endermanevo.client.particle.ParticlePortal2;
-import p455w0rd.endermanevo.client.particle.ParticleVanillaPortal;
+import p455w0rd.endermanevo.client.particle.*;
 import p455w0rd.endermanevo.client.render.ParticleRenderer;
 
 /**
@@ -25,7 +23,10 @@ public class ParticleUtil {
 			particle = new ParticleLove(world, xCoordIn, yCoordIn, zCoordIn, xSpeedIn, ySpeedIn, zSpeedIn);
 			break;
 		case PORTAL_GREEN:
-			particle = new ParticlePortal2(world, xCoordIn, yCoordIn, zCoordIn, xSpeedIn, ySpeedIn, zSpeedIn);
+			particle = new ParticleEvolvedEndermanPortal(world, xCoordIn, yCoordIn, zCoordIn, xSpeedIn, ySpeedIn, zSpeedIn);
+			break;
+		case PORTAL_RED:
+			particle = new ParticleEvolvedEndermanAggroPortal(world, xCoordIn, yCoordIn, zCoordIn, xSpeedIn, ySpeedIn, zSpeedIn);
 			break;
 		case PORTAL:
 			particle = new ParticleVanillaPortal(world, xCoordIn, yCoordIn, zCoordIn, xSpeedIn, ySpeedIn, zSpeedIn);

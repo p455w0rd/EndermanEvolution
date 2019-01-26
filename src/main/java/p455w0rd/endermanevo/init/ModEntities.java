@@ -14,10 +14,7 @@ import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.Biome.SpawnListEntry;
 import net.minecraftforge.fml.common.registry.EntityRegistry;
 import p455w0rd.endermanevo.EndermanEvolution;
-import p455w0rd.endermanevo.entity.EntityEvolvedEnderman;
-import p455w0rd.endermanevo.entity.EntityEvolvedEndermite;
-import p455w0rd.endermanevo.entity.EntityFrienderPearl;
-import p455w0rd.endermanevo.entity.EntityFrienderman;
+import p455w0rd.endermanevo.entity.*;
 import p455w0rd.endermanevo.init.ModConfig.ConfigOptions;
 import p455w0rdslib.util.BiomeUtils;
 

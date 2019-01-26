@@ -1,26 +1,24 @@
 /*
- * This file is part of p455w0rd's Things.
+ * This file is part of Enderman Evolution.
  * Copyright (c) 2016, p455w0rd (aka TheRealp455w0rd), All rights reserved
  * unless
  * otherwise stated.
  *
- * p455w0rd's Things is free software: you can redistribute it and/or modify
+ * Enderman Evolution is free software: you can redistribute it and/or modify
  * it under the terms of the MIT License.
  *
- * p455w0rd's Things is distributed in the hope that it will be useful,
+ * Enderman Evolution is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * MIT License for more details.
  *
  * You should have received a copy of the MIT License
- * along with p455w0rd's Things. If not, see
+ * along with Enderman Evolution. If not, see
  * <https://opensource.org/licenses/MIT>.
  */
 package p455w0rd.endermanevo.entity;
 
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 import javax.annotation.Nullable;
 
@@ -30,33 +28,17 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 import cpw.mods.ironchest.common.blocks.chest.IronChestType;
-import mcjty.theoneprobe.api.IProbeHitEntityData;
-import mcjty.theoneprobe.api.IProbeInfo;
-import mcjty.theoneprobe.api.ProbeMode;
+import mcjty.theoneprobe.api.*;
 import mcjty.theoneprobe.apiimpl.styles.ItemStyle;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityCreature;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.IEntityOwnable;
-import net.minecraft.entity.SharedMonsterAttributes;
-import net.minecraft.entity.ai.EntityAIAttackMelee;
-import net.minecraft.entity.ai.EntityAIBase;
-import net.minecraft.entity.ai.EntityAIHurtByTarget;
-import net.minecraft.entity.ai.EntityAILookIdle;
-import net.minecraft.entity.ai.EntityAINearestAttackableTarget;
-import net.minecraft.entity.ai.EntityAISwimming;
-import net.minecraft.entity.ai.EntityAITarget;
-import net.minecraft.entity.ai.EntityAIWander;
-import net.minecraft.entity.ai.EntityAIWatchClosest;
+import net.minecraft.entity.*;
+import net.minecraft.entity.ai.*;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.ai.attributes.IAttributeInstance;
 import net.minecraft.entity.item.EntityItem;
-import net.minecraft.entity.monster.EntityCreeper;
-import net.minecraft.entity.monster.EntityGhast;
-import net.minecraft.entity.monster.IMob;
+import net.minecraft.entity.monster.*;
 import net.minecraft.entity.passive.EntityHorse;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
@@ -67,24 +49,11 @@ import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.network.datasync.DataParameter;
-import net.minecraft.network.datasync.DataSerializers;
-import net.minecraft.network.datasync.EntityDataManager;
-import net.minecraft.pathfinding.PathNavigate;
-import net.minecraft.pathfinding.PathNavigateGround;
-import net.minecraft.pathfinding.PathNodeType;
+import net.minecraft.network.datasync.*;
+import net.minecraft.pathfinding.*;
 import net.minecraft.scoreboard.Team;
-import net.minecraft.util.DamageSource;
-import net.minecraft.util.EntityDamageSourceIndirect;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
-import net.minecraft.util.EnumParticleTypes;
-import net.minecraft.util.NonNullList;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.SoundEvent;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.*;
+import net.minecraft.util.math.*;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.World;
@@ -94,24 +63,16 @@ import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import p455w0rd.endermanevo.api.ITOPEntityInfoProvider;
+import p455w0rd.endermanevo.init.*;
 import p455w0rd.endermanevo.init.ModIntegration.Mods;
-import p455w0rd.endermanevo.init.ModItems;
-import p455w0rd.endermanevo.init.ModNetworking;
-import p455w0rd.endermanevo.init.ModRegistries;
 import p455w0rd.endermanevo.integration.EnderStorage;
 import p455w0rd.endermanevo.integration.IronChests;
 import p455w0rd.endermanevo.network.PacketFriendermanRegistrySync;
-import p455w0rd.endermanevo.util.ChestUtils;
+import p455w0rd.endermanevo.util.*;
 import p455w0rd.endermanevo.util.ChestUtils.VanillaChestTypes;
 import p455w0rd.endermanevo.util.EntityUtils;
-import p455w0rd.endermanevo.util.EnumParticles;
 import p455w0rd.endermanevo.util.FriendermanUtils.ChestType;
-import p455w0rd.endermanevo.util.ParticleUtil;
-import p455w0rdslib.util.EasyMappings;
-import p455w0rdslib.util.InventoryUtils;
-import p455w0rdslib.util.MCUtils;
-import p455w0rdslib.util.MathUtils;
-import p455w0rdslib.util.PlayerUUIDUtils;
+import p455w0rdslib.util.*;
 
 /**
  * @author p455w0rd

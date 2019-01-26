@@ -10,41 +10,24 @@ import com.google.common.base.Function;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityCreature;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.IEntityLivingData;
-import net.minecraft.entity.ai.EntityAIAttackMelee;
-import net.minecraft.entity.ai.EntityAIBase;
-import net.minecraft.entity.ai.EntityAIHurtByTarget;
-import net.minecraft.entity.ai.EntityAILookIdle;
-import net.minecraft.entity.ai.EntityAINearestAttackableTarget;
-import net.minecraft.entity.ai.EntityAISwimming;
-import net.minecraft.entity.ai.EntityAIWander;
-import net.minecraft.entity.ai.EntityAIWatchClosest;
+import net.minecraft.entity.*;
+import net.minecraft.entity.ai.*;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.monster.EntityEnderman;
+import net.minecraft.entity.passive.EntityTameable;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.projectile.EntitySnowball;
-import net.minecraft.init.Blocks;
-import net.minecraft.init.Items;
-import net.minecraft.init.MobEffects;
+import net.minecraft.init.*;
 import net.minecraft.inventory.EntityEquipmentSlot;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemElytra;
-import net.minecraft.item.ItemStack;
+import net.minecraft.item.*;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.network.datasync.*;
 import net.minecraft.scoreboard.Team;
-import net.minecraft.util.DamageSource;
-import net.minecraft.util.EntityDamageSource;
-import net.minecraft.util.EntityDamageSourceIndirect;
-import net.minecraft.util.SoundEvent;
-import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.RayTraceResult;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.DifficultyInstance;
-import net.minecraft.world.World;
+import net.minecraft.util.*;
+import net.minecraft.util.math.*;
+import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.TextFormatting;
+import net.minecraft.world.*;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.Side;
@@ -58,7 +41,7 @@ import p455w0rdslib.util.MCPrivateUtils;
 
 public class EntityEvolvedEnderman extends EntityEnderman {
 
-	//private int targetChangeTime = 0;
+	private static final DataParameter<Boolean> IS_AGGRO = EntityDataManager.<Boolean>createKey(EntityEvolvedEnderman.class, DataSerializers.BOOLEAN);
 
 	public EntityEvolvedEnderman(World worldIn) {
 		super(worldIn);
@@ -90,8 +73,40 @@ public class EntityEvolvedEnderman extends EntityEnderman {
 		tasks.addTask(10, new EntityEvolvedEnderman.AIPlaceBlock(this));
 		tasks.addTask(11, new EntityEvolvedEnderman.AITakeBlock(this));
 		targetTasks.addTask(1, new EntityEvolvedEnderman.AIFindPlayer(this));
-		targetTasks.addTask(2, new EntityAIHurtByTarget(this, false, new Class[0]));
+		targetTasks.addTask(2, new EntityEvolvedEnderman.EntityAIEndermanHurtByTarget(this));
 		targetTasks.addTask(3, new EntityAINearestAttackableTarget<EntityEvolvedEndermite>(this, EntityEvolvedEndermite.class, 10, true, false, (@Nullable EntityEvolvedEndermite p_apply_1_) -> p_apply_1_.isSpawnedByPlayer()));
+	}
+
+	private static final String IS_AGGRO_KEY = "IsAggro";
+
+	@Override
+	public void writeEntityToNBT(NBTTagCompound compound) {
+		super.writeEntityToNBT(compound);
+		compound.setBoolean(IS_AGGRO_KEY, isAggro());
+	}
+
+	@Override
+	public void readEntityFromNBT(NBTTagCompound compound) {
+		super.readEntityFromNBT(compound);
+		if (compound.hasKey(IS_AGGRO_KEY)) {
+			if (isAggro() != compound.getBoolean(IS_AGGRO_KEY)) {
+				setAggro(!isAggro());
+			}
+		}
+	}
+
+	@Override
+	protected void entityInit() {
+		super.entityInit();
+		dataManager.register(IS_AGGRO, Boolean.valueOf(false));
+	}
+
+	public void setAggro(boolean isAggro) {
+		dataManager.set(IS_AGGRO, Boolean.valueOf(isAggro));
+	}
+
+	public boolean isAggro() {
+		return dataManager.get(IS_AGGRO).booleanValue();
 	}
 
 	@SideOnly(Side.CLIENT)
@@ -340,7 +355,7 @@ public class EntityEvolvedEnderman extends EntityEnderman {
 					double d3 = d0 + (posX - d0) * d6 + (random.nextDouble() - 0.5D) * width * 2.0D;
 					double d4 = d1 + (posY - d1) * d6 + random.nextDouble() * height;
 					double d5 = d2 + (posZ - d2) * d6 + (random.nextDouble() - 0.5D) * width * 2.0D;
-					ParticleUtil.spawn(EnumParticles.PORTAL_GREEN, EasyMappings.world(this), d3, d4, d5, f, f1, f2);
+					ParticleUtil.spawn(getParticle(), EasyMappings.world(this), d3, d4, d5, f, f1, f2);
 				}
 			}
 			if (this instanceof EntityCreature) {
@@ -349,6 +364,10 @@ public class EntityEvolvedEnderman extends EntityEnderman {
 
 			return true;
 		}
+	}
+
+	private EnumParticles getParticle() {
+		return isAggro() ? EnumParticles.PORTAL_RED : EnumParticles.PORTAL_GREEN;
 	}
 
 	@Override
@@ -371,7 +390,7 @@ public class EntityEvolvedEnderman extends EntityEnderman {
 				double sx = (rand.nextDouble() - 0.5D) * 2.0D;
 				double sy = -rand.nextDouble();
 				double sz = (rand.nextDouble() - 0.5D) * 2.0D;
-				ParticleUtil.spawn(EnumParticles.PORTAL_GREEN, EasyMappings.world(this), x, y, z, sx, sy, sz);
+				ParticleUtil.spawn(getParticle(), EasyMappings.world(this), x, y, z, sx, sy, sz);
 			}
 		}
 
@@ -505,6 +524,9 @@ public class EntityEvolvedEnderman extends EntityEnderman {
 		private EntityPlayer player;
 		private int aggroTime;
 		private int teleportTime;
+		private int direMessageTime;
+		private TextComponentString aggroMessage;
+		private TextComponentString nextTimeMessage = new TextComponentString(TextFormatting.GREEN + "" + TextFormatting.BOLD + "You're not worth my time -_-");
 
 		public AIFindPlayer(EntityEvolvedEnderman p_i45842_1_) {
 			super(p_i45842_1_, EntityPlayer.class, false);
@@ -528,6 +550,7 @@ public class EntityEvolvedEnderman extends EntityEnderman {
 		public void startExecuting() {
 			aggroTime = 5;
 			teleportTime = 0;
+			direMessageTime = 0;
 		}
 
 		/**
@@ -536,6 +559,10 @@ public class EntityEvolvedEnderman extends EntityEnderman {
 		@Override
 		public void resetTask() {
 			player = null;
+			targetEntity = null;
+			direMessageTime = 0;
+			aggroTime = 0;
+			aggroMessage = null;
 			super.resetTask();
 		}
 
@@ -554,7 +581,9 @@ public class EntityEvolvedEnderman extends EntityEnderman {
 				}
 			}
 			else {
-				return targetEntity != null && targetEntity.isEntityAlive() ? true : super.shouldContinueExecuting();
+				boolean shouldContinue = targetEntity != null && targetEntity.isEntityAlive() ? true : super.shouldContinueExecuting();
+				enderman.setAggro(shouldContinue);
+				return shouldContinue;
 			}
 		}
 
@@ -572,6 +601,25 @@ public class EntityEvolvedEnderman extends EntityEnderman {
 			}
 			else {
 				if (targetEntity != null) {
+					if (aggroTime <= 0) {
+						aggroTime = (targetEntity.getEntityWorld().rand.nextInt(20) + 1) * 20;
+						aggroMessage = new TextComponentString(TextFormatting.GREEN + "" + TextFormatting.BOLD + targetEntity.getDisplayNameString() + "!! I'm such a huge fan, gimme hugz!");
+						enderman.setAggro(true);
+					}
+					if (aggroTime == 1) {
+						targetEntity.sendStatusMessage(nextTimeMessage, true);
+						enderman.setAggro(false);
+						resetTask();
+						return;
+					}
+					aggroTime--;
+					if (direMessageTime == 0) {
+						targetEntity.sendStatusMessage(aggroMessage, true);
+						direMessageTime = 20 * 30;
+					}
+					else {
+						direMessageTime--;
+					}
 					if (enderman.shouldAttackPlayer(targetEntity)) {
 						if (targetEntity.getDistanceSq(enderman) < 16.0D) {
 							enderman.teleportRandomly();
@@ -693,6 +741,61 @@ public class EntityEvolvedEnderman extends EntityEnderman {
 				world.setBlockToAir(blockpos);
 			}
 		}
+	}
+
+	public class EntityAIEndermanHurtByTarget extends EntityAITarget {
+		/** Store the previous revengeTimer value */
+		private int revengeTimerOld;
+
+		public EntityAIEndermanHurtByTarget(EntityCreature creatureIn) {
+			super(creatureIn, true);
+			setMutexBits(1);
+		}
+
+		/**
+		 * Returns whether the EntityAIBase should begin execution.
+		 */
+		@Override
+		public boolean shouldExecute() {
+			int i = taskOwner.getRevengeTimer();
+			EntityLivingBase entitylivingbase = taskOwner.getRevengeTarget();
+			return i != revengeTimerOld && entitylivingbase != null && this.isSuitableTarget(entitylivingbase, false);
+		}
+
+		/**
+		 * Execute a one shot task or start executing a continuous task
+		 */
+		@Override
+		public void startExecuting() {
+			taskOwner.setAttackTarget(taskOwner.getRevengeTarget());
+			target = taskOwner.getAttackTarget();
+			revengeTimerOld = taskOwner.getRevengeTimer();
+			unseenMemoryTicks = 5 * 20;
+			if (taskOwner.getEntityWorld() != null && taskOwner.getEntityWorld().provider.getDimensionType() == DimensionType.NETHER) {
+				alertOthers();
+			}
+
+			super.startExecuting();
+		}
+
+		protected void alertOthers() {
+			double d0 = getTargetDistance();
+			for (EntityCreature entitycreature : taskOwner.world.getEntitiesWithinAABB(taskOwner.getClass(), (new AxisAlignedBB(taskOwner.posX, taskOwner.posY, taskOwner.posZ, taskOwner.posX + 1.0D, taskOwner.posY + 1.0D, taskOwner.posZ + 1.0D)).grow(d0, 10.0D, d0))) {
+				if (taskOwner != entitycreature && entitycreature.getAttackTarget() == null && (!(taskOwner instanceof EntityTameable) || ((EntityTameable) taskOwner).getOwner() == ((EntityTameable) entitycreature).getOwner()) && !entitycreature.isOnSameTeam(taskOwner.getRevengeTarget())) {
+					setEntityAttackTarget(entitycreature, taskOwner.getRevengeTarget());
+				}
+			}
+		}
+
+		protected void setEntityAttackTarget(EntityCreature creatureIn, EntityLivingBase entityLivingBaseIn) {
+			creatureIn.setAttackTarget(entityLivingBaseIn);
+		}
+	}
+
+	@Override
+	public void setAttackTarget(@Nullable EntityLivingBase entitylivingbaseIn) {
+		super.setAttackTarget(entitylivingbaseIn);
+		setAggro(getAttackTarget() != null);
 	}
 
 }

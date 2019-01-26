@@ -1,19 +1,13 @@
 package p455w0rd.endermanevo.init;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.RenderItem;
+import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.entity.RenderManager;
-import net.minecraft.client.renderer.entity.RenderSnowball;
+import net.minecraft.entity.Entity;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import p455w0rd.endermanevo.blocks.tiles.TileBlockSkull;
-import p455w0rd.endermanevo.client.render.RenderEvolvedEnderman;
-import p455w0rd.endermanevo.client.render.RenderEvolvedEndermite;
-import p455w0rd.endermanevo.client.render.RenderFrienderman;
-import p455w0rd.endermanevo.client.render.TESRBlockSkull;
-import p455w0rd.endermanevo.entity.EntityEvolvedEnderman;
-import p455w0rd.endermanevo.entity.EntityEvolvedEndermite;
-import p455w0rd.endermanevo.entity.EntityFrienderPearl;
-import p455w0rd.endermanevo.entity.EntityFrienderman;
+import p455w0rd.endermanevo.client.render.*;
+import p455w0rd.endermanevo.entity.*;
 
 /**
  * @author p455w0rd
@@ -21,17 +15,28 @@ import p455w0rd.endermanevo.entity.EntityFrienderman;
  */
 public class ModRendering {
 
-	public static void preInit() {
+	private static RenderManager renderManager;
+
+	public static void registerTileEntityRenderers() {
 		ClientRegistry.bindTileEntitySpecialRenderer(TileBlockSkull.class, new TESRBlockSkull());
 	}
 
-	public static void init() {
-		RenderManager rm = Minecraft.getMinecraft().getRenderManager();
-		RenderItem itemRenderer = Minecraft.getMinecraft().getRenderItem();
-		rm.entityRenderMap.put(EntityEvolvedEnderman.class, new RenderEvolvedEnderman(rm));
-		rm.entityRenderMap.put(EntityFrienderman.class, new RenderFrienderman(rm));
-		rm.entityRenderMap.put(EntityFrienderPearl.class, new RenderSnowball<EntityFrienderPearl>(rm, ModItems.FRIENDER_PEARL, itemRenderer));
-		rm.entityRenderMap.put(EntityEvolvedEndermite.class, new RenderEvolvedEndermite(rm));
+	public static RenderManager getRenderManager() {
+		if (renderManager == null) {
+			renderManager = Minecraft.getMinecraft().getRenderManager();
+		}
+		return renderManager;
+	}
+
+	private static void registerEntityRenderer(Class<? extends Entity> entityClass, Render<? extends Entity> renderer) {
+		getRenderManager().entityRenderMap.put(entityClass, renderer);
+	}
+
+	public static void registerEntityRenderers() {
+		registerEntityRenderer(EntityEvolvedEnderman.class, new RenderEvolvedEnderman());
+		registerEntityRenderer(EntityFrienderman.class, new RenderFrienderman());
+		registerEntityRenderer(EntityFrienderPearl.class, new RenderFrienderPearl());
+		registerEntityRenderer(EntityEvolvedEndermite.class, new RenderEvolvedEndermite());
 	}
 
 }

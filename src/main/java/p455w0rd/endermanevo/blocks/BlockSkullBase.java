@@ -8,17 +8,13 @@ import com.google.common.collect.Lists;
 import net.minecraft.block.BlockSkull;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemBlock;
-import net.minecraft.item.ItemStack;
+import net.minecraft.item.*;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.util.math.*;
+import net.minecraft.util.text.translation.I18n;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import p455w0rd.endermanevo.blocks.tiles.TileBlockSkull;
@@ -28,6 +24,7 @@ import p455w0rd.endermanevo.init.ModItems;
  * @author p455w0rd
  *
  */
+@SuppressWarnings("deprecation")
 public class BlockSkullBase extends BlockSkull {
 
 	protected static final AxisAlignedBB DEFAULT_AABB = new AxisAlignedBB(0.25D, 0.0D, 0.25D, 0.75D, 0.5D, 0.75D);
@@ -49,7 +46,7 @@ public class BlockSkullBase extends BlockSkull {
 
 	@Override
 	public String getLocalizedName() {
-		return I18n.format(getUnlocalizedName());
+		return I18n.translateToLocal(getUnlocalizedName());
 	}
 
 	@Override

@@ -3,11 +3,8 @@ package p455w0rd.endermanevo.client.model;
 import org.lwjgl.opengl.GL11;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.model.ModelBiped;
-import net.minecraft.client.model.ModelEnderman;
-import net.minecraft.client.model.ModelRenderer;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.OpenGlHelper;
+import net.minecraft.client.model.*;
+import net.minecraft.client.renderer.*;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.util.ResourceLocation;
@@ -97,9 +94,13 @@ public class ModelSkullBase extends ModelBiped {
 		}
 		head.rotateAngleY = rotationX / (180F / (float) Math.PI);
 		head.rotateAngleX = rotationY / (180F / (float) Math.PI);
-		head.render(0.0625F);
+		if (entity == null || (entity != null && !entity.isInvisible())) {
+			head.render(0.0625F);
+		}
 		if (renderOverlay) {
-			renderOverlay(rotationX, rotationY);
+			if (entity == null || (entity != null && !entity.isInvisible())) {
+				renderOverlay(rotationX, rotationY);
+			}
 		}
 		if (entity != null && entity.isSneaking()) {
 			GlStateManager.translate(0.0F, -0.25F, 0.0F);
@@ -123,13 +124,16 @@ public class ModelSkullBase extends ModelBiped {
 			float g = 0.75F;
 			float b = 0;
 			GlStateManager.color(r, g, b, 0.5F);
-			GlStateManager.disableLighting();
+			//GlStateManager.disableLighting();
+			RenderHelper.enableStandardItemLighting();
 			OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, 260.0F, 260.0F);
 			GlStateManager.blendFunc(GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ONE);
 			//GlStateManager.translate(0.5F, 0.1F, 0.5F);
 			GlStateManager.scale(1.1F, 1.1F, 1.1F);
 			//modelbase.render(rot);
+
 			head.render(0.0625F);
+
 			GlStateManager.translate(-0.5F, -0.5F, -0.5F);
 			GlStateManager.matrixMode(5890);
 			GlStateManager.loadIdentity();
@@ -183,13 +187,14 @@ public class ModelSkullBase extends ModelBiped {
 	public void renderLightMap(float skullRotation, float skullPitch, EntityLivingBase entity) {
 
 		GlStateManager.pushMatrix();
-		GlStateManager.enableBlend();
-		GlStateManager.blendFunc(GL11.GL_ONE, GL11.GL_ONE);
-		GlStateManager.depthMask(true);
-		GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+		//GlStateManager.enableBlend();
+		//GlStateManager.blendFunc(GL11.GL_ONE, GL11.GL_ONE);
+		//GlStateManager.depthMask(true);
+		//GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
 		float brightnessX = OpenGlHelper.lastBrightnessX;
 		float brightnessY = OpenGlHelper.lastBrightnessY;
 		//OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, 61680f, 0f);
+		RenderHelper.enableStandardItemLighting();
 		OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, 240f, 240f);
 		if (entity != null && entity instanceof EntityLivingBase) {
 			render(skullRotation, skullPitch, entity);
@@ -199,24 +204,25 @@ public class ModelSkullBase extends ModelBiped {
 		}
 
 		OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, brightnessX, brightnessY);
-		GlStateManager.disableBlend();
+		//GlStateManager.disableBlend();
 		GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 		GlStateManager.popMatrix();
 	}
 
 	public void renderLightMapOnPlayerHead(World world, EntityLivingBase wearer) {
 		GlStateManager.pushMatrix();
-		GlStateManager.enableBlend();
-		GlStateManager.blendFunc(GL11.GL_ONE, GL11.GL_ONE);
-		GlStateManager.depthMask(true);
+		//GlStateManager.enableBlend();
+		//GlStateManager.blendFunc(GL11.GL_ONE, GL11.GL_ONE);
+		//GlStateManager.depthMask(true);
 		float brightnessX = OpenGlHelper.lastBrightnessX;
 		float brightnessY = OpenGlHelper.lastBrightnessY;
-		GlStateManager.disableLighting();
+		//GlStateManager.disableLighting();
+		RenderHelper.enableStandardItemLighting();
 		OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, 240f, 240f);
 		//head.render(0.01F);
 		render(wearer.getRotationYawHead(), wearer.rotationPitch, wearer);
 		OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, brightnessX, brightnessY);
-		GlStateManager.disableBlend();
+		//GlStateManager.disableBlend();
 		GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 		GlStateManager.popMatrix();
 	}

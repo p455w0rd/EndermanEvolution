@@ -35,6 +35,10 @@ public class ModConfig {
 		ConfigOptions.FRIENDERMAN_MAX_SPAWN = CONFIG.getInt("FriendermanMaxSpawnPerGroup", DEF_CAT, 2, 1, 4, "When the game decides to spawn a Frienderman, what is the max that should spawn in the group?");
 		ConfigOptions.SHOW_SKULL_PARTICLES = CONFIG.getBoolean("DisplaySkullParticles", CLIENT_CAT, true, "Whether or not to spawn particles when wearing an enderman skull");
 		ConfigOptions.ENABLE_ENDERFLOWER_WORLDGEN = CONFIG.getBoolean("EnableEnderDaisyWorldGen", DEF_CAT, true, "Whether or not Ender Daisies generate naturally");
+		ConfigOptions.ENDERFLOWER_SPAWN_PROBABILITY = CONFIG.getFloat("EnderDaisySpawnProbability", DEF_CAT, 0.2F, 0.01F, 0.8F, "Chance between 0.0 and 1.0 that an Ender Daisy will spawn (0.2=20% chance)");
+		ConfigOptions.ENDERFLOWER_DIM_WHITELIST = CONFIG.get(DEF_CAT, "EnderDaisyDimensionWhitelist", new int[] {
+				-1, 0, 1
+		}, "Integer dimension IDs where Ender Daisies are allowed to spawn. One integer per line.").getIntList();
 
 		if (CONFIG.hasChanged() || reloadConfigs) {
 			CONFIG.save();
@@ -51,6 +55,10 @@ public class ModConfig {
 		public static boolean ENDERMAN_DAY_SPAWN = true;
 		public static boolean SHOW_SKULL_PARTICLES = true;
 		public static boolean ENABLE_ENDERFLOWER_WORLDGEN = true;
+		public static float ENDERFLOWER_SPAWN_PROBABILITY = 0.2F;
+		public static int[] ENDERFLOWER_DIM_WHITELIST = new int[] {
+				-1, 0, 1
+		};
 
 	}
 }

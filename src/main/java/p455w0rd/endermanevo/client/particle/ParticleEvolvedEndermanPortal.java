@@ -1,28 +1,26 @@
 /*
- * This file is part of p455w0rd's Things.
+ * This file is part of Enderman Evolution.
  * Copyright (c) 2016, p455w0rd (aka TheRealp455w0rd), All rights reserved
  * unless
  * otherwise stated.
  *
- * p455w0rd's Things is free software: you can redistribute it and/or modify
+ * Enderman Evolution is free software: you can redistribute it and/or modify
  * it under the terms of the MIT License.
  *
- * p455w0rd's Things is distributed in the hope that it will be useful,
+ * Enderman Evolution is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * MIT License for more details.
  *
  * You should have received a copy of the MIT License
- * along with p455w0rd's Things. If not, see
+ * along with Enderman Evolution. If not, see
  * <https://opensource.org/licenses/MIT>.
  */
 package p455w0rd.endermanevo.client.particle;
 
 import net.minecraft.client.particle.IParticleFactory;
 import net.minecraft.client.particle.Particle;
-import net.minecraft.client.renderer.BufferBuilder;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.OpenGlHelper;
+import net.minecraft.client.renderer.*;
 import net.minecraft.entity.Entity;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
@@ -32,13 +30,13 @@ import net.minecraftforge.fml.relauncher.SideOnly;
  * @author p455w0rd
  *
  */
-public class ParticlePortal2 extends Particle {
+public class ParticleEvolvedEndermanPortal extends Particle {
 	private final float portalParticleScale;
 	private final double portalPosX;
 	private final double portalPosY;
 	private final double portalPosZ;
 
-	public ParticlePortal2(World worldIn, double xCoordIn, double yCoordIn, double zCoordIn, double xSpeedIn, double ySpeedIn, double zSpeedIn) {
+	public ParticleEvolvedEndermanPortal(World worldIn, double xCoordIn, double yCoordIn, double zCoordIn, double xSpeedIn, double ySpeedIn, double zSpeedIn) {
 		super(worldIn, xCoordIn, yCoordIn, zCoordIn, xSpeedIn, ySpeedIn, zSpeedIn);
 		motionX = xSpeedIn;
 		motionY = ySpeedIn;
@@ -121,7 +119,7 @@ public class ParticlePortal2 extends Particle {
 	public static class Factory implements IParticleFactory {
 		@Override
 		public Particle createParticle(int particleID, World worldIn, double xCoordIn, double yCoordIn, double zCoordIn, double xSpeedIn, double ySpeedIn, double zSpeedIn, int... p_178902_15_) {
-			return new ParticlePortal2(worldIn, xCoordIn, yCoordIn, zCoordIn, xSpeedIn, ySpeedIn, zSpeedIn);
+			return new ParticleEvolvedEndermanPortal(worldIn, xCoordIn, yCoordIn, zCoordIn, xSpeedIn, ySpeedIn, zSpeedIn);
 		}
 	}
 }

@@ -1,19 +1,19 @@
 /*
- * This file is part of p455w0rd's Things.
+ * This file is part of Enderman Evolution.
  * Copyright (c) 2016, p455w0rd (aka TheRealp455w0rd), All rights reserved
  * unless
  * otherwise stated.
  *
- * p455w0rd's Things is free software: you can redistribute it and/or modify
+ * Enderman Evolution is free software: you can redistribute it and/or modify
  * it under the terms of the MIT License.
  *
- * p455w0rd's Things is distributed in the hope that it will be useful,
+ * Enderman Evolution is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * MIT License for more details.
  *
  * You should have received a copy of the MIT License
- * along with p455w0rd's Things. If not, see
+ * along with Enderman Evolution. If not, see
  * <https://opensource.org/licenses/MIT>.
  */
 package p455w0rd.endermanevo.client.model.layers;
@@ -21,9 +21,7 @@ package p455w0rd.endermanevo.client.model.layers;
 import net.minecraft.block.BlockShulkerBox;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.BlockRendererDispatcher;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.OpenGlHelper;
+import net.minecraft.client.renderer.*;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
 import net.minecraft.client.renderer.entity.layers.LayerRenderer;
 import net.minecraft.client.renderer.texture.TextureMap;
@@ -31,7 +29,7 @@ import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import p455w0rd.endermanevo.client.render.CustomChestRenderer;
 import p455w0rd.endermanevo.client.render.CustomChestRenderer.ChestType;
-import p455w0rd.endermanevo.client.render.RenderFrienderman;
+import p455w0rd.endermanevo.client.render.RenderEndermanBase;
 import p455w0rd.endermanevo.entity.EntityFrienderman;
 import p455w0rd.endermanevo.init.ModIntegration.Mods;
 import p455w0rd.endermanevo.integration.EnderStorage;
@@ -43,9 +41,10 @@ import p455w0rdslib.util.RenderUtils;
  *
  */
 public class LayerHeldBlock3 implements LayerRenderer<EntityFrienderman> {
-	private final RenderFrienderman endermanRenderer;
 
-	public LayerHeldBlock3(RenderFrienderman endermanRendererIn) {
+	private final RenderEndermanBase<EntityFrienderman> endermanRenderer;
+
+	public LayerHeldBlock3(RenderEndermanBase<EntityFrienderman> endermanRendererIn) {
 		endermanRenderer = endermanRendererIn;
 	}
 

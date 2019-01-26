@@ -5,10 +5,8 @@ import java.util.List;
 
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.util.text.translation.I18n;
-import net.minecraftforge.common.config.ConfigCategory;
-import net.minecraftforge.common.config.ConfigElement;
-import net.minecraftforge.common.config.Configuration;
+import net.minecraft.client.resources.I18n;
+import net.minecraftforge.common.config.*;
 import net.minecraftforge.fml.client.config.GuiConfig;
 import net.minecraftforge.fml.client.config.IConfigElement;
 import p455w0rd.endermanevo.init.ModConfig;
@@ -39,7 +37,7 @@ public class GuiModConfig extends GuiConfig {
 	}
 
 	private static String getTitle(GuiScreen parent) {
-		return I18n.translateToLocal(ModGlobals.NAME + " Config");
+		return I18n.format(ModGlobals.NAME + " Config");
 	}
 
 	@Override

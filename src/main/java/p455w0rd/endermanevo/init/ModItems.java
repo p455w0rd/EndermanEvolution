@@ -9,10 +9,7 @@ import net.minecraft.item.Item;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import p455w0rd.endermanevo.api.IModelHolder;
-import p455w0rd.endermanevo.items.ItemEnderFlower;
-import p455w0rd.endermanevo.items.ItemEnderFragment;
-import p455w0rd.endermanevo.items.ItemFrienderPearl;
-import p455w0rd.endermanevo.items.ItemSkullBase;
+import p455w0rd.endermanevo.items.*;
 
 public class ModItems {
 

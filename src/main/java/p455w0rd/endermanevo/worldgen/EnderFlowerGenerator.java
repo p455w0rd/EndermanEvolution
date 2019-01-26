@@ -1,15 +1,8 @@
 package p455w0rd.endermanevo.worldgen;
 
-import static net.minecraftforge.common.BiomeDictionary.Type.DEAD;
-import static net.minecraftforge.common.BiomeDictionary.Type.END;
-import static net.minecraftforge.common.BiomeDictionary.Type.FOREST;
-import static net.minecraftforge.common.BiomeDictionary.Type.HILLS;
-import static net.minecraftforge.common.BiomeDictionary.Type.MAGICAL;
-import static net.minecraftforge.common.BiomeDictionary.Type.MOUNTAIN;
-import static net.minecraftforge.common.BiomeDictionary.Type.NETHER;
-import static net.minecraftforge.common.BiomeDictionary.Type.PLAINS;
+import static net.minecraftforge.common.BiomeDictionary.Type.*;
 
-import java.util.Random;
+import java.util.*;
 
 import javax.annotation.Nullable;
 
@@ -28,6 +21,7 @@ import net.minecraftforge.common.BiomeDictionary.Type;
 import net.minecraftforge.fml.common.IWorldGenerator;
 import p455w0rd.endermanevo.blocks.BlockEnderFlower;
 import p455w0rd.endermanevo.init.ModBlocks;
+import p455w0rd.endermanevo.init.ModConfig.ConfigOptions;
 
 /**
  * @author p455w0rd
@@ -36,21 +30,16 @@ import p455w0rd.endermanevo.init.ModBlocks;
 public class EnderFlowerGenerator implements IWorldGenerator {
 
 	private static final Type[] VALID_BIOMES = new Type[] {
-			PLAINS,
-			END,
-			NETHER,
-			MAGICAL,
-			FOREST,
-			MOUNTAIN,
-			HILLS
+			PLAINS, END, NETHER, MAGICAL, FOREST, MOUNTAIN, HILLS
 	};
+	private List<Integer> validDimenions = new ArrayList<>();
 
 	@Override
 	public void generate(Random rand, int chunkX, int chunkZ, World world, IChunkGenerator chunkGenerator, IChunkProvider chunkProvider) {
 		final int x = chunkX * 16 + 8;
 		final int z = chunkZ * 16 + 8;
 		final Biome biome = world.getBiomeForCoordsBody(new BlockPos(x, 0, z));
-		if (BiomeDictionary.hasType(biome, DEAD)) {
+		if (BiomeDictionary.hasType(biome, DEAD) || !isValidDimension(world)) {
 			return;
 		}
 
@@ -61,8 +50,17 @@ public class EnderFlowerGenerator implements IWorldGenerator {
 		}
 	}
 
+	private boolean isValidDimension(World world) {
+		if (validDimenions.isEmpty()) {
+			for (int dimension : ConfigOptions.ENDERFLOWER_DIM_WHITELIST) {
+				validDimenions.add(dimension);
+			}
+		}
+		return validDimenions.contains(world.provider.getDimension());
+	}
+
 	private void genFlower(World world, Random rand, int x, int z) {
-		if (rand.nextFloat() < 0.5f) {
+		if (rand.nextFloat() < ConfigOptions.ENDERFLOWER_SPAWN_PROBABILITY) {
 			final int posX = x + world.rand.nextInt(16);
 			final int posZ = z + world.rand.nextInt(16);
 			final BlockPos newPos = getGroundPos(world, posX, posZ);

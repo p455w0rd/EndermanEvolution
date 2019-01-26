@@ -2,13 +2,7 @@ package p455w0rd.endermanevo.integration;
 
 import javax.annotation.Nullable;
 
-import mcjty.theoneprobe.api.IProbeHitData;
-import mcjty.theoneprobe.api.IProbeHitEntityData;
-import mcjty.theoneprobe.api.IProbeInfo;
-import mcjty.theoneprobe.api.IProbeInfoEntityProvider;
-import mcjty.theoneprobe.api.IProbeInfoProvider;
-import mcjty.theoneprobe.api.ITheOneProbe;
-import mcjty.theoneprobe.api.ProbeMode;
+import mcjty.theoneprobe.api.*;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
@@ -16,9 +10,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.event.FMLInterModComms;
-import p455w0rd.endermanevo.api.ITOPBlockDisplayOverride;
-import p455w0rd.endermanevo.api.ITOPEntityInfoProvider;
-import p455w0rd.endermanevo.api.ITOPInfoProvider;
+import p455w0rd.endermanevo.api.*;
 import p455w0rd.endermanevo.init.ModGlobals;
 
 /**
@@ -46,6 +38,14 @@ public class TOP {
 		@Override
 		public Void apply(ITheOneProbe theOneProbe) {
 			probe = theOneProbe;
+			probe.registerEntityDisplayOverride((mode, probeInfo, player, world, entity, data) -> {
+				if (entity instanceof ITOPEntityDisplayOverride) {
+					ITOPEntityDisplayOverride provider = (ITOPEntityDisplayOverride) entity;
+					provider.overrideStandardInfo(mode, probeInfo, player, world, entity, data);
+					return true;
+				}
+				return false;
+			});
 			probe.registerEntityProvider(new IProbeInfoEntityProvider() {
 				@Override
 				public String getID() {

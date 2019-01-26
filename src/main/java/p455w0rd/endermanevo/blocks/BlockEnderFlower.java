@@ -1,46 +1,31 @@
 package p455w0rd.endermanevo.blocks;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Random;
 
 import javax.annotation.Nullable;
 
 import com.google.common.collect.Lists;
 
-import net.minecraft.block.Block;
-import net.minecraft.block.IGrowable;
-import net.minecraft.block.SoundType;
+import net.minecraft.block.*;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyInteger;
-import net.minecraft.block.state.BlockFaceShape;
-import net.minecraft.block.state.BlockStateContainer;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.enchantment.Enchantment;
-import net.minecraft.enchantment.EnchantmentHelper;
+import net.minecraft.block.state.*;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
-import net.minecraft.init.Enchantments;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.BlockRenderLayer;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
-import net.minecraft.util.EnumParticleTypes;
-import net.minecraft.util.NonNullList;
+import net.minecraft.util.*;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import net.minecraftforge.common.EnumPlantType;
-import net.minecraftforge.common.ForgeHooks;
-import net.minecraftforge.common.IPlantable;
+import net.minecraftforge.common.*;
+import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import p455w0rd.endermanevo.init.ModCreativeTab;
-import p455w0rd.endermanevo.init.ModGlobals;
-import p455w0rd.endermanevo.init.ModItems;
+import p455w0rd.endermanevo.init.*;
 import p455w0rd.endermanevo.util.EnumParticles;
 import p455w0rd.endermanevo.util.ParticleUtil;
 
@@ -74,6 +59,7 @@ public class BlockEnderFlower extends Block implements IGrowable, IPlantable {
 	public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
 		if (!world.isRemote) {
 			if (getAge(state) == getMaxAge() && hand == EnumHand.MAIN_HAND) {
+				/*
 				int fortune = 0;
 				ItemStack heldStack = player.getHeldItemMainhand();
 				if (!heldStack.isEmpty()) {
@@ -84,7 +70,8 @@ public class BlockEnderFlower extends Block implements IGrowable, IPlantable {
 						}
 					}
 				}
-				dropBlockAsItem(world, pos, state, fortune);
+				*/
+				dropBlockAsItem(world, pos, state, -1);
 				if (!player.capabilities.isCreativeMode) {
 					world.setBlockState(pos, getDefaultState().withProperty(STAGE, Integer.valueOf(0)), 3);
 				}
@@ -92,6 +79,36 @@ public class BlockEnderFlower extends Block implements IGrowable, IPlantable {
 			}
 		}
 		return false;
+	}
+
+	@Override
+	public void dropBlockAsItemWithChance(World worldIn, BlockPos pos, IBlockState state, float chance, int fortune) {
+		if (!worldIn.isRemote && !worldIn.restoringBlockSnapshots) {
+			NonNullList<ItemStack> drops = NonNullList.create();
+			getDrops(drops, worldIn, pos, state, fortune);
+			chance = ForgeEventFactory.fireBlockHarvesting(Lists.newArrayList(), worldIn, pos, state, fortune, chance, false, harvesters.get());
+			for (ItemStack drop : drops) {
+				if (worldIn.rand.nextFloat() <= chance) {
+					spawnAsEntity(worldIn, pos, drop);
+				}
+			}
+		}
+	}
+
+	@Override
+	public void getDrops(NonNullList<ItemStack> drops, IBlockAccess world, BlockPos pos, IBlockState state, int fortune) {
+		int age = getAge(state);
+		Random rand = world instanceof World ? ((World) world).rand : ModGlobals.RNG;
+		drops.clear();
+		if (fortune > -1) {
+			drops.add(new ItemStack(getItemBlock(), 1));
+		}
+		if (fortune == -1) {
+			fortune = 0;
+		}
+		if (age >= getMaxAge()) {
+			drops.add(new ItemStack(ModItems.ENDER_FRAGMENT, 1 + rand.nextInt(fortune + 1)));
+		}
 	}
 
 	@Override
@@ -126,6 +143,11 @@ public class BlockEnderFlower extends Block implements IGrowable, IPlantable {
 	@Override
 	public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos) {
 		return FLOWER_AABB[state.getValue(getAgeProperty()).intValue()];
+	}
+
+	@Override
+	public AxisAlignedBB getCollisionBoundingBox(IBlockState blockState, IBlockAccess worldIn, BlockPos pos) {
+		return NULL_AABB;
 	}
 
 	private boolean canSustainBush(IBlockState state) {
@@ -228,18 +250,6 @@ public class BlockEnderFlower extends Block implements IGrowable, IPlantable {
 	}
 
 	@Override
-	public void getDrops(NonNullList<ItemStack> drops, IBlockAccess world, BlockPos pos, IBlockState state, int fortune) {
-		int age = getAge(state);
-		Random rand = world instanceof World ? ((World) world).rand : ModGlobals.RNG;
-		drops.clear();
-		int numFlowers = 1 + (rand.nextFloat() > 0.97 ? 1 : 0);
-		drops.add(new ItemStack(getItemBlock(), numFlowers));
-		if (age >= getMaxAge()) {
-			drops.add(new ItemStack(ModItems.ENDER_FRAGMENT, 1 + rand.nextInt(fortune + 1)));
-		}
-	}
-
-	@Override
 	public boolean canPlaceBlockAt(World worldIn, BlockPos pos) {
 		IBlockState soil = worldIn.getBlockState(pos.down());
 		return super.canPlaceBlockAt(worldIn, pos) && isValidSoil(soil.getBlock());
@@ -295,7 +305,7 @@ public class BlockEnderFlower extends Block implements IGrowable, IPlantable {
 		Random rand = ModGlobals.RNG;
 
 		if (iblockstate.getMaterial() != Material.AIR) {
-			for (int i = 0; i < 15; ++i) {
+			for (int i = 0; i < 5; ++i) {
 				double d0 = rand.nextGaussian() * 0.02D;
 				double d1 = rand.nextGaussian() * 0.02D;
 				double d2 = rand.nextGaussian() * 0.02D;
@@ -303,7 +313,7 @@ public class BlockEnderFlower extends Block implements IGrowable, IPlantable {
 			}
 		}
 		else {
-			for (int i1 = 0; i1 < 15; ++i1) {
+			for (int i1 = 0; i1 < 5; ++i1) {
 				double d0 = rand.nextGaussian() * 0.02D;
 				double d1 = rand.nextGaussian() * 0.02D;
 				double d2 = rand.nextGaussian() * 0.02D;
