@@ -25,6 +25,7 @@ import mcp.mobius.waila.api.*;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.text.translation.I18n;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import p455w0rd.endermanevo.entity.EntityFrienderman;
@@ -36,48 +37,49 @@ import p455w0rdslib.util.PlayerUUIDUtils;
  * @author p455w0rd
  *
  */
+@SuppressWarnings("deprecation")
 public class WAILAProviderFrienderman implements IWailaEntityProvider {
 
 	@Override
-	public Entity getWailaOverride(IWailaEntityAccessor accessor, IWailaConfigHandler config) {
+	public Entity getWailaOverride(final IWailaEntityAccessor accessor, final IWailaConfigHandler config) {
 		return null;
 	}
 
 	@Override
-	public List<String> getWailaHead(Entity entity, List<String> currenttip, IWailaEntityAccessor accessor, IWailaConfigHandler config) {
+	public List<String> getWailaHead(final Entity entity, final List<String> currenttip, final IWailaEntityAccessor accessor, final IWailaConfigHandler config) {
 		return null;
 	}
 
 	@Override
-	public List<String> getWailaBody(Entity entity, List<String> currenttip, IWailaEntityAccessor accessor, IWailaConfigHandler config) {
+	public List<String> getWailaBody(final Entity entity, final List<String> currenttip, final IWailaEntityAccessor accessor, final IWailaConfigHandler config) {
 		if (!(entity instanceof EntityFrienderman)) {
 			return currenttip;
 		}
-		EntityFrienderman friend = (EntityFrienderman) entity;
-		NBTTagCompound nbt = friend.getEntityData();
+		final EntityFrienderman friend = (EntityFrienderman) entity;
+		final NBTTagCompound nbt = friend.getEntityData();
 		String owner = "";
-		boolean isTame = friend.isTamed();
+		final boolean isTame = friend.isTamed();
 		currenttip.add(WAILA.toolTipEnclose);
 		if (isTame) {
-			UUID ownerUUID = friend.getOwnerId();
+			final UUID ownerUUID = friend.getOwnerId();
 			if (FMLCommonHandler.instance().getMinecraftServerInstance() != null && MCUtils.isSMP(FMLCommonHandler.instance().getMinecraftServerInstance())) {
 				owner = PlayerUUIDUtils.getPlayerName(ownerUUID);
 				if (owner == "") {
-					owner = "404 Error: Name not found!";
+					owner = I18n.translateToLocal("waila.404");
 				}
 			}
 			else {
 				owner = accessor.getPlayer().getName();
 			}
 
-			currenttip.add("Owner: " + owner);
-			currenttip.add("Mode: " + (friend.isSitting() ? "Idle" : "Following/Defending"));
+			currenttip.add(I18n.translateToLocal("waila.owner") + ": " + owner);
+			currenttip.add(I18n.translateToLocal("waila.mode") + ": " + (friend.isSitting() ? I18n.translateToLocal("waila.idle") : I18n.translateToLocal("waila.followingdefending")));
 			if (friend.isHoldingChest() && accessor == friend.getOwner()) {
-				currenttip.add("Sneak+Right-Click to take chest");
+				currenttip.add(I18n.translateToLocal("waila.sneakrclicktotake"));
 			}
 		}
 		else {
-			currenttip.add("Right-click with Frienderpearl to tame");
+			currenttip.add(I18n.translateToLocal("waila.rightclickpearltotame"));
 			currenttip.add(nbt.getString("OwnerUUID"));
 		}
 		currenttip.add(WAILA.toolTipEnclose);
@@ -85,12 +87,12 @@ public class WAILAProviderFrienderman implements IWailaEntityProvider {
 	}
 
 	@Override
-	public List<String> getWailaTail(Entity entity, List<String> currenttip, IWailaEntityAccessor accessor, IWailaConfigHandler config) {
+	public List<String> getWailaTail(final Entity entity, final List<String> currenttip, final IWailaEntityAccessor accessor, final IWailaConfigHandler config) {
 		return null;
 	}
 
 	@Override
-	public NBTTagCompound getNBTData(EntityPlayerMP player, Entity ent, NBTTagCompound tag, World world) {
+	public NBTTagCompound getNBTData(final EntityPlayerMP player, final Entity ent, final NBTTagCompound tag, final World world) {
 		return ent.getEntityData();
 	}
 

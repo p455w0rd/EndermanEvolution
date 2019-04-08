@@ -56,6 +56,7 @@ import net.minecraft.util.*;
 import net.minecraft.util.math.*;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.translation.I18n;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.living.EnderTeleportEvent;
@@ -78,10 +79,11 @@ import p455w0rdslib.util.*;
  * @author p455w0rd
  *
  */
+@SuppressWarnings("deprecation")
 public class EntityFrienderman extends EntityCreature implements IMob, IEntityOwnable, ITOPEntityInfoProvider {
 
 	private static final UUID ATTACKING_SPEED_BOOST_ID = UUID.fromString("020E0DFB-87AE-4653-9556-831010E291A0");
-	private static final AttributeModifier ATTACKING_SPEED_BOOST = (new AttributeModifier(ATTACKING_SPEED_BOOST_ID, "Attacking speed boost", 0.15000000596046448D, 0)).setSaved(false);
+	private static final AttributeModifier ATTACKING_SPEED_BOOST = new AttributeModifier(ATTACKING_SPEED_BOOST_ID, "Attacking speed boost", 0.15000000596046448D, 0).setSaved(false);
 	private static final Set<Block> CARRIABLE_BLOCKS = Sets.<Block>newIdentityHashSet();
 	private static final DataParameter<Optional<IBlockState>> CARRIED_BLOCK = EntityDataManager.<Optional<IBlockState>>createKey(EntityFrienderman.class, DataSerializers.OPTIONAL_BLOCK_STATE);
 	private static final DataParameter<ItemStack> CARRIED_ITEM = EntityDataManager.<ItemStack>createKey(EntityFrienderman.class, DataSerializers.ITEM_STACK);
@@ -101,7 +103,7 @@ public class EntityFrienderman extends EntityCreature implements IMob, IEntityOw
 	private boolean isPartying;
 	private BlockPos jukeboxPosition;
 
-	public EntityFrienderman(World worldIn) {
+	public EntityFrienderman(final World worldIn) {
 		super(worldIn);
 		setTamed(false);
 		setSize(0.6F, 2.9F);
@@ -110,27 +112,27 @@ public class EntityFrienderman extends EntityCreature implements IMob, IEntityOw
 	}
 
 	@Override
-	public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, EntityPlayer player, World world, Entity entity, IProbeHitEntityData data) {
+	public void addProbeInfo(final ProbeMode mode, final IProbeInfo probeInfo, final EntityPlayer player, final World world, final Entity entity, final IProbeHitEntityData data) {
 		if (!isTamed()) {
-			probeInfo.horizontal().item(new ItemStack(ModItems.FRIENDER_PEARL), new ItemStyle().width(8).height(8)).text(" Right-click with FrienderPearl to tame.");
+			probeInfo.horizontal().item(new ItemStack(ModItems.FRIENDER_PEARL), new ItemStyle().width(8).height(8)).text(" " + I18n.translateToLocal("waila.rightclickpearltotame"));
 		}
 		else {
 			String ownerName = "";
 			ownerName = PlayerUUIDUtils.getPlayerName(getOwnerId());
 			if (ownerName == "") {
-				ownerName = "<Unavailable>";
+				ownerName = I18n.translateToLocal("top.unavailable");
 			}
-			probeInfo.horizontal().text("Owner: " + ownerName);
-			probeInfo.horizontal().text("Mode: " + (isSitting() ? "Idle" : "Following/Defending"));
+			probeInfo.horizontal().text(I18n.translateToLocal("waila.owner") + ": " + ownerName);
+			probeInfo.horizontal().text(I18n.translateToLocal("waila.mode") + ": " + (isSitting() ? I18n.translateToLocal("waila.idle") : I18n.translateToLocal("waila.followingdefending")));
 			if (isHoldingChest() && player == getOwner()) {
-				probeInfo.horizontal().text("Sneak+Right-Click to take chest");
+				probeInfo.horizontal().text(I18n.translateToLocal("waila.sneakrclicktotake"));
 			}
 		}
 	}
 
 	@SideOnly(Side.CLIENT)
 	@Override
-	public boolean isInvisibleToPlayer(EntityPlayer player) {
+	public boolean isInvisibleToPlayer(final EntityPlayer player) {
 		return false;
 	}
 
@@ -142,7 +144,7 @@ public class EntityFrienderman extends EntityCreature implements IMob, IEntityOw
 	@SideOnly(Side.CLIENT)
 	@Override
 	public int getBrightnessForRender() {
-		BlockPos.MutableBlockPos blockpos$mutableblockpos = new BlockPos.MutableBlockPos(MathHelper.floor(posX), 0, MathHelper.floor(posZ));
+		final BlockPos.MutableBlockPos blockpos$mutableblockpos = new BlockPos.MutableBlockPos(MathHelper.floor(posX), 0, MathHelper.floor(posZ));
 
 		if (world != null && world.isBlockLoaded(blockpos$mutableblockpos)) {
 			blockpos$mutableblockpos.setY(MathHelper.floor(posY + getEyeHeight()));
@@ -154,7 +156,7 @@ public class EntityFrienderman extends EntityCreature implements IMob, IEntityOw
 	}
 
 	@Override
-	protected void dropLoot(boolean wasRecentlyHit, int lootingModifier, DamageSource source) {
+	protected void dropLoot(final boolean wasRecentlyHit, final int lootingModifier, final DamageSource source) {
 
 		super.dropLoot(wasRecentlyHit, lootingModifier, source);
 		if (isHoldingChest()) {
@@ -164,7 +166,7 @@ public class EntityFrienderman extends EntityCreature implements IMob, IEntityOw
 
 	@Override
 	public float getBrightness() {
-		BlockPos.MutableBlockPos blockpos$mutableblockpos = new BlockPos.MutableBlockPos(MathHelper.floor(posX), 0, MathHelper.floor(posZ));
+		final BlockPos.MutableBlockPos blockpos$mutableblockpos = new BlockPos.MutableBlockPos(MathHelper.floor(posX), 0, MathHelper.floor(posZ));
 
 		if (world != null && world.isBlockLoaded(blockpos$mutableblockpos)) {
 			blockpos$mutableblockpos.setY(MathHelper.floor(posY + getEyeHeight()));
@@ -179,7 +181,7 @@ public class EntityFrienderman extends EntityCreature implements IMob, IEntityOw
 		return dataManager.get(LID_ANGLE).floatValue();
 	}
 
-	public void setLidAngle(float angle) {
+	public void setLidAngle(final float angle) {
 		dataManager.set(LID_ANGLE, Float.valueOf(angle));
 	}
 
@@ -198,7 +200,7 @@ public class EntityFrienderman extends EntityCreature implements IMob, IEntityOw
 		}
 	}
 
-	private boolean shouldAttackPlayer(EntityPlayer player) {
+	private boolean shouldAttackPlayer(final EntityPlayer player) {
 		if (isTamed() && player.getUniqueID() == getOwnerId()) {
 			return false;
 		}
@@ -229,7 +231,7 @@ public class EntityFrienderman extends EntityCreature implements IMob, IEntityOw
 	}
 
 	@Override
-	protected SoundEvent getHurtSound(DamageSource damageSourceIn) {
+	protected SoundEvent getHurtSound(final DamageSource damageSourceIn) {
 		return SoundEvents.ENTITY_ENDERMEN_HURT;
 	}
 
@@ -239,7 +241,7 @@ public class EntityFrienderman extends EntityCreature implements IMob, IEntityOw
 	}
 
 	@Override
-	public void notifyDataManagerChange(DataParameter<?> key) {
+	public void notifyDataManagerChange(final DataParameter<?> key) {
 		if (SCREAMING.equals(key) && isScreaming() && EasyMappings.world(this).isRemote) {
 			playEndermanSound();
 		}
@@ -312,7 +314,7 @@ public class EntityFrienderman extends EntityCreature implements IMob, IEntityOw
 		}
 	}
 
-	public void setHeldBlockState(@Nullable IBlockState state) {
+	public void setHeldBlockState(@Nullable final IBlockState state) {
 		if (!getHeldItemStack().isEmpty()) {
 			entityDropItem(getHeldItemStack().copy(), 1.0F);
 		}
@@ -320,7 +322,7 @@ public class EntityFrienderman extends EntityCreature implements IMob, IEntityOw
 		dataManager.set(CARRIED_BLOCK, Optional.fromNullable(state));
 	}
 
-	public void setHeldItemStack(@Nullable ItemStack stack) {
+	public void setHeldItemStack(@Nullable final ItemStack stack) {
 		if (getHeldBlockState() != null) {
 			entityDropItem(new ItemStack(getHeldBlockState().getBlock()).copy(), 1.0F);
 		}
@@ -335,7 +337,7 @@ public class EntityFrienderman extends EntityCreature implements IMob, IEntityOw
 	}
 
 	@Override
-	public void writeEntityToNBT(NBTTagCompound compound) {
+	public void writeEntityToNBT(final NBTTagCompound compound) {
 		super.writeEntityToNBT(compound);
 
 		if (getOwner() != null) {
@@ -344,7 +346,7 @@ public class EntityFrienderman extends EntityCreature implements IMob, IEntityOw
 		}
 		else {
 			if (dataManager.get(OWNER_NAME) != null && dataManager.get(OWNER_NAME) != "") {
-				UUID uuid = getUUID(dataManager.get(OWNER_NAME));
+				final UUID uuid = getUUID(dataManager.get(OWNER_NAME));
 				if (uuid != null) {
 					compound.setString("Owner", dataManager.get(OWNER_NAME));
 					compound.setString("OwnerUUID", getUUID(dataManager.get(OWNER_NAME)).toString());
@@ -352,15 +354,15 @@ public class EntityFrienderman extends EntityCreature implements IMob, IEntityOw
 			}
 		}
 		if (!getHeldItemStack().isEmpty()) {
-			NBTTagCompound itemStack = new NBTTagCompound();
+			final NBTTagCompound itemStack = new NBTTagCompound();
 			getHeldItemStack().writeToNBT(itemStack);
 			compound.setTag("Item", itemStack);
 		}
 		if (chestInventory != null) {
-			NBTTagList nbtList = new NBTTagList();
+			final NBTTagList nbtList = new NBTTagList();
 			for (int i = 0; i < chestInventory.getSizeInventory(); i++) {
 				if (!chestInventory.getStackInSlot(i).isEmpty()) {
-					NBTTagCompound slotNBT = new NBTTagCompound();
+					final NBTTagCompound slotNBT = new NBTTagCompound();
 					slotNBT.setInteger("Slot", i);
 					chestInventory.getStackInSlot(i).writeToNBT(slotNBT);
 					nbtList.appendTag(slotNBT);
@@ -372,22 +374,22 @@ public class EntityFrienderman extends EntityCreature implements IMob, IEntityOw
 		compound.setBoolean("Sitting", isSitting());
 	}
 
-	public ItemStack writeInventoryToStack(IInventory inventory, ItemStack stack) {
+	public ItemStack writeInventoryToStack(final IInventory inventory, final ItemStack stack) {
 		return getItemBlockWithInventory(inventory, stack);
 	}
 
-	public ItemStack getItemBlockWithInventory(IInventory inventory, ItemStack stack) {
+	public ItemStack getItemBlockWithInventory(final IInventory inventory, final ItemStack stack) {
 		if (!stack.isEmpty() && stack.getItem() instanceof ItemBlock && inventory != null && inventory.getSizeInventory() > 0) {
 			if (!stack.hasTagCompound()) {
 				stack.setTagCompound(new NBTTagCompound());
 			}
-			NBTTagCompound stackNBT = stack.getOrCreateSubCompound("BlockEntityTag");
-			NBTTagList stackList = new NBTTagList();
+			final NBTTagCompound stackNBT = stack.getOrCreateSubCompound("BlockEntityTag");
+			final NBTTagList stackList = new NBTTagList();
 			for (int i = 0; i < inventory.getSizeInventory(); i++) {
 				if (inventory.getStackInSlot(i).isEmpty()) {
 					continue;
 				}
-				NBTTagCompound slotNBT = new NBTTagCompound();
+				final NBTTagCompound slotNBT = new NBTTagCompound();
 				slotNBT.setByte("Slot", (byte) i);
 				inventory.getStackInSlot(i).writeToNBT(slotNBT);
 				stackList.appendTag(slotNBT);
@@ -399,16 +401,16 @@ public class EntityFrienderman extends EntityCreature implements IMob, IEntityOw
 		return null;
 	}
 
-	private UUID getUUID(String name) {
+	private UUID getUUID(final String name) {
 		return PlayerUUIDUtils.getPlayerUUID(name);
 	}
 
 	@Override
-	public void readEntityFromNBT(NBTTagCompound compound) {
+	public void readEntityFromNBT(final NBTTagCompound compound) {
 		super.readEntityFromNBT(compound);
 		UUID uuid = null;
 		if (compound.hasKey("Owner")) {
-			String s1 = compound.getString("Owner");
+			final String s1 = compound.getString("Owner");
 			uuid = getUUID(s1);
 		}
 
@@ -417,7 +419,7 @@ public class EntityFrienderman extends EntityCreature implements IMob, IEntityOw
 				setOwnerId(uuid);
 				setTamed(true);
 			}
-			catch (Throwable var4) {
+			catch (final Throwable var4) {
 				setTamed(false);
 			}
 		}
@@ -428,9 +430,9 @@ public class EntityFrienderman extends EntityCreature implements IMob, IEntityOw
 			if (chestInventory == null) {
 				chestInventory = new TempChest(compound.getInteger("ChestSize"));
 			}
-			NBTTagList tagList = compound.getTagList("Chest", 10);
+			final NBTTagList tagList = compound.getTagList("Chest", 10);
 			for (int i = 0; i < tagList.tagCount(); i++) {
-				NBTTagCompound slotNBT = tagList.getCompoundTagAt(i);
+				final NBTTagCompound slotNBT = tagList.getCompoundTagAt(i);
 				if (slotNBT != null) {
 					chestInventory.setInventorySlotContents(slotNBT.getInteger("Slot"), new ItemStack(slotNBT));
 				}
@@ -442,12 +444,12 @@ public class EntityFrienderman extends EntityCreature implements IMob, IEntityOw
 	}
 
 	@Override
-	public void setAttackTarget(@Nullable EntityLivingBase entitylivingbaseIn) {
+	public void setAttackTarget(@Nullable final EntityLivingBase entitylivingbaseIn) {
 		if (isTamed() && entitylivingbaseIn == getOwner()) {
 			return;
 		}
 		super.setAttackTarget(entitylivingbaseIn);
-		IAttributeInstance iattributeinstance = getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED);
+		final IAttributeInstance iattributeinstance = getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED);
 
 		if (entitylivingbaseIn == null) {
 			dataManager.set(SCREAMING, Boolean.valueOf(false));
@@ -465,7 +467,7 @@ public class EntityFrienderman extends EntityCreature implements IMob, IEntityOw
 	}
 
 	@Override
-	public boolean processInteract(EntityPlayer player, EnumHand hand) {
+	public boolean processInteract(final EntityPlayer player, final EnumHand hand) {
 		if (EasyMappings.world(this).isRemote || hand == EnumHand.OFF_HAND) {
 			return false;
 		}
@@ -484,7 +486,7 @@ public class EntityFrienderman extends EntityCreature implements IMob, IEntityOw
 						}
 					}
 					else if (ChestUtils.isVanillaChest(stack)) {
-						ItemStack chestStack = stack.copy();
+						final ItemStack chestStack = stack.copy();
 						ItemStack leftOverStack = ItemStack.EMPTY;
 						if (chestStack.getCount() > 1) {
 							chestStack.setCount(1);
@@ -499,7 +501,7 @@ public class EntityFrienderman extends EntityCreature implements IMob, IEntityOw
 						return true;
 					}
 					else if (ChestUtils.isVanillaShulkerBox(stack)) {
-						ItemStack shulkerStack = stack.copy();
+						final ItemStack shulkerStack = stack.copy();
 						ItemStack leftOverStack = ItemStack.EMPTY;
 						if (shulkerStack.getCount() > 1) {
 							shulkerStack.setCount(1);
@@ -514,7 +516,7 @@ public class EntityFrienderman extends EntityCreature implements IMob, IEntityOw
 						return true;
 					}
 					else if (Mods.ENDERSTORAGE.isLoaded() && stack.getItem() == EnderStorage.getEnderStorageItem() && stack.getItemDamage() == 0) {
-						ItemStack chestStack = stack.copy();
+						final ItemStack chestStack = stack.copy();
 						ItemStack leftOverStack = ItemStack.EMPTY;
 						if (chestStack.getCount() > 1) {
 							chestStack.setCount(1);
@@ -527,7 +529,7 @@ public class EntityFrienderman extends EntityCreature implements IMob, IEntityOw
 						return true;
 					}
 					else if (Mods.IRONCHESTS.isLoaded() && IronChests.isIronChest(stack) && IronChests.getChestType(stack) != IronChestType.DIRTCHEST9000) {
-						ItemStack chestStack = stack.copy();
+						final ItemStack chestStack = stack.copy();
 						ItemStack leftOverStack = ItemStack.EMPTY;
 						if (chestStack.getCount() > 1) {
 							chestStack.setCount(1);
@@ -543,7 +545,7 @@ public class EntityFrienderman extends EntityCreature implements IMob, IEntityOw
 						return true;
 					}
 					else if (Mods.IRONCHESTS.isLoaded() && IronChests.isIronShulkerBox(stack)) {
-						ItemStack chestStack = stack.copy();
+						final ItemStack chestStack = stack.copy();
 						ItemStack leftOverStack = ItemStack.EMPTY;
 						if (chestStack.getCount() > 1) {
 							chestStack.setCount(1);
@@ -552,7 +554,7 @@ public class EntityFrienderman extends EntityCreature implements IMob, IEntityOw
 						}
 						movingTowardItem = null;
 						setHeldItemStack(chestStack);
-						int numSlots = IronChests.getShulkerBoxInventorySize(stack);
+						final int numSlots = IronChests.getShulkerBoxInventorySize(stack);
 						chestInventory = new TempChest(numSlots);
 						ChestUtils.loadInventoryFromStack(chestInventory, getHeldItemStack());
 						player.setHeldItem(hand, leftOverStack);
@@ -669,7 +671,7 @@ public class EntityFrienderman extends EntityCreature implements IMob, IEntityOw
 	}
 
 	@Override
-	public boolean canBeLeashedTo(EntityPlayer player) {
+	public boolean canBeLeashedTo(final EntityPlayer player) {
 		return isTamed() && isOwner(player);
 	}
 
@@ -677,8 +679,8 @@ public class EntityFrienderman extends EntityCreature implements IMob, IEntityOw
 		return (dataManager.get(TAMED).byteValue() & 4) != 0;
 	}
 
-	public void setTamed(boolean tamed) {
-		byte b0 = dataManager.get(TAMED).byteValue();
+	public void setTamed(final boolean tamed) {
+		final byte b0 = dataManager.get(TAMED).byteValue();
 		if (tamed) {
 			dataManager.set(TAMED, Byte.valueOf((byte) (b0 | 4)));
 			getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(30.0D);
@@ -696,8 +698,8 @@ public class EntityFrienderman extends EntityCreature implements IMob, IEntityOw
 		return (dataManager.get(TAMED).byteValue() & 1) != 0;
 	}
 
-	public void setSitting(boolean sitting) {
-		byte b0 = dataManager.get(TAMED).byteValue();
+	public void setSitting(final boolean sitting) {
+		final byte b0 = dataManager.get(TAMED).byteValue();
 		if (sitting) {
 			dataManager.set(TAMED, Byte.valueOf((byte) (b0 | 1)));
 		}
@@ -715,16 +717,16 @@ public class EntityFrienderman extends EntityCreature implements IMob, IEntityOw
 		return (UUID) ((Optional<?>) dataManager.get(OWNER_UNIQUE_ID)).orNull();
 	}
 
-	public void setOwnerId(@Nullable UUID p_184754_1_) {
+	public void setOwnerId(@Nullable final UUID p_184754_1_) {
 		dataManager.set(OWNER_UNIQUE_ID, Optional.fromNullable(p_184754_1_));
 		dataManager.set(OWNER_NAME, getPlayerName(p_184754_1_));
 	}
 
-	private String getPlayerName(UUID uuid) {
+	private String getPlayerName(final UUID uuid) {
 		return PlayerUUIDUtils.getPlayerName(uuid);
 	}
 
-	private boolean canFriendermanPickupItem(ItemStack stack) {
+	private boolean canFriendermanPickupItem(final ItemStack stack) {
 		return isHoldingChest() && chestHasRoom(stack) && deathTime <= 0;
 	}
 
@@ -746,31 +748,31 @@ public class EntityFrienderman extends EntityCreature implements IMob, IEntityOw
 		return false;
 	}
 
-	public boolean chestHasRoom(ItemStack stack) {
+	public boolean chestHasRoom(final ItemStack stack) {
 		return isHoldingChest() && testInventoryInsertion(getHeldChestInventory(), stack) > 0;//InventoryUtils.canInsertStack(getHeldChestInventory(), stack);
 	}
 
-	public int testInventoryInsertion(IInventory inventory, ItemStack item) {
+	public int testInventoryInsertion(final IInventory inventory, final ItemStack item) {
 		if (item.isEmpty() || item.getCount() == 0) {
 			return 0;
 		}
 		if (inventory == null) {
 			return 0;
 		}
-		int slotCount = inventory.getSizeInventory();
+		final int slotCount = inventory.getSizeInventory();
 		int itemSizeCounter = item.getCount();
 		for (int i = 0; i < slotCount && itemSizeCounter > 0; i++) {
 
 			if (!inventory.isItemValidForSlot(i, item)) {
 				continue;
 			}
-			ItemStack inventorySlot = inventory.getStackInSlot(i);
+			final ItemStack inventorySlot = inventory.getStackInSlot(i);
 			if (inventorySlot.isEmpty()) {
 				itemSizeCounter -= Math.min(Math.min(itemSizeCounter, inventory.getInventoryStackLimit()), item.getMaxStackSize());
 			}
 			else if (areMergeCandidates(item, inventorySlot)) {
 
-				int space = inventorySlot.getMaxStackSize() - inventorySlot.getCount();
+				final int space = inventorySlot.getMaxStackSize() - inventorySlot.getCount();
 				itemSizeCounter -= Math.min(itemSizeCounter, space);
 			}
 		}
@@ -781,7 +783,7 @@ public class EntityFrienderman extends EntityCreature implements IMob, IEntityOw
 		return 0;
 	}
 
-	boolean areMergeCandidates(ItemStack source, ItemStack target) {
+	boolean areMergeCandidates(final ItemStack source, final ItemStack target) {
 		return source.isItemEqual(target) && ItemStack.areItemStackTagsEqual(source, target) && target.getCount() < target.getMaxStackSize();
 	}
 
@@ -853,15 +855,15 @@ public class EntityFrienderman extends EntityCreature implements IMob, IEntityOw
 	@Nullable
 	public EntityLivingBase getOwner() {
 		try {
-			UUID uuid = getOwnerId();
+			final UUID uuid = getOwnerId();
 			return uuid == null ? null : getEntityWorld().getPlayerEntityByUUID(uuid);
 		}
-		catch (IllegalArgumentException var2) {
+		catch (final IllegalArgumentException var2) {
 			return null;
 		}
 	}
 
-	public boolean isOwner(EntityLivingBase entityIn) {
+	public boolean isOwner(final EntityLivingBase entityIn) {
 		return entityIn.getUniqueID().equals(getOwnerId());
 	}
 
@@ -869,7 +871,7 @@ public class EntityFrienderman extends EntityCreature implements IMob, IEntityOw
 		return aiSit;
 	}
 
-	protected void playTameEffect(boolean play) {
+	protected void playTameEffect(final boolean play) {
 		EnumParticleTypes enumparticletypes = EnumParticleTypes.HEART;
 
 		if (!play) {
@@ -877,16 +879,16 @@ public class EntityFrienderman extends EntityCreature implements IMob, IEntityOw
 		}
 
 		for (int i = 0; i < 7; ++i) {
-			double d0 = rand.nextGaussian() * 0.02D;
-			double d1 = rand.nextGaussian() * 0.02D;
-			double d2 = rand.nextGaussian() * 0.02D;
+			final double d0 = rand.nextGaussian() * 0.02D;
+			final double d1 = rand.nextGaussian() * 0.02D;
+			final double d2 = rand.nextGaussian() * 0.02D;
 			EasyMappings.world(this).spawnParticle(enumparticletypes, posX + rand.nextFloat() * width * 2.0F - width, posY + 0.5D + rand.nextFloat() * height, posZ + rand.nextFloat() * width * 2.0F - width, d0, d1, d2, new int[0]);
 		}
 	}
 
 	@Override
-	public boolean attackEntityAsMob(Entity entityIn) {
-		boolean flag = entityIn.attackEntityFrom(DamageSource.causeMobDamage(this), ((int) getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).getAttributeValue()));
+	public boolean attackEntityAsMob(final Entity entityIn) {
+		final boolean flag = entityIn.attackEntityFrom(DamageSource.causeMobDamage(this), (int) getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).getAttributeValue());
 
 		if (flag) {
 			applyEnchantments(this, entityIn);
@@ -897,7 +899,7 @@ public class EntityFrienderman extends EntityCreature implements IMob, IEntityOw
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void handleStatusUpdate(byte id) {
+	public void handleStatusUpdate(final byte id) {
 		if (id == 7) {
 			playTameEffect(true);
 		}
@@ -916,7 +918,7 @@ public class EntityFrienderman extends EntityCreature implements IMob, IEntityOw
 	}
 
 	@Override
-	public boolean attackEntityFrom(DamageSource source, float amount) {
+	public boolean attackEntityFrom(final DamageSource source, final float amount) {
 		if (isEntityInvulnerable(source)) {
 			return false;
 		}
@@ -926,35 +928,35 @@ public class EntityFrienderman extends EntityCreature implements IMob, IEntityOw
 			}
 			return false;
 		}
-		boolean flag = super.attackEntityFrom(source, amount);
-		if ((source.isUnblockable()) && (rand.nextInt(10) != 0)) {
+		final boolean flag = super.attackEntityFrom(source, amount);
+		if (source.isUnblockable() && rand.nextInt(10) != 0) {
 			teleportRandomly();
 		}
 		return flag;
 	}
 
 	protected boolean teleportRandomly() {
-		double d0 = posX + (rand.nextDouble() - 0.5D) * 64.0D;
-		double d1 = posY + (rand.nextInt(64) - 32);
-		double d2 = posZ + (rand.nextDouble() - 0.5D) * 64.0D;
+		final double d0 = posX + (rand.nextDouble() - 0.5D) * 64.0D;
+		final double d1 = posY + (rand.nextInt(64) - 32);
+		final double d2 = posZ + (rand.nextDouble() - 0.5D) * 64.0D;
 		return teleportTo(d0, d1, d2);
 	}
 
-	protected boolean teleportToEntity(Entity entity) {
+	protected boolean teleportToEntity(final Entity entity) {
 		Vec3d vec3d = new Vec3d(posX - entity.posX, getEntityBoundingBox().minY + height / 2.0F - entity.posY + entity.getEyeHeight(), posZ - entity.posZ);
 		vec3d = vec3d.normalize();
-		double d1 = posX + (rand.nextDouble() - 0.5D) * 8.0D - vec3d.x * 16.0D;
-		double d2 = posY + (rand.nextInt(16) - 8) - vec3d.y * 16.0D;
-		double d3 = posZ + (rand.nextDouble() - 0.5D) * 8.0D - vec3d.z * 16.0D;
+		final double d1 = posX + (rand.nextDouble() - 0.5D) * 8.0D - vec3d.x * 16.0D;
+		final double d2 = posY + (rand.nextInt(16) - 8) - vec3d.y * 16.0D;
+		final double d3 = posZ + (rand.nextDouble() - 0.5D) * 8.0D - vec3d.z * 16.0D;
 		return teleportTo(d1, d2, d3);
 	}
 
-	private boolean teleportTo(double x, double y, double z) {
-		EnderTeleportEvent event = new EnderTeleportEvent(this, x, y, z, 0);
+	private boolean teleportTo(final double x, final double y, final double z) {
+		final EnderTeleportEvent event = new EnderTeleportEvent(this, x, y, z, 0);
 		if (MinecraftForge.EVENT_BUS.post(event)) {
 			return false;
 		}
-		boolean flag = attemptTeleport(event.getTargetX(), event.getTargetY(), event.getTargetZ());
+		final boolean flag = attemptTeleport(event.getTargetX(), event.getTargetY(), event.getTargetZ());
 
 		if (flag) {
 			EasyMappings.world(this).playSound((EntityPlayer) null, prevPosX, prevPosY, prevPosZ, SoundEvents.ENTITY_ENDERMEN_TELEPORT, getSoundCategory(), 1.0F, 1.0F);
@@ -966,12 +968,12 @@ public class EntityFrienderman extends EntityCreature implements IMob, IEntityOw
 
 	@Override
 	public boolean getCanSpawnHere() {
-		return EasyMappings.world(this).getBlockState((new BlockPos(this)).down()).canEntitySpawn(this);
+		return EasyMappings.world(this).getBlockState(new BlockPos(this).down()).canEntitySpawn(this);
 	}
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void setPartying(BlockPos pos, boolean shouldParty) {
+	public void setPartying(final BlockPos pos, final boolean shouldParty) {
 		jukeboxPosition = pos;
 		isPartying = shouldParty;
 	}
@@ -984,12 +986,12 @@ public class EntityFrienderman extends EntityCreature implements IMob, IEntityOw
 	@Override
 	public void onLivingUpdate() {
 		if (getEntityWorld() != null && getEntityWorld().isRemote) {
-			double x = posX + (rand.nextDouble() - 0.5D) * width;
-			double y = posY + rand.nextDouble() * height - 0.25D;
-			double z = posZ + (rand.nextDouble() - 0.5D) * width;
-			double sx = (rand.nextDouble() - 0.5D) * 2.0D;
-			double sy = -rand.nextDouble();
-			double sz = (rand.nextDouble() - 0.5D) * 2.0D;
+			final double x = posX + (rand.nextDouble() - 0.5D) * width;
+			final double y = posY + rand.nextDouble() * height - 0.25D;
+			final double z = posZ + (rand.nextDouble() - 0.5D) * width;
+			final double sx = (rand.nextDouble() - 0.5D) * 2.0D;
+			final double sy = -rand.nextDouble();
+			final double sz = (rand.nextDouble() - 0.5D) * 2.0D;
 			ParticleUtil.spawn(EnumParticles.LOVE, getEntityWorld(), x, y, z, sx, sy, sz);
 		}
 
@@ -1018,7 +1020,7 @@ public class EntityFrienderman extends EntityCreature implements IMob, IEntityOw
 
 		isJumping = false;
 		updateArmSwingProgress();
-		float f = getBrightness();
+		final float f = getBrightness();
 
 		if (f > 0.5F) {
 			idleTime += 2;
@@ -1029,10 +1031,10 @@ public class EntityFrienderman extends EntityCreature implements IMob, IEntityOw
 		}
 
 		if (newPosRotationIncrements > 0 && !canPassengerSteer()) {
-			double d0 = posX + (interpTargetX - posX) / newPosRotationIncrements;
-			double d1 = posY + (interpTargetY - posY) / newPosRotationIncrements;
-			double d2 = posZ + (interpTargetZ - posZ) / newPosRotationIncrements;
-			double d3 = MathHelper.wrapDegrees(interpTargetYaw - rotationYaw);
+			final double d0 = posX + (interpTargetX - posX) / newPosRotationIncrements;
+			final double d1 = posY + (interpTargetY - posY) / newPosRotationIncrements;
+			final double d2 = posZ + (interpTargetZ - posZ) / newPosRotationIncrements;
+			final double d3 = MathHelper.wrapDegrees(interpTargetYaw - rotationYaw);
 			rotationYaw = (float) (rotationYaw + d3 / newPosRotationIncrements);
 			rotationPitch = (float) (rotationPitch + (interpTargetPitch - rotationPitch) / newPosRotationIncrements);
 			--newPosRotationIncrements;
@@ -1104,14 +1106,14 @@ public class EntityFrienderman extends EntityCreature implements IMob, IEntityOw
 
 		EasyMappings.world(this).profiler.startSection("looting");
 
-		if (!dead || (isHoldingChest() && isSitting())) {
-			List<EntityItem> nearList = getEntityWorld().getEntitiesWithinAABB(EntityItem.class, getEntityBoundingBox().grow(6.0));
-			for (EntityItem entityitem : nearList) {
+		if (!dead || isHoldingChest() && isSitting()) {
+			final List<EntityItem> nearList = getEntityWorld().getEntitiesWithinAABB(EntityItem.class, getEntityBoundingBox().grow(6.0));
+			for (final EntityItem entityitem : nearList) {
 				if (!entityitem.isDead && !entityitem.getItem().isEmpty() && canFriendermanPickupItem(entityitem.getItem())) {
 					if (movingTowardItem == null || movingTowardItem.isDead || !nearList.contains(movingTowardItem)) {
 						movingTowardItem = entityitem;
 					}
-					List<EntityItem> itemListNear = getEntityWorld().getEntitiesWithinAABB(EntityItem.class, getEntityBoundingBox().grow(6.0));
+					final List<EntityItem> itemListNear = getEntityWorld().getEntitiesWithinAABB(EntityItem.class, getEntityBoundingBox().grow(6.0));
 					if (movingTowardItem != null && itemListNear.contains(movingTowardItem)) {
 						updateEquipmentIfNeeded(movingTowardItem);
 					}
@@ -1124,8 +1126,8 @@ public class EntityFrienderman extends EntityCreature implements IMob, IEntityOw
 	}
 
 	@Override
-	protected void updateEquipmentIfNeeded(EntityItem itemEntity) {
-		ItemStack stack = itemEntity.getItem();
+	protected void updateEquipmentIfNeeded(final EntityItem itemEntity) {
+		final ItemStack stack = itemEntity.getItem();
 		if (canFriendermanPickupItem(stack)) {
 			if (lidClosed) {
 				lidClosed = false;
@@ -1147,10 +1149,10 @@ public class EntityFrienderman extends EntityCreature implements IMob, IEntityOw
 		}
 	}
 
-	public boolean shouldAttackEntity(EntityLivingBase p_142018_1_, EntityLivingBase p_142018_2_) {
+	public boolean shouldAttackEntity(final EntityLivingBase p_142018_1_, final EntityLivingBase p_142018_2_) {
 		if (!(p_142018_1_ instanceof EntityCreeper) && !(p_142018_1_ instanceof EntityGhast)) {
 			if (p_142018_1_ instanceof EntityFrienderman) {
-				EntityFrienderman frienderman = (EntityFrienderman) p_142018_1_;
+				final EntityFrienderman frienderman = (EntityFrienderman) p_142018_1_;
 
 				if (frienderman.isTamed() && frienderman.getOwner() == p_142018_2_) {
 					return false;
@@ -1170,15 +1172,15 @@ public class EntityFrienderman extends EntityCreature implements IMob, IEntityOw
 		private int aggroTime;
 		private int teleportTime;
 
-		public AIFindPlayer(EntityFrienderman p_i45842_1_) {
+		public AIFindPlayer(final EntityFrienderman p_i45842_1_) {
 			super(p_i45842_1_, EntityPlayer.class, false);
 			enderman = p_i45842_1_;
 		}
 
 		@Override
 		public boolean shouldExecute() {
-			double d0 = getTargetDistance();
-			player = EasyMappings.world(enderman).getNearestAttackablePlayer(enderman.posX, enderman.posY, enderman.posZ, d0, d0, (Function<EntityPlayer, Double>) null, (@Nullable EntityPlayer player) -> (player != null) && (enderman.shouldAttackPlayer(player)));
+			final double d0 = getTargetDistance();
+			player = EasyMappings.world(enderman).getNearestAttackablePlayer(enderman.posX, enderman.posY, enderman.posZ, d0, d0, (Function<EntityPlayer, Double>) null, (@Nullable final EntityPlayer player) -> player != null && enderman.shouldAttackPlayer(player));
 			return player != null;
 		}
 
@@ -1203,7 +1205,7 @@ public class EntityFrienderman extends EntityCreature implements IMob, IEntityOw
 				enderman.faceEntity(player, 10.0F, 10.0F);
 				return true;
 			}
-			return (targetEntity != null) && (targetEntity.isEntityAlive()) ? true : super.shouldContinueExecuting();
+			return targetEntity != null && targetEntity.isEntityAlive() ? true : super.shouldContinueExecuting();
 		}
 
 		@Override
@@ -1223,7 +1225,7 @@ public class EntityFrienderman extends EntityCreature implements IMob, IEntityOw
 						}
 						teleportTime = 0;
 					}
-					else if ((targetEntity.getDistanceSq(enderman) > 256.0D) && (teleportTime++ >= 30) && (enderman.teleportToEntity(targetEntity))) {
+					else if (targetEntity.getDistanceSq(enderman) > 256.0D && teleportTime++ >= 30 && enderman.teleportToEntity(targetEntity)) {
 						teleportTime = 0;
 					}
 				}
@@ -1246,7 +1248,7 @@ public class EntityFrienderman extends EntityCreature implements IMob, IEntityOw
 		private final EntityFrienderman theEntity;
 		private boolean isSitting;
 
-		public EntityAISit(EntityFrienderman entityIn) {
+		public EntityAISit(final EntityFrienderman entityIn) {
 			theEntity = entityIn;
 			setMutexBits(5);
 		}
@@ -1263,8 +1265,8 @@ public class EntityFrienderman extends EntityCreature implements IMob, IEntityOw
 				return false;
 			}
 			else {
-				EntityLivingBase entitylivingbase = theEntity.getOwner();
-				return entitylivingbase == null ? true : (theEntity.getDistanceSq(entitylivingbase) < 144.0D && entitylivingbase.getRevengeTarget() != null ? false : isSitting);
+				final EntityLivingBase entitylivingbase = theEntity.getOwner();
+				return entitylivingbase == null ? true : theEntity.getDistanceSq(entitylivingbase) < 144.0D && entitylivingbase.getRevengeTarget() != null ? false : isSitting;
 			}
 		}
 
@@ -1279,7 +1281,7 @@ public class EntityFrienderman extends EntityCreature implements IMob, IEntityOw
 			theEntity.setSitting(false);
 		}
 
-		public void setSitting(boolean sitting) {
+		public void setSitting(final boolean sitting) {
 			isSitting = sitting;
 		}
 	}
@@ -1288,11 +1290,11 @@ public class EntityFrienderman extends EntityCreature implements IMob, IEntityOw
 
 		private EntityFrienderman thePet = null;
 
-		private PathNavigate pathFinder;
+		private final PathNavigate pathFinder;
 
 		private EntityItem targetItem = null;
 
-		public EntityAICollectItem(EntityFrienderman thePet) {
+		public EntityAICollectItem(final EntityFrienderman thePet) {
 			this.thePet = thePet;
 			pathFinder = thePet.getNavigator();
 			setMutexBits(3);
@@ -1308,12 +1310,12 @@ public class EntityFrienderman extends EntityCreature implements IMob, IEntityOw
 			}
 			if (thePet.world != null) {
 
-				List<EntityItem> items = thePet.world.getEntitiesWithinAABB(EntityItem.class, thePet.getEntityBoundingBox().expand(0.0D, -1.0D, 0.0D).expand(10D, 2.0D, 10D));
+				final List<EntityItem> items = thePet.world.getEntitiesWithinAABB(EntityItem.class, thePet.getEntityBoundingBox().expand(0.0D, -1.0D, 0.0D).expand(10D, 2.0D, 10D));
 				EntityItem closest = null;
 				double closestDistance = Double.MAX_VALUE;
-				for (EntityItem item : items) {
+				for (final EntityItem item : items) {
 					if (!item.isDead && item.onGround) {
-						double dist = item.getDistanceSq(thePet);
+						final double dist = item.getDistanceSq(thePet);
 						if (dist < closestDistance && thePet.testInventoryInsertion(thePet.getHeldChestInventory(), item.getItem()) > 0 && !item.isInWater()) {
 							closest = item;
 							closestDistance = dist;
@@ -1351,8 +1353,8 @@ public class EntityFrienderman extends EntityCreature implements IMob, IEntityOw
 			super.updateTask();
 			if (!thePet.world.isRemote) {
 				if (targetItem != null && thePet.getDistanceSq(targetItem) < 1.0) {
-					ItemStack stack = targetItem.getItem();
-					int preEatSize = stack.getCount();
+					final ItemStack stack = targetItem.getItem();
+					final int preEatSize = stack.getCount();
 					InventoryUtils.addItem(thePet.getHeldChestInventory(), stack);
 					if (preEatSize != stack.getCount()) {
 						if (stack.getCount() == 0) {
@@ -1375,7 +1377,7 @@ public class EntityFrienderman extends EntityCreature implements IMob, IEntityOw
 		float minDist;
 		private float oldWaterCost;
 
-		public EntityAIMoveToEntityItem(EntityFrienderman thePetIn, float minDistIn, float maxDistIn) {
+		public EntityAIMoveToEntityItem(final EntityFrienderman thePetIn, final float minDistIn, final float maxDistIn) {
 			thePet = thePetIn;
 			theWorld = EasyMappings.world(thePetIn);
 			petPathfinder = thePetIn.getNavigator();
@@ -1398,8 +1400,8 @@ public class EntityFrienderman extends EntityCreature implements IMob, IEntityOw
 			return true;
 		}
 
-		protected void pickupItem(EntityItem itemEntity) {
-			ItemStack stack = itemEntity.getItem();
+		protected void pickupItem(final EntityItem itemEntity) {
+			final ItemStack stack = itemEntity.getItem();
 			if (thePet.canFriendermanPickupItem(stack)) {
 				if (thePet.lidClosed) {
 					thePet.lidClosed = false;
@@ -1423,7 +1425,7 @@ public class EntityFrienderman extends EntityCreature implements IMob, IEntityOw
 
 		@Override
 		public boolean shouldContinueExecuting() {
-			return !petPathfinder.noPath() && thePet.isTamed() && (itemsNear.size() > 0 && thePet.getDistanceSq(itemsNear.get(0)) <= 6 * 6);
+			return !petPathfinder.noPath() && thePet.isTamed() && itemsNear.size() > 0 && thePet.getDistanceSq(itemsNear.get(0)) <= 6 * 6;
 		}
 
 		@Override
@@ -1449,9 +1451,9 @@ public class EntityFrienderman extends EntityCreature implements IMob, IEntityOw
 			if (currentTargetItem != null) {
 				if (--timeToRecalcPath <= 0) {
 					timeToRecalcPath = 10;
-					double x = itemsNear.get(0).posX;
-					double y = itemsNear.get(0).posY;
-					double z = itemsNear.get(0).posZ;
+					final double x = itemsNear.get(0).posX;
+					final double y = itemsNear.get(0).posY;
+					final double z = itemsNear.get(0).posZ;
 					if (!thePet.isSitting()) {
 						if (thePet.getDistanceSq(currentTargetItem) <= 6) {
 							petPathfinder.tryMoveToXYZ(x + 1, y, z + 1, 0.5);
@@ -1481,7 +1483,7 @@ public class EntityFrienderman extends EntityCreature implements IMob, IEntityOw
 		float minDist;
 		private float oldWaterCost;
 
-		public EntityAIFollowOwner(EntityFrienderman thePetIn, double followSpeedIn, float minDistIn, float maxDistIn) {
+		public EntityAIFollowOwner(final EntityFrienderman thePetIn, final double followSpeedIn, final float minDistIn, final float maxDistIn) {
 			thePet = thePetIn;
 			theWorld = EasyMappings.world(thePetIn);
 			followSpeed = followSpeedIn;
@@ -1500,7 +1502,7 @@ public class EntityFrienderman extends EntityCreature implements IMob, IEntityOw
 		 */
 		@Override
 		public boolean shouldExecute() {
-			EntityLivingBase entitylivingbase = thePet.getOwner();
+			final EntityLivingBase entitylivingbase = thePet.getOwner();
 
 			if (entitylivingbase == null) {
 				return false;
@@ -1548,8 +1550,8 @@ public class EntityFrienderman extends EntityCreature implements IMob, IEntityOw
 			thePet.setPathPriority(PathNodeType.WATER, oldWaterCost);
 		}
 
-		private boolean isEmptyBlock(BlockPos pos) {
-			IBlockState iblockstate = theWorld.getBlockState(pos);
+		private boolean isEmptyBlock(final BlockPos pos) {
+			final IBlockState iblockstate = theWorld.getBlockState(pos);
 			return iblockstate.getMaterial() == Material.AIR ? true : !iblockstate.isFullCube();
 		}
 
@@ -1567,9 +1569,9 @@ public class EntityFrienderman extends EntityCreature implements IMob, IEntityOw
 					if (!petPathfinder.tryMoveToEntityLiving(theOwner, followSpeed)) {
 						if (!thePet.getLeashed()) {
 							if (thePet.getDistanceSq(theOwner) >= 144.0D) {
-								int i = MathUtils.floor(theOwner.posX) - 2;
-								int j = MathUtils.floor(theOwner.posZ) - 2;
-								int k = MathUtils.floor(theOwner.getEntityBoundingBox().minY);
+								final int i = MathUtils.floor(theOwner.posX) - 2;
+								final int j = MathUtils.floor(theOwner.posZ) - 2;
+								final int k = MathUtils.floor(theOwner.getEntityBoundingBox().minY);
 
 								for (int l = 0; l <= 4; ++l) {
 									for (int i1 = 0; i1 <= 4; ++i1) {
@@ -1593,7 +1595,7 @@ public class EntityFrienderman extends EntityCreature implements IMob, IEntityOw
 		EntityLivingBase theOwnerAttacker;
 		private int timestamp;
 
-		public EntityAIOwnerHurtByTarget(EntityFrienderman theDefendingTameableIn) {
+		public EntityAIOwnerHurtByTarget(final EntityFrienderman theDefendingTameableIn) {
 			super(theDefendingTameableIn, false);
 			theDefendingTameable = theDefendingTameableIn;
 			setMutexBits(1);
@@ -1608,14 +1610,14 @@ public class EntityFrienderman extends EntityCreature implements IMob, IEntityOw
 				return false;
 			}
 			else {
-				EntityLivingBase entitylivingbase = theDefendingTameable.getOwner();
+				final EntityLivingBase entitylivingbase = theDefendingTameable.getOwner();
 
 				if (entitylivingbase == null) {
 					return false;
 				}
 				else {
 					theOwnerAttacker = entitylivingbase.getRevengeTarget();
-					int i = entitylivingbase.getRevengeTimer();
+					final int i = entitylivingbase.getRevengeTimer();
 					return i != timestamp && this.isSuitableTarget(theOwnerAttacker, false) && theDefendingTameable.shouldAttackEntity(theOwnerAttacker, entitylivingbase);
 				}
 			}
@@ -1627,7 +1629,7 @@ public class EntityFrienderman extends EntityCreature implements IMob, IEntityOw
 		@Override
 		public void startExecuting() {
 			taskOwner.setAttackTarget(theOwnerAttacker);
-			EntityLivingBase entitylivingbase = theDefendingTameable.getOwner();
+			final EntityLivingBase entitylivingbase = theDefendingTameable.getOwner();
 
 			if (entitylivingbase != null) {
 				timestamp = entitylivingbase.getRevengeTimer();
@@ -1637,7 +1639,7 @@ public class EntityFrienderman extends EntityCreature implements IMob, IEntityOw
 		}
 	}
 
-	public static void setCarriable(Block block, boolean canCarry) {
+	public static void setCarriable(final Block block, final boolean canCarry) {
 		if (canCarry) {
 			CARRIABLE_BLOCKS.add(block);
 		}
@@ -1654,7 +1656,7 @@ public class EntityFrienderman extends EntityCreature implements IMob, IEntityOw
 			this(27);
 		}
 
-		public TempChest(int numSlots) {
+		public TempChest(final int numSlots) {
 			invList = NonNullList.withSize(numSlots, ItemStack.EMPTY);
 		}
 
@@ -1679,13 +1681,13 @@ public class EntityFrienderman extends EntityCreature implements IMob, IEntityOw
 		}
 
 		@Override
-		public ItemStack getStackInSlot(int index) {
+		public ItemStack getStackInSlot(final int index) {
 			return invList.get(index);
 		}
 
 		@Override
-		public ItemStack decrStackSize(int index, int count) {
-			int newSize = invList.get(index).getCount() - count;
+		public ItemStack decrStackSize(final int index, final int count) {
+			final int newSize = invList.get(index).getCount() - count;
 			if (newSize < 0) {
 				return null;
 			}
@@ -1694,12 +1696,12 @@ public class EntityFrienderman extends EntityCreature implements IMob, IEntityOw
 		}
 
 		@Override
-		public ItemStack removeStackFromSlot(int index) {
+		public ItemStack removeStackFromSlot(final int index) {
 			return ItemStackHelper.getAndRemove(invList, index);
 		}
 
 		@Override
-		public void setInventorySlotContents(int index, ItemStack stack) {
+		public void setInventorySlotContents(final int index, final ItemStack stack) {
 			if (!stack.isEmpty() && stack.getCount() > getInventoryStackLimit()) {
 				stack.setCount(getInventoryStackLimit());
 			}
@@ -1716,30 +1718,30 @@ public class EntityFrienderman extends EntityCreature implements IMob, IEntityOw
 		}
 
 		@Override
-		public boolean isUsableByPlayer(EntityPlayer player) {
+		public boolean isUsableByPlayer(final EntityPlayer player) {
 			return true;
 		}
 
 		@Override
-		public void openInventory(EntityPlayer player) {
+		public void openInventory(final EntityPlayer player) {
 		}
 
 		@Override
-		public void closeInventory(EntityPlayer player) {
+		public void closeInventory(final EntityPlayer player) {
 		}
 
 		@Override
-		public boolean isItemValidForSlot(int index, ItemStack stack) {
+		public boolean isItemValidForSlot(final int index, final ItemStack stack) {
 			return true;
 		}
 
 		@Override
-		public int getField(int id) {
+		public int getField(final int id) {
 			return 0;
 		}
 
 		@Override
-		public void setField(int id, int value) {
+		public void setField(final int id, final int value) {
 		}
 
 		@Override
@@ -1766,7 +1768,7 @@ public class EntityFrienderman extends EntityCreature implements IMob, IEntityOw
 
 	}
 
-	public static boolean getCarriable(Block block) {
+	public static boolean getCarriable(final Block block) {
 		return CARRIABLE_BLOCKS.contains(block);
 	}
 
