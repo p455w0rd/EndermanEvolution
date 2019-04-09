@@ -22,7 +22,7 @@ waila.owner=Owner
 waile.mode=Mode
 waila.idle=Idle
 waila.followingdefending=Following/Defending
-wail.sneakrclicktotake=Sneak+Right-Click to take chest
+waila.sneakrclicktotake=Sneak+Right-Click to take chest
 waila.rightclickpearltotame=Right-click with Frienderpearl to tame
 
 top.unavailable=<Unavailable>
