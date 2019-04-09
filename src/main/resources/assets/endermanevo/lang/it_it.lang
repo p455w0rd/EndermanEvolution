@@ -16,3 +16,13 @@ jei.friender_pearl.desc=Usata per addomesticare gli Enderman Amici. Può essere 
 jei.skull_enderman.desc=Droppata dagli Enderman. Quando indossata prevenirà gli attacchi degli Endermen.
 jei.skull_evolved_enderman.desc=Droppata dagli Enderman evoluti. Quando indossata prevenirà gli attacchi degli Endermen.
 jei.skull_frienderman.desc=Droppata dagli Enderman amici. Quando indossata prevenirà gli attacchi degli Endermen. Aumenta anche molto le possibilità di addomesticare un Enderman Amico con una Perla dell'Amicizia 
+
+waila.404=Errore 404: Nome non trovato!
+waila.owner=Proprietario
+waile.mode=Modalità
+waila.idle=Inattivo
+waila.followingdefending=Seguendo/Difendendo
+wail.sneakrclicktotake=Shift+Tasto-Destro per prendere la cassa
+waila.rightclickpearltotame=Tasto-Destro con una Perla dell'amicizia per domarlo
+
+top.unavailable=<Non Disponibile>
