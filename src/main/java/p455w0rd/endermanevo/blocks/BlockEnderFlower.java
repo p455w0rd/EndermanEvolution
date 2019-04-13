@@ -42,6 +42,8 @@ public class BlockEnderFlower extends Block implements IGrowable, IPlantable {
 	};
 	public static final List<Block> VALID_SOILS = Lists.newArrayList(Blocks.NETHERRACK, Blocks.DIRT, Blocks.GRASS, Blocks.FARMLAND);
 	public static final List<Block> VALID_BONEMEAL_SOILS = Lists.newArrayList(Blocks.END_STONE, Blocks.END_BRICKS, Blocks.END_PORTAL_FRAME);
+	public static final List<ItemStack> VALID_SOILS_STACKS = Lists.newArrayList(new ItemStack(Blocks.NETHERRACK), new ItemStack(Blocks.DIRT), new ItemStack(Blocks.GRASS), new ItemStack(Blocks.FARMLAND), new ItemStack(Blocks.END_STONE), new ItemStack(Blocks.END_BRICKS), new ItemStack(Blocks.END_PORTAL_FRAME));
+	private static IBlockState[] stateList = null;
 
 	public BlockEnderFlower() {
 		super(Material.LEAVES, Material.LEAVES.getMaterialMapColor());
@@ -55,8 +57,18 @@ public class BlockEnderFlower extends Block implements IGrowable, IPlantable {
 		disableStats();
 	}
 
+	public static IBlockState[] getGrowthStates() {
+		if (stateList == null) {
+			stateList = new IBlockState[8];
+			for (int i = 0; i < 8; i++) {
+				stateList[i] = ModBlocks.ENDER_FLOWER.getDefaultState().withProperty(STAGE, Integer.valueOf(i));
+			}
+		}
+		return stateList;
+	}
+
 	@Override
-	public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
+	public boolean onBlockActivated(final World world, final BlockPos pos, final IBlockState state, final EntityPlayer player, final EnumHand hand, final EnumFacing facing, final float hitX, final float hitY, final float hitZ) {
 		if (!world.isRemote) {
 			if (getAge(state) == getMaxAge() && hand == EnumHand.MAIN_HAND) {
 				/*
@@ -82,12 +94,12 @@ public class BlockEnderFlower extends Block implements IGrowable, IPlantable {
 	}
 
 	@Override
-	public void dropBlockAsItemWithChance(World worldIn, BlockPos pos, IBlockState state, float chance, int fortune) {
+	public void dropBlockAsItemWithChance(final World worldIn, final BlockPos pos, final IBlockState state, float chance, final int fortune) {
 		if (!worldIn.isRemote && !worldIn.restoringBlockSnapshots) {
-			NonNullList<ItemStack> drops = NonNullList.create();
+			final NonNullList<ItemStack> drops = NonNullList.create();
 			getDrops(drops, worldIn, pos, state, fortune);
 			chance = ForgeEventFactory.fireBlockHarvesting(Lists.newArrayList(), worldIn, pos, state, fortune, chance, false, harvesters.get());
-			for (ItemStack drop : drops) {
+			for (final ItemStack drop : drops) {
 				if (worldIn.rand.nextFloat() <= chance) {
 					spawnAsEntity(worldIn, pos, drop);
 				}
@@ -96,9 +108,9 @@ public class BlockEnderFlower extends Block implements IGrowable, IPlantable {
 	}
 
 	@Override
-	public void getDrops(NonNullList<ItemStack> drops, IBlockAccess world, BlockPos pos, IBlockState state, int fortune) {
-		int age = getAge(state);
-		Random rand = world instanceof World ? ((World) world).rand : ModGlobals.RNG;
+	public void getDrops(final NonNullList<ItemStack> drops, final IBlockAccess world, final BlockPos pos, final IBlockState state, int fortune) {
+		final int age = getAge(state);
+		final Random rand = world instanceof World ? ((World) world).rand : ModGlobals.RNG;
 		drops.clear();
 		if (fortune > -1) {
 			drops.add(new ItemStack(getItemBlock(), 1));
@@ -112,7 +124,7 @@ public class BlockEnderFlower extends Block implements IGrowable, IPlantable {
 	}
 
 	@Override
-	public boolean canSustainPlant(IBlockState state, IBlockAccess world, BlockPos pos, EnumFacing direction, net.minecraftforge.common.IPlantable plantable) {
+	public boolean canSustainPlant(final IBlockState state, final IBlockAccess world, final BlockPos pos, final EnumFacing direction, final net.minecraftforge.common.IPlantable plantable) {
 		return false;
 	}
 
@@ -124,48 +136,48 @@ public class BlockEnderFlower extends Block implements IGrowable, IPlantable {
 		return 7;
 	}
 
-	private int getAge(IBlockState state) {
+	private int getAge(final IBlockState state) {
 		return state.getValue(getAgeProperty()).intValue();
 	}
 
-	private IBlockState withAge(int age) {
+	private IBlockState withAge(final int age) {
 		return getDefaultState().withProperty(getAgeProperty(), Integer.valueOf(age));
 	}
 
-	private boolean isMaxAge(IBlockState state) {
+	private boolean isMaxAge(final IBlockState state) {
 		return state.getValue(getAgeProperty()).intValue() >= getMaxAge();
 	}
 
-	public static boolean isValidSoil(Block block) {
+	public static boolean isValidSoil(final Block block) {
 		return BlockEnderFlower.VALID_SOILS.contains(block) || BlockEnderFlower.VALID_BONEMEAL_SOILS.contains(block);
 	}
 
 	@Override
-	public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos) {
+	public AxisAlignedBB getBoundingBox(final IBlockState state, final IBlockAccess source, final BlockPos pos) {
 		return FLOWER_AABB[state.getValue(getAgeProperty()).intValue()];
 	}
 
 	@Override
-	public AxisAlignedBB getCollisionBoundingBox(IBlockState blockState, IBlockAccess worldIn, BlockPos pos) {
+	public AxisAlignedBB getCollisionBoundingBox(final IBlockState blockState, final IBlockAccess worldIn, final BlockPos pos) {
 		return NULL_AABB;
 	}
 
-	private boolean canSustainBush(IBlockState state) {
+	private boolean canSustainBush(final IBlockState state) {
 		return isValidSoil(state.getBlock());
 	}
 
-	private int getBonemealAgeIncrease(World world) {
+	private int getBonemealAgeIncrease(final World world) {
 		return world.rand.nextInt(8);//MathHelper.getInt(worldIn.rand, 2, 5);
 	}
 
 	@Override
-	public void updateTick(World world, BlockPos pos, IBlockState state, Random rand) {
+	public void updateTick(final World world, final BlockPos pos, final IBlockState state, final Random rand) {
 		checkAndDropBlock(world, pos, state);
-		float f = getGrowChance(this, world, pos);
+		final float f = getGrowChance(this, world, pos);
 		if (f == 1.0f) {
-			boolean bonusSoil = VALID_BONEMEAL_SOILS.contains(world.getBlockState(pos.down()).getBlock());
+			final boolean bonusSoil = VALID_BONEMEAL_SOILS.contains(world.getBlockState(pos.down()).getBlock());
 			if (bonusSoil || world.getLightFromNeighbors(pos.up()) <= 8) {
-				int i = getAge(state);
+				final int i = getAge(state);
 				if (i < getMaxAge()) {
 					int newAge = bonusSoil ? i + 2 : i + 1;
 					if (newAge > getMaxAge()) {
@@ -180,21 +192,21 @@ public class BlockEnderFlower extends Block implements IGrowable, IPlantable {
 
 	@SideOnly(Side.CLIENT)
 	@Override
-	public void randomDisplayTick(IBlockState state, World world, BlockPos pos, Random rand) {
+	public void randomDisplayTick(final IBlockState state, final World world, final BlockPos pos, final Random rand) {
 		if (getAge(state) >= getMaxAge()) {
 			for (int i = 0; i < 2; ++i) {
-				double x = (pos.getX() + 0.5D) + (rand.nextDouble() - 0.5D) * 0.34D;
-				double y = (pos.getY() + 0.5D) + rand.nextDouble() * 0.55D - 0.25D;
-				double z = (pos.getZ() + 0.5D) + (rand.nextDouble() - 0.5D) * 0.34D;
-				double sx = (rand.nextDouble() - 0.5D) * 2.0D;
-				double sy = -rand.nextDouble();
-				double sz = (rand.nextDouble() - 0.5D) * 2.0D;
+				final double x = pos.getX() + 0.5D + (rand.nextDouble() - 0.5D) * 0.34D;
+				final double y = pos.getY() + 0.5D + rand.nextDouble() * 0.55D - 0.25D;
+				final double z = pos.getZ() + 0.5D + (rand.nextDouble() - 0.5D) * 0.34D;
+				final double sx = (rand.nextDouble() - 0.5D) * 2.0D;
+				final double sy = -rand.nextDouble();
+				final double sz = (rand.nextDouble() - 0.5D) * 2.0D;
 				ParticleUtil.spawn(EnumParticles.PORTAL_GREEN, world, x, y, z, sx, sy, sz);
 			}
 		}
 	}
 
-	protected static float getGrowChance(Block block, World world, BlockPos pos) {
+	protected static float getGrowChance(final Block block, final World world, final BlockPos pos) {
 		float chance = world.rand.nextFloat() + 0.1f;
 		if (VALID_BONEMEAL_SOILS.contains(world.getBlockState(pos.down()).getBlock())) {
 			chance += 0.5f;
@@ -208,23 +220,23 @@ public class BlockEnderFlower extends Block implements IGrowable, IPlantable {
 
 	@Deprecated
 	@Override
-	public void neighborChanged(IBlockState state, World worldIn, BlockPos pos, Block blockIn, BlockPos fromPos) {
+	public void neighborChanged(final IBlockState state, final World worldIn, final BlockPos pos, final Block blockIn, final BlockPos fromPos) {
 		super.neighborChanged(state, worldIn, pos, blockIn, fromPos);
 		checkAndDropBlock(worldIn, pos, state);
 	}
 
-	private void checkAndDropBlock(World worldIn, BlockPos pos, IBlockState state) {
+	private void checkAndDropBlock(final World worldIn, final BlockPos pos, final IBlockState state) {
 		if (!canBlockStay(worldIn, pos, state)) {
 			dropBlockAsItem(worldIn, pos, state, 0);
 			worldIn.setBlockState(pos, Blocks.AIR.getDefaultState(), 3);
 		}
 	}
 
-	private boolean canBlockStay(World world, BlockPos pos, IBlockState state) {
+	private boolean canBlockStay(final World world, final BlockPos pos, final IBlockState state) {
 		if (state.getBlock() == this) {
-			IBlockState soil = world.getBlockState(pos.down());
+			final IBlockState soil = world.getBlockState(pos.down());
 			boolean isNextToWater = false;
-			for (EnumFacing offset : EnumFacing.HORIZONTALS) {
+			for (final EnumFacing offset : EnumFacing.HORIZONTALS) {
 				if (world.getBlockState(pos.offset(offset)).getMaterial() == Material.WATER) {
 					isNextToWater = true;
 					break;
@@ -240,50 +252,50 @@ public class BlockEnderFlower extends Block implements IGrowable, IPlantable {
 	}
 
 	@Override
-	public ItemStack getItem(World worldIn, BlockPos pos, IBlockState state) {
+	public ItemStack getItem(final World worldIn, final BlockPos pos, final IBlockState state) {
 		return new ItemStack(getItemBlock());
 	}
 
 	@Override
-	public Item getItemDropped(IBlockState state, Random rand, int fortune) {
+	public Item getItemDropped(final IBlockState state, final Random rand, final int fortune) {
 		return getItemBlock();
 	}
 
 	@Override
-	public boolean canPlaceBlockAt(World worldIn, BlockPos pos) {
-		IBlockState soil = worldIn.getBlockState(pos.down());
+	public boolean canPlaceBlockAt(final World worldIn, final BlockPos pos) {
+		final IBlockState soil = worldIn.getBlockState(pos.down());
 		return super.canPlaceBlockAt(worldIn, pos) && isValidSoil(soil.getBlock());
 	}
 
 	@Override
-	public boolean canGrow(World world, BlockPos pos, IBlockState state, boolean isClient) {
+	public boolean canGrow(final World world, final BlockPos pos, final IBlockState state, final boolean isClient) {
 		return VALID_BONEMEAL_SOILS.contains(world.getBlockState(pos.down()).getBlock()) ? !isMaxAge(state) : false;
 	}
 
 	@Override
-	public boolean canUseBonemeal(World world, Random rand, BlockPos pos, IBlockState state) {
-		Block block = world.getBlockState(pos.down()).getBlock();
+	public boolean canUseBonemeal(final World world, final Random rand, final BlockPos pos, final IBlockState state) {
+		final Block block = world.getBlockState(pos.down()).getBlock();
 		return VALID_BONEMEAL_SOILS.contains(block);
 	}
 
 	@Override
-	public void grow(World world, Random rand, BlockPos pos, IBlockState state) {
+	public void grow(final World world, final Random rand, final BlockPos pos, final IBlockState state) {
 		if (getAge(state) < getMaxAge()) {
-			int i = Math.min(getAge(state) + getBonemealAgeIncrease(world), 7);
+			final int i = Math.min(getAge(state) + getBonemealAgeIncrease(world), 7);
 			if (i <= getMaxAge()) {
 				world.setBlockState(pos, withAge(i), 2);
 			}
 		}
 	}
 
-	public static boolean tryBonemeal(ItemStack stack, World world, BlockPos target, EntityPlayer player, @Nullable EnumHand hand) {
-		IBlockState iblockstate = world.getBlockState(target);
+	public static boolean tryBonemeal(final ItemStack stack, final World world, final BlockPos target, final EntityPlayer player, @Nullable final EnumHand hand) {
+		final IBlockState iblockstate = world.getBlockState(target);
 		//int hook = net.minecraftforge.event.ForgeEventFactory.onApplyBonemeal(player, world, target, iblockstate, stack, hand);
 		//if (hook != 0) {
 		//	return hook > 0;
 		//}
 		if (iblockstate.getBlock() instanceof BlockEnderFlower) {
-			BlockEnderFlower flower = (BlockEnderFlower) iblockstate.getBlock();
+			final BlockEnderFlower flower = (BlockEnderFlower) iblockstate.getBlock();
 			if (flower.canGrow(world, target, iblockstate, world.isRemote)) {
 				if (!world.isRemote) {
 					if (flower.canUseBonemeal(world, world.rand, target, iblockstate)) {
@@ -300,23 +312,23 @@ public class BlockEnderFlower extends Block implements IGrowable, IPlantable {
 		return false;
 	}
 
-	public static void spawnBonemealParticles(World world, BlockPos pos) {
-		IBlockState iblockstate = world.getBlockState(pos);
-		Random rand = ModGlobals.RNG;
+	public static void spawnBonemealParticles(final World world, final BlockPos pos) {
+		final IBlockState iblockstate = world.getBlockState(pos);
+		final Random rand = ModGlobals.RNG;
 
 		if (iblockstate.getMaterial() != Material.AIR) {
 			for (int i = 0; i < 5; ++i) {
-				double d0 = rand.nextGaussian() * 0.02D;
-				double d1 = rand.nextGaussian() * 0.02D;
-				double d2 = rand.nextGaussian() * 0.02D;
+				final double d0 = rand.nextGaussian() * 0.02D;
+				final double d1 = rand.nextGaussian() * 0.02D;
+				final double d2 = rand.nextGaussian() * 0.02D;
 				world.spawnParticle(EnumParticleTypes.VILLAGER_HAPPY, pos.getX() + rand.nextFloat(), pos.getY() + rand.nextFloat() * iblockstate.getBoundingBox(world, pos).maxY, pos.getZ() + rand.nextFloat(), d0, d1, d2);
 			}
 		}
 		else {
 			for (int i1 = 0; i1 < 5; ++i1) {
-				double d0 = rand.nextGaussian() * 0.02D;
-				double d1 = rand.nextGaussian() * 0.02D;
-				double d2 = rand.nextGaussian() * 0.02D;
+				final double d0 = rand.nextGaussian() * 0.02D;
+				final double d1 = rand.nextGaussian() * 0.02D;
+				final double d2 = rand.nextGaussian() * 0.02D;
 				world.spawnParticle(EnumParticleTypes.VILLAGER_HAPPY, pos.getX() + rand.nextFloat(), pos.getY() + (double) rand.nextFloat() * 1.0f, pos.getZ() + rand.nextFloat(), d0, d1, d2, new int[0]);
 			}
 		}
@@ -329,27 +341,27 @@ public class BlockEnderFlower extends Block implements IGrowable, IPlantable {
 	}
 
 	@Override
-	public BlockFaceShape getBlockFaceShape(IBlockAccess worldIn, IBlockState state, BlockPos pos, EnumFacing face) {
+	public BlockFaceShape getBlockFaceShape(final IBlockAccess worldIn, final IBlockState state, final BlockPos pos, final EnumFacing face) {
 		return BlockFaceShape.UNDEFINED;
 	}
 
 	@Override
-	public boolean isOpaqueCube(IBlockState state) {
+	public boolean isOpaqueCube(final IBlockState state) {
 		return false;
 	}
 
 	@Override
-	public boolean isFullCube(IBlockState state) {
+	public boolean isFullCube(final IBlockState state) {
 		return false;
 	}
 
 	@Override
-	public IBlockState getStateFromMeta(int meta) {
+	public IBlockState getStateFromMeta(final int meta) {
 		return withAge(meta);
 	}
 
 	@Override
-	public int getMetaFromState(IBlockState state) {
+	public int getMetaFromState(final IBlockState state) {
 		return getAge(state);
 	}
 
@@ -361,13 +373,13 @@ public class BlockEnderFlower extends Block implements IGrowable, IPlantable {
 	}
 
 	@Override
-	public EnumPlantType getPlantType(IBlockAccess world, BlockPos pos) {
+	public EnumPlantType getPlantType(final IBlockAccess world, final BlockPos pos) {
 		return EnumPlantType.getPlantType("EnderCrops");
 	}
 
 	@Override
-	public IBlockState getPlant(IBlockAccess world, BlockPos pos) {
-		IBlockState state = world.getBlockState(pos);
+	public IBlockState getPlant(final IBlockAccess world, final BlockPos pos) {
+		final IBlockState state = world.getBlockState(pos);
 		if (state.getBlock() != this) {
 			return getDefaultState();
 		}

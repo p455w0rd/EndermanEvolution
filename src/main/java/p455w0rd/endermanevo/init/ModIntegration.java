@@ -27,16 +27,22 @@ public class ModIntegration {
 		}
 	}
 
+	public static void postInit() {
+		if (Mods.IE.isLoaded()) {
+			IE.registerClocheRecipe();
+		}
+	}
+
 	public static enum Mods {
 			TOP("theoneprobe", "The One Probe"),
 			ENDERSTORAGE("enderstorage", "Ender Storage"),
 			WAILA("waila", "WAILA"),
 			IRONCHESTS("ironchest", "Iron Chests"), JEI("jei", "Just Enough Items"),
-			TINKERS("tconstruct", "Tinkers Construct");
+			TINKERS("tconstruct", "Tinkers Construct"), IE("immersiveengineering", "Immersive Engineering");
 
-		private String modid, name;
+		private final String modid, name;
 
-		Mods(String modidIn, String nameIn) {
+		Mods(final String modidIn, final String nameIn) {
 			modid = modidIn;
 			name = nameIn;
 		}
