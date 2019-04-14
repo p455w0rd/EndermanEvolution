@@ -22,7 +22,6 @@ minecraft {
 	version = "1.12.2-14.23.5.2768"
 	runDir = "run"
 	mappings = "snapshot_20171003"
-	//useDepAts = true
 	clientJvmArgs= ["-Dcofh.rf.crashOnOldAPI=false"]
 }
 
@@ -74,7 +73,7 @@ dependencies {
 	deobfCompile "slimeknights:TConstruct:1.12.2-2.10.1.518"
 	deobfCompile "slimeknights.mantle:Mantle:1.12-1.3.2.38"
 	deobfCompile "immersive-engineering:ImmersiveEngineering:0.12:89"
-	deobfCompile "p455w0rd:p455w0rdslib:1.12.2-2.0.36"
+	deobfCompile "p455w0rd:p455w0rdslib:1.12.2-2.0.38"
 	deobfCompile "info.loenwind.autoconfig:AutoConfig:1.12.2-1.0.1"
 	deobfCompile "info.loenwind.autosave:AutoSave:1.12.2-1.0.8"
 	deobfCompile "com.enderio.core:EnderCore:1.12.2-0.5.44"

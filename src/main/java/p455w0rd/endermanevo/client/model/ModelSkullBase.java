@@ -29,7 +29,7 @@ public class ModelSkullBase extends ModelBiped {
 		this(32);
 	}
 
-	protected ModelSkullBase(int height) {
+	protected ModelSkullBase(final int height) {
 		textureWidth = 64;
 		textureHeight = height;
 		renderOverlay = true;
@@ -53,11 +53,11 @@ public class ModelSkullBase extends ModelBiped {
 		return LIGHTMAP;
 	}
 
-	protected void setLightMap(ResourceLocation texture) {
+	protected void setLightMap(final ResourceLocation texture) {
 		LIGHTMAP = texture;
 	}
 
-	protected void setTexture(ResourceLocation texture) {
+	protected void setTexture(final ResourceLocation texture) {
 		TEXTURE = texture;
 	}
 
@@ -70,11 +70,11 @@ public class ModelSkullBase extends ModelBiped {
 		return this;
 	}
 
-	public void render(float rotationX) {
+	public void render(final float rotationX) {
 		render(rotationX, 0.0F, null);
 	}
 
-	public void render(float rotationX, float rotationY, EntityLivingBase entity) {
+	public void render(final float rotationX, final float rotationY, final EntityLivingBase entity) {
 		/*
 		bipedBody.showModel = false;
 		bipedLeftLeg.showModel = false;
@@ -94,11 +94,11 @@ public class ModelSkullBase extends ModelBiped {
 		}
 		head.rotateAngleY = rotationX / (180F / (float) Math.PI);
 		head.rotateAngleX = rotationY / (180F / (float) Math.PI);
-		if (entity == null || (entity != null && !entity.isInvisible())) {
+		if (entity == null || entity != null && !entity.isInvisible()) {
 			head.render(0.0625F);
 		}
 		if (renderOverlay) {
-			if (entity == null || (entity != null && !entity.isInvisible())) {
+			if (entity == null || entity != null && !entity.isInvisible()) {
 				renderOverlay(rotationX, rotationY);
 			}
 		}
@@ -110,19 +110,19 @@ public class ModelSkullBase extends ModelBiped {
 		}
 		if (this instanceof Enderman2) {
 			GlStateManager.pushMatrix();
-			float oldTexX = OpenGlHelper.lastBrightnessX;
-			float oldTexY = OpenGlHelper.lastBrightnessY;
+			final float oldTexX = OpenGlHelper.lastBrightnessX;
+			final float oldTexY = OpenGlHelper.lastBrightnessY;
 			GlStateManager.depthMask(true);
 			bindTexture(new ResourceLocation(ModGlobals.MODID, "textures/entity/charge_nocolor.png"));
 			GlStateManager.matrixMode(5890);
 			GlStateManager.loadIdentity();
-			float f = Minecraft.getMinecraft().player.ticksExisted + Minecraft.getMinecraft().getRenderPartialTicks();
+			final float f = Minecraft.getMinecraft().player.ticksExisted + Minecraft.getMinecraft().getRenderPartialTicks();
 			GlStateManager.translate(f * 0.01F, f * 0.01F, 0.0F);
 			GlStateManager.matrixMode(5888);
 			GlStateManager.enableBlend();
-			float r = 0;
-			float g = 0.75F;
-			float b = 0;
+			final float r = 0;
+			final float g = 0.75F;
+			final float b = 0;
 			GlStateManager.color(r, g, b, 0.5F);
 			//GlStateManager.disableLighting();
 			RenderHelper.enableStandardItemLighting();
@@ -149,12 +149,12 @@ public class ModelSkullBase extends ModelBiped {
 		}
 	}
 
-	public void bindTexture(ResourceLocation texture) {
+	public void bindTexture(final ResourceLocation texture) {
 		Minecraft.getMinecraft().getTextureManager().bindTexture(texture);
 	}
 
 	@Override
-	public void render(Entity entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scale) {
+	public void render(final Entity entityIn, final float limbSwing, final float limbSwingAmount, final float ageInTicks, final float netHeadYaw, final float headPitch, final float scale) {
 		if (entityIn != null && entityIn instanceof EntityLivingBase) {
 			render(netHeadYaw, headPitch, (EntityLivingBase) entityIn);
 		}
@@ -164,35 +164,35 @@ public class ModelSkullBase extends ModelBiped {
 
 	}
 
-	public void renderOverlay(float rotationX) {
+	public void renderOverlay(final float rotationX) {
 		renderOverlay(rotationX, 0.0F);
 	}
 
-	public void renderOverlay(float rotationX, float rotationY) {
+	public void renderOverlay(final float rotationX, final float rotationY) {
 		overlay.rotateAngleY = rotationX / (180F / (float) Math.PI);
 		overlay.rotateAngleX = rotationY / (180F / (float) Math.PI);
 		overlay.render(0.0625F);
 	}
 
-	protected void setRotation(ModelRenderer model, float x, float y, float z) {
+	protected void setRotation(final ModelRenderer model, final float x, final float y, final float z) {
 		model.rotateAngleX = x;
 		model.rotateAngleY = y;
 		model.rotateAngleZ = z;
 	}
 
-	public void renderLightMap(float skullRotation) {
+	public void renderLightMap(final float skullRotation) {
 		renderLightMap(skullRotation, 0.0F, null);
 	}
 
-	public void renderLightMap(float skullRotation, float skullPitch, EntityLivingBase entity) {
+	public void renderLightMap(final float skullRotation, final float skullPitch, final EntityLivingBase entity) {
 
 		GlStateManager.pushMatrix();
 		//GlStateManager.enableBlend();
 		//GlStateManager.blendFunc(GL11.GL_ONE, GL11.GL_ONE);
 		//GlStateManager.depthMask(true);
 		//GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
-		float brightnessX = OpenGlHelper.lastBrightnessX;
-		float brightnessY = OpenGlHelper.lastBrightnessY;
+		final float brightnessX = OpenGlHelper.lastBrightnessX;
+		final float brightnessY = OpenGlHelper.lastBrightnessY;
 		//OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, 61680f, 0f);
 		RenderHelper.enableStandardItemLighting();
 		OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, 240f, 240f);
@@ -207,15 +207,16 @@ public class ModelSkullBase extends ModelBiped {
 		//GlStateManager.disableBlend();
 		GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 		GlStateManager.popMatrix();
+		GlStateManager.enableBlend();
 	}
 
-	public void renderLightMapOnPlayerHead(World world, EntityLivingBase wearer) {
+	public void renderLightMapOnPlayerHead(final World world, final EntityLivingBase wearer) {
 		GlStateManager.pushMatrix();
 		//GlStateManager.enableBlend();
 		//GlStateManager.blendFunc(GL11.GL_ONE, GL11.GL_ONE);
 		//GlStateManager.depthMask(true);
-		float brightnessX = OpenGlHelper.lastBrightnessX;
-		float brightnessY = OpenGlHelper.lastBrightnessY;
+		final float brightnessX = OpenGlHelper.lastBrightnessX;
+		final float brightnessY = OpenGlHelper.lastBrightnessY;
 		//GlStateManager.disableLighting();
 		RenderHelper.enableStandardItemLighting();
 		OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, 240f, 240f);
@@ -236,7 +237,7 @@ public class ModelSkullBase extends ModelBiped {
 		public Enderman() {
 			setTexture(TEXTURE_ENDERMAN);
 			setLightMap(LIGHTMAP_ENDERMAN);
-			ModelEnderman model = getEndermanModelInstace();
+			final ModelEnderman model = getEndermanModelInstace();
 			head = model.bipedHead;
 			overlay = model.bipedHeadwear;
 			model.isAttacking = true;
@@ -259,7 +260,7 @@ public class ModelSkullBase extends ModelBiped {
 		public Frienderman() {
 			setTexture(TEXTURE_ENDERMAN);
 			setLightMap(LIGHTMAP_ENDERMAN);
-			ModelEnderman model = getEndermanModelInstace();
+			final ModelEnderman model = getEndermanModelInstace();
 			head = model.bipedHead;
 			overlay = model.bipedHeadwear;
 			model.isAttacking = true;
@@ -282,7 +283,7 @@ public class ModelSkullBase extends ModelBiped {
 		public Enderman2() {
 			setTexture(TEXTURE_ENDERMAN);
 			setLightMap(LIGHTMAP_ENDERMAN);
-			ModelEnderman model = getEndermanModelInstace();
+			final ModelEnderman model = getEndermanModelInstace();
 			head = model.bipedHead;
 			overlay = model.bipedHeadwear;
 			model.isAttacking = true;

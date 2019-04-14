@@ -14,7 +14,7 @@ import p455w0rd.endermanevo.blocks.tiles.TileBlockSkull;
 
 public class ModBlocks {
 
-	private static final List<Block> BLOCK_LIST = new ArrayList<Block>();
+	private static final List<Block> BLOCK_LIST = new ArrayList<>();
 
 	public static final BlockSkullBase.Enderman ENDERMAN_SKULL = new BlockSkullBase.Enderman();
 	public static final BlockSkullBase.Frienderman FRIENDERMAN_SKULL = new BlockSkullBase.Frienderman();
@@ -27,9 +27,9 @@ public class ModBlocks {
 
 	@SideOnly(Side.CLIENT)
 	public static void preInitModels() {
-		for (Block block : BLOCK_LIST) {
+		for (final Block block : BLOCK_LIST) {
 			if (block instanceof IModelHolder) {
-				((IModelHolder) block).initModel();
+				((IModelHolder) block).initModel((IModelHolder) block);
 			}
 		}
 	}
