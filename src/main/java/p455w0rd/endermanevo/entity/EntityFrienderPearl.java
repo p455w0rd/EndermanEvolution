@@ -47,35 +47,34 @@ public class EntityFrienderPearl extends EntityThrowable {
 
 	private EntityLivingBase thrower;
 
-	public EntityFrienderPearl(World worldIn) {
+	public EntityFrienderPearl(final World worldIn) {
 		super(worldIn);
 	}
 
-	public EntityFrienderPearl(World worldIn, EntityLivingBase throwerIn) {
+	public EntityFrienderPearl(final World worldIn, final EntityLivingBase throwerIn) {
 		super(worldIn, throwerIn);
 		thrower = throwerIn;
 	}
 
 	@SideOnly(Side.CLIENT)
-	public EntityFrienderPearl(World worldIn, double x, double y, double z) {
+	public EntityFrienderPearl(final World worldIn, final double x, final double y, final double z) {
 		super(worldIn, x, y, z);
 	}
 
-	public static void registerFixesThrowable(DataFixer p_189663_0_) {
+	public static void registerFixesThrowable(final DataFixer p_189663_0_) {
 		EntityThrowable.registerFixesThrowable(p_189663_0_, "ThrownFrienderpearl");
 	}
 
 	@Override
-	protected void onImpact(RayTraceResult result) {
-		EntityLivingBase entitylivingbase = getThrower();
-
+	protected void onImpact(final RayTraceResult result) {
+		final EntityLivingBase entitylivingbase = getThrower();
 		if (result.entityHit != null) {
 			if (result.entityHit == thrower) {
 				return;
 			}
 			else {
 				if (entitylivingbase != null && result.entityHit instanceof EntityCreature && !(result.entityHit instanceof EntityMob)) {
-					EntityCreature passiveEntity = (EntityCreature) result.entityHit;
+					final EntityCreature passiveEntity = (EntityCreature) result.entityHit;
 					passiveEntity.setPositionAndUpdate(entitylivingbase.posX, entitylivingbase.posY, entitylivingbase.posZ);
 					passiveEntity.fallDistance = 0.0F;
 					setDead();
@@ -85,18 +84,15 @@ public class EntityFrienderPearl extends EntityThrowable {
 		}
 
 		if (result.typeOfHit == RayTraceResult.Type.BLOCK) {
-			BlockPos blockpos = result.getBlockPos();
-			TileEntity tileentity = EasyMappings.world(this).getTileEntity(blockpos);
-
+			final BlockPos blockpos = result.getBlockPos();
+			final TileEntity tileentity = EasyMappings.world(this).getTileEntity(blockpos);
 			if (tileentity instanceof TileEntityEndGateway) {
-				TileEntityEndGateway tileentityendgateway = (TileEntityEndGateway) tileentity;
-
+				final TileEntityEndGateway tileentityendgateway = (TileEntityEndGateway) tileentity;
 				if (entitylivingbase != null) {
 					tileentityendgateway.teleportEntity(entitylivingbase);
 					setDead();
 					return;
 				}
-
 				tileentityendgateway.teleportEntity(this);
 				return;
 			}
@@ -106,19 +102,15 @@ public class EntityFrienderPearl extends EntityThrowable {
 				ParticleUtil.spawn(EnumParticles.LOVE, EasyMappings.world(this), posX, posY + rand.nextDouble() * 2.0D, posZ, rand.nextGaussian(), 0.0D, rand.nextGaussian());
 			}
 		}
-
 		if (!EasyMappings.world(this).isRemote) {
 			if (entitylivingbase instanceof EntityPlayerMP) {
-				EntityPlayerMP entityplayermp = (EntityPlayerMP) entitylivingbase;
-
+				final EntityPlayerMP entityplayermp = (EntityPlayerMP) entitylivingbase;
 				if (entityplayermp.connection.getNetworkManager().isChannelOpen() && EasyMappings.world(entityplayermp) == EasyMappings.world(this) && !entityplayermp.isPlayerSleeping()) {
-					EnderTeleportEvent event = new EnderTeleportEvent(entityplayermp, posX, posY, posZ, 5.0F);
+					final EnderTeleportEvent event = new EnderTeleportEvent(entityplayermp, posX, posY, posZ, 5.0F);
 					if (!MinecraftForge.EVENT_BUS.post(event)) {
-
 						if (entitylivingbase.isRiding()) {
 							entitylivingbase.dismountRidingEntity();
 						}
-
 						entitylivingbase.setPositionAndUpdate(event.getTargetX(), event.getTargetY(), event.getTargetZ());
 						entitylivingbase.fallDistance = 0.0F;
 					}
@@ -128,15 +120,13 @@ public class EntityFrienderPearl extends EntityThrowable {
 				entitylivingbase.setPositionAndUpdate(posX, posY, posZ);
 				entitylivingbase.fallDistance = 0.0F;
 			}
-
 			setDead();
 		}
 	}
 
 	@Override
 	public void onUpdate() {
-		EntityLivingBase entitylivingbase = getThrower();
-
+		final EntityLivingBase entitylivingbase = getThrower();
 		if (entitylivingbase != null && entitylivingbase instanceof EntityPlayer && !entitylivingbase.isEntityAlive()) {
 			setDead();
 		}
@@ -144,4 +134,5 @@ public class EntityFrienderPearl extends EntityThrowable {
 			super.onUpdate();
 		}
 	}
+
 }

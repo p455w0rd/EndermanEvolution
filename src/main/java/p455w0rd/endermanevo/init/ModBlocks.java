@@ -20,6 +20,9 @@ public class ModBlocks {
 	public static final BlockSkullBase.Frienderman FRIENDERMAN_SKULL = new BlockSkullBase.Frienderman();
 	public static final BlockSkullBase.EvolvedEnderman ENDERMAN2_SKULL = new BlockSkullBase.EvolvedEnderman();
 	public static final BlockEnderFlower ENDER_FLOWER = new BlockEnderFlower();
+	private static final Block[] BLOCK_ARRAY = new Block[] {
+			ENDERMAN_SKULL, FRIENDERMAN_SKULL, ENDERMAN2_SKULL, ENDER_FLOWER
+	};
 
 	public static void init() {
 		GameRegistry.registerTileEntity(TileBlockSkull.class, new ResourceLocation(ModGlobals.MODID, ":tile_pskull"));
@@ -27,7 +30,7 @@ public class ModBlocks {
 
 	@SideOnly(Side.CLIENT)
 	public static void preInitModels() {
-		for (final Block block : BLOCK_LIST) {
+		for (final Block block : BLOCK_ARRAY) {
 			if (block instanceof IModelHolder) {
 				((IModelHolder) block).initModel((IModelHolder) block);
 			}
@@ -36,7 +39,7 @@ public class ModBlocks {
 
 	public static List<Block> getList() {
 		if (BLOCK_LIST.isEmpty()) {
-			BLOCK_LIST.addAll(Arrays.asList(ENDERMAN_SKULL, FRIENDERMAN_SKULL, ENDERMAN2_SKULL, ENDER_FLOWER));
+			BLOCK_LIST.addAll(Arrays.asList(BLOCK_ARRAY));
 		}
 		return BLOCK_LIST;
 	}

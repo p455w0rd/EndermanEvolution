@@ -18,19 +18,9 @@ public class CustomChestRenderer {
 	public static final ModelChest CHEST_MODEL = new ModelChest();
 	public static final ModelShulker SHULKER_BOX_MODEL = new ModelShulker();
 
-	//private ChestType type;
-	/*
-	public CustomChestRenderer(ChestType typeIn) {
-		type=typeIn;
-		Calendar calendar = Calendar.getInstance();
-	    if (calendar.get(2) + 1 == 12 && calendar.get(5) >= 24 && calendar.get(5) <= 26 && type==ChestType.NORMAL) {
-	        type=ChestType.CHRISTMAS;
-	    }
-	}
-	*/
-	public static void renderChest(ChestType typeIn, float lidAngle) {
+	public static void renderChest(final ChestType typeIn, final float lidAngle) {
 		ChestType type = typeIn;
-		Calendar calendar = Calendar.getInstance();
+		final Calendar calendar = Calendar.getInstance();
 		if (calendar.get(2) + 1 == 12 && calendar.get(5) >= 24 && calendar.get(5) <= 26 && type == ChestType.NORMAL) {
 			type = ChestType.CHRISTMAS;
 		}
@@ -49,7 +39,7 @@ public class CustomChestRenderer {
 		GlStateManager.popMatrix();
 	}
 
-	public static void renderShulkerBox(int color, float lidProgress) {
+	public static void renderShulkerBox(final int color, final float lidProgress) {
 		GlStateManager.enableDepth();
 		GlStateManager.depthFunc(515);
 		GlStateManager.depthMask(true);
@@ -80,7 +70,7 @@ public class CustomChestRenderer {
 
 		ResourceLocation texture;
 
-		ChestType(ResourceLocation textureIn) {
+		ChestType(final ResourceLocation textureIn) {
 			texture = textureIn;
 		}
 

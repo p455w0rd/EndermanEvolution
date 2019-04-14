@@ -156,22 +156,7 @@ public class ModEvents {
 				}
 			}
 		}
-		/* later
-				if (event.getEntity() instanceof EntityPlayer) {
-					if (!PLAYERS_WITH_FRIENDERMAN.contains(((EntityPlayer) event.getEntity()).getUniqueID())) {
-						for (RenderLivingBase<? extends EntityLivingBase> renderPlayer : Minecraft.getMinecraft().getRenderManager().getSkinMap().values()) {
-							if (renderPlayer instanceof RenderPlayer) {
-								renderPlayer.addLayer(new LayerMiniFrienderman());
-								PLAYERS_WITH_FRIENDERMAN.add(((EntityPlayer) event.getEntity()).getUniqueID());
-								break;
-							}
-						}
-					}
-				}
-				*/
 	}
-
-	//private static final ArrayList<UUID> PLAYERS_WITH_FRIENDERMAN = Lists.<UUID>newArrayList();
 
 	@SubscribeEvent
 	@SideOnly(Side.CLIENT)
@@ -375,7 +360,6 @@ public class ModEvents {
 					ParticleUtil.spawn(EnumParticles.PORTAL, player.getEntityWorld(), x, y, z, sx, sy, sz);
 				}
 			}
-			//}
 		}
 	}
 

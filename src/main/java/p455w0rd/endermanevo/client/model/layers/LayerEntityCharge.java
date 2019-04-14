@@ -21,14 +21,14 @@ public class LayerEntityCharge<T extends EntityLivingBase> implements LayerRende
 	private final RenderLivingBase<T> entityRenderer;
 	private final ModelBase entityModel;
 
-	public LayerEntityCharge(RenderLivingBase<T> rendererIn, ModelBase modelIn) {
+	public LayerEntityCharge(final RenderLivingBase<T> rendererIn, final ModelBase modelIn) {
 		entityRenderer = rendererIn;
 		entityModel = modelIn;
 	}
 
 	@Override
-	public void doRenderLayer(EntityLivingBase entitylivingbaseIn, float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch, float scale) {
-		boolean flag = !entitylivingbaseIn.isInvisible();
+	public void doRenderLayer(final EntityLivingBase entitylivingbaseIn, final float limbSwing, final float limbSwingAmount, final float partialTicks, final float ageInTicks, final float netHeadYaw, final float headPitch, final float scale) {
+		final boolean flag = !entitylivingbaseIn.isInvisible();
 		EntityEvolvedEnderman enderman = null;
 		if (entitylivingbaseIn instanceof EntityEvolvedEnderman) {
 			enderman = (EntityEvolvedEnderman) entitylivingbaseIn;
@@ -40,27 +40,21 @@ public class LayerEntityCharge<T extends EntityLivingBase> implements LayerRende
 		entityRenderer.bindTexture(LIGHTNING_TEXTURE);
 		GlStateManager.matrixMode(5890);
 		GlStateManager.loadIdentity();
-		float f = entitylivingbaseIn.ticksExisted + partialTicks;
+		final float f = entitylivingbaseIn.ticksExisted + partialTicks;
 		GlStateManager.translate(f * 0.01F, f * 0.01F, 0.0F);
 		GlStateManager.matrixMode(5888);
 		GlStateManager.enableBlend();
 		float r = 0;
 		float g = 0.75F;
-		float b = 0;
-		if (enderman != null) {
-			if (enderman.isAggro()) {
-				g = 0;
-				r = 0.75F;
-			}
-			else {
-				//System.out.println("");
-			}
+		final float b = 0;
+		if (enderman != null && enderman.isAggro()) {
+			g = 0;
+			r = 0.75F;
 		}
 		GlStateManager.color(r, g, b, 0.5F);
 		RenderHelper.enableStandardItemLighting();
-		float oldTexX = OpenGlHelper.lastBrightnessX;
-		float oldTexY = OpenGlHelper.lastBrightnessY;
-		//OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, 61680.0F, 0.0F);
+		final float oldTexX = OpenGlHelper.lastBrightnessX;
+		final float oldTexY = OpenGlHelper.lastBrightnessY;
 		OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, 260.0F, 260.0F);
 		GlStateManager.blendFunc(GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ONE);
 		if (entitylivingbaseIn instanceof EntitySlime) {

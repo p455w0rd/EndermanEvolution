@@ -16,28 +16,25 @@ public class EntityEvolvedEndermite extends EntityEndermite {
 
 	private int lifetime;
 
-	public EntityEvolvedEndermite(World worldIn) {
+	public EntityEvolvedEndermite(final World worldIn) {
 		super(worldIn);
 	}
 
 	@Override
 	public void onLivingUpdate() {
 		updateArmSwingProgress();
-		float f = getBrightness();
-
+		final float f = getBrightness();
 		if (f > 0.5F) {
 			idleTime += 2;
 		}
-
 		if (jumpTicks > 0) {
 			--jumpTicks;
 		}
-
 		if (newPosRotationIncrements > 0 && !canPassengerSteer()) {
-			double d0 = posX + (interpTargetX - posX) / newPosRotationIncrements;
-			double d1 = posY + (interpTargetY - posY) / newPosRotationIncrements;
-			double d2 = posZ + (interpTargetZ - posZ) / newPosRotationIncrements;
-			double d3 = MathHelper.wrapDegrees(interpTargetYaw - rotationYaw);
+			final double d0 = posX + (interpTargetX - posX) / newPosRotationIncrements;
+			final double d1 = posY + (interpTargetY - posY) / newPosRotationIncrements;
+			final double d2 = posZ + (interpTargetZ - posZ) / newPosRotationIncrements;
+			final double d3 = MathHelper.wrapDegrees(interpTargetYaw - rotationYaw);
 			rotationYaw = (float) (rotationYaw + d3 / newPosRotationIncrements);
 			rotationPitch = (float) (rotationPitch + (interpTargetPitch - rotationPitch) / newPosRotationIncrements);
 			--newPosRotationIncrements;
@@ -49,21 +46,16 @@ public class EntityEvolvedEndermite extends EntityEndermite {
 			motionY *= 0.98D;
 			motionZ *= 0.98D;
 		}
-
 		if (Math.abs(motionX) < 0.003D) {
 			motionX = 0.0D;
 		}
-
 		if (Math.abs(motionY) < 0.003D) {
 			motionY = 0.0D;
 		}
-
 		if (Math.abs(motionZ) < 0.003D) {
 			motionZ = 0.0D;
 		}
-
 		EasyMappings.world(this).profiler.startSection("ai");
-
 		if (isMovementBlocked()) {
 			isJumping = false;
 			moveStrafing = 0.0F;
@@ -75,10 +67,8 @@ public class EntityEvolvedEndermite extends EntityEndermite {
 			updateEntityActionState();
 			EasyMappings.world(this).profiler.endSection();
 		}
-
 		EasyMappings.world(this).profiler.endSection();
 		EasyMappings.world(this).profiler.startSection("jump");
-
 		if (isJumping) {
 			if (isInWater()) {
 				handleJumpWater();
@@ -94,7 +84,6 @@ public class EntityEvolvedEndermite extends EntityEndermite {
 		else {
 			jumpTicks = 0;
 		}
-
 		EasyMappings.world(this).profiler.endSection();
 		EasyMappings.world(this).profiler.startSection("travel");
 		moveStrafing *= 0.98F;
@@ -105,19 +94,15 @@ public class EntityEvolvedEndermite extends EntityEndermite {
 		EasyMappings.world(this).profiler.startSection("push");
 		collideWithNearbyEntities();
 		EasyMappings.world(this).profiler.endSection();
-
 		EasyMappings.world(this).profiler.startSection("looting");
-
 		if (!EasyMappings.world(this).isRemote && canPickUpLoot() && !dead && EasyMappings.world(this).getGameRules().getBoolean("mobGriefing")) {
-			for (EntityItem entityitem : EasyMappings.world(this).getEntitiesWithinAABB(EntityItem.class, getEntityBoundingBox().expand(1.0D, 0.0D, 1.0D))) {
+			for (final EntityItem entityitem : EasyMappings.world(this).getEntitiesWithinAABB(EntityItem.class, getEntityBoundingBox().expand(1.0D, 0.0D, 1.0D))) {
 				if (!entityitem.isDead && entityitem.getItem() != null && !entityitem.cannotPickup()) {
 					updateEquipmentIfNeeded(entityitem);
 				}
 			}
 		}
-
 		EasyMappings.world(this).profiler.endSection();
-
 		if (EasyMappings.world(this).isRemote) {
 			for (int i = 0; i < 2; ++i) {
 				ParticleUtil.spawn(EnumParticles.PORTAL_GREEN, EasyMappings.world(this), posX + (rand.nextDouble() - 0.5D) * width, posY + rand.nextDouble() * height, posZ + (rand.nextDouble() - 0.5D) * width, (rand.nextDouble() - 0.5D) * 2.0D, -rand.nextDouble(), (rand.nextDouble() - 0.5D) * 2.0D);

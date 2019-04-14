@@ -43,22 +43,22 @@ public class EntityEvolvedEnderman extends EntityEnderman {
 
 	private static final DataParameter<Boolean> IS_AGGRO = EntityDataManager.<Boolean>createKey(EntityEvolvedEnderman.class, DataSerializers.BOOLEAN);
 
-	public EntityEvolvedEnderman(World worldIn) {
+	public EntityEvolvedEnderman(final World worldIn) {
 		super(worldIn);
 	}
 
-	private boolean shouldAttackPlayer(EntityPlayer player) {
-		ItemStack itemstack = player.inventory.armorInventory.get(3);
+	private boolean shouldAttackPlayer(final EntityPlayer player) {
+		final ItemStack itemstack = player.inventory.armorInventory.get(3);
 
 		if (itemstack.getItem() == Item.getItemFromBlock(Blocks.PUMPKIN) || itemstack.getItem() instanceof ItemSkullBase) {
 			return false;
 		}
 		else {
-			Vec3d vec3d = player.getLook(1.0F).normalize();
+			final Vec3d vec3d = player.getLook(1.0F).normalize();
 			Vec3d vec3d1 = new Vec3d(posX - player.posX, getEntityBoundingBox().minY + getEyeHeight() - (player.posY + player.getEyeHeight()), posZ - player.posZ);
-			double d0 = vec3d1.lengthVector();
+			final double d0 = vec3d1.lengthVector();
 			vec3d1 = vec3d1.normalize();
-			double d1 = vec3d.dotProduct(vec3d1);
+			final double d1 = vec3d.dotProduct(vec3d1);
 			return d1 > 1.0D - 0.025D / d0 ? player.canEntityBeSeen(this) : false;
 		}
 	}
@@ -74,19 +74,19 @@ public class EntityEvolvedEnderman extends EntityEnderman {
 		tasks.addTask(11, new EntityEvolvedEnderman.AITakeBlock(this));
 		targetTasks.addTask(1, new EntityEvolvedEnderman.AIFindPlayer(this));
 		targetTasks.addTask(2, new EntityEvolvedEnderman.EntityAIEndermanHurtByTarget(this));
-		targetTasks.addTask(3, new EntityAINearestAttackableTarget<EntityEvolvedEndermite>(this, EntityEvolvedEndermite.class, 10, true, false, (@Nullable EntityEvolvedEndermite p_apply_1_) -> p_apply_1_.isSpawnedByPlayer()));
+		targetTasks.addTask(3, new EntityAINearestAttackableTarget<>(this, EntityEvolvedEndermite.class, 10, true, false, (@Nullable final EntityEvolvedEndermite p_apply_1_) -> p_apply_1_.isSpawnedByPlayer()));
 	}
 
 	private static final String IS_AGGRO_KEY = "IsAggro";
 
 	@Override
-	public void writeEntityToNBT(NBTTagCompound compound) {
+	public void writeEntityToNBT(final NBTTagCompound compound) {
 		super.writeEntityToNBT(compound);
 		compound.setBoolean(IS_AGGRO_KEY, isAggro());
 	}
 
 	@Override
-	public void readEntityFromNBT(NBTTagCompound compound) {
+	public void readEntityFromNBT(final NBTTagCompound compound) {
 		super.readEntityFromNBT(compound);
 		if (compound.hasKey(IS_AGGRO_KEY)) {
 			if (isAggro() != compound.getBoolean(IS_AGGRO_KEY)) {
@@ -101,7 +101,7 @@ public class EntityEvolvedEnderman extends EntityEnderman {
 		dataManager.register(IS_AGGRO, Boolean.valueOf(false));
 	}
 
-	public void setAggro(boolean isAggro) {
+	public void setAggro(final boolean isAggro) {
 		dataManager.set(IS_AGGRO, Boolean.valueOf(isAggro));
 	}
 
@@ -111,7 +111,7 @@ public class EntityEvolvedEnderman extends EntityEnderman {
 
 	@SideOnly(Side.CLIENT)
 	@Override
-	public boolean isInvisibleToPlayer(EntityPlayer player) {
+	public boolean isInvisibleToPlayer(final EntityPlayer player) {
 		return false;
 	}
 
@@ -122,12 +122,11 @@ public class EntityEvolvedEnderman extends EntityEnderman {
 
 	@Override
 	@Nullable
-	public IEntityLivingData onInitialSpawn(DifficultyInstance difficulty, @Nullable IEntityLivingData livingdata) {
-		int radius = 32;
-		List<EntityEvolvedEnderman> endermanList = world.getEntitiesWithinAABB(EntityEvolvedEnderman.class, new AxisAlignedBB(posX - radius, 0, posZ - radius, posX + radius, world.getHeight(), posZ + radius));
+	public IEntityLivingData onInitialSpawn(final DifficultyInstance difficulty, @Nullable final IEntityLivingData livingdata) {
+		final int radius = 32;
+		final List<EntityEvolvedEnderman> endermanList = world.getEntitiesWithinAABB(EntityEvolvedEnderman.class, new AxisAlignedBB(posX - radius, 0, posZ - radius, posX + radius, world.getHeight(), posZ + radius));
 		if (endermanList.size() >= ConfigOptions.ENDERMAN_MAX_SPAWN) {
 			return null;
-			//setDead();
 		}
 		if (!getCanSpawnHere()) {
 			//setDead();
@@ -138,8 +137,7 @@ public class EntityEvolvedEnderman extends EntityEnderman {
 	@SideOnly(Side.CLIENT)
 	@Override
 	public int getBrightnessForRender() {
-		BlockPos.MutableBlockPos blockpos$mutableblockpos = new BlockPos.MutableBlockPos(MathHelper.floor(posX), 0, MathHelper.floor(posZ));
-
+		final BlockPos.MutableBlockPos blockpos$mutableblockpos = new BlockPos.MutableBlockPos(MathHelper.floor(posX), 0, MathHelper.floor(posZ));
 		if (world != null && world.isBlockLoaded(blockpos$mutableblockpos)) {
 			blockpos$mutableblockpos.setY(MathHelper.floor(posY + getEyeHeight()));
 			return world.getCombinedLight(blockpos$mutableblockpos, 0);
@@ -151,8 +149,7 @@ public class EntityEvolvedEnderman extends EntityEnderman {
 
 	@Override
 	public float getBrightness() {
-		BlockPos.MutableBlockPos blockpos$mutableblockpos = new BlockPos.MutableBlockPos(MathHelper.floor(posX), 0, MathHelper.floor(posZ));
-
+		final BlockPos.MutableBlockPos blockpos$mutableblockpos = new BlockPos.MutableBlockPos(MathHelper.floor(posX), 0, MathHelper.floor(posZ));
 		if (world != null && world.isBlockLoaded(blockpos$mutableblockpos)) {
 			blockpos$mutableblockpos.setY(MathHelper.floor(posY + getEyeHeight()));
 			return world.getLightBrightness(blockpos$mutableblockpos);
@@ -167,13 +164,13 @@ public class EntityEvolvedEnderman extends EntityEnderman {
 	}
 
 	@Override
-	public boolean attackEntityFrom(DamageSource source, float amount) {
+	public boolean attackEntityFrom(final DamageSource source, float amount) {
 		if (isEntityInvulnerable(source) || world.isRemote || !ForgeHooks.onLivingAttack(this, source, amount)) {
 			return false;
 		}
 		if ((source instanceof EntityDamageSourceIndirect || source.isProjectile()) && !isInWater()) {
 			if (source.isProjectile() && !(source.getImmediateSource() instanceof EntitySnowball)) {
-				Entity sourceEntity = source.getTrueSource();
+				final Entity sourceEntity = source.getTrueSource();
 				if (sourceEntity != null && attemptTeleport(sourceEntity.posX + (rand.nextInt(3) == 2 ? -1 : 1), sourceEntity.posY, sourceEntity.posZ + (rand.nextInt(3) == 2 ? -1 : 1))) {
 					if (sourceEntity instanceof EntityLivingBase) {
 						setRevengeTarget((EntityLivingBase) sourceEntity);
@@ -204,17 +201,13 @@ public class EntityEvolvedEnderman extends EntityEnderman {
 					getItemStackFromSlot(EntityEquipmentSlot.HEAD).damageItem((int) (amount * 4.0F + rand.nextFloat() * amount * 2.0F), this);
 					amount *= 0.75F;
 				}
-
-				boolean flag = false;
-
+				final boolean flag = false;
 				limbSwingAmount = 1.5F;
 				boolean flag1 = true;
-
 				if (hurtResistantTime > maxHurtResistantTime / 2.0F) {
 					if (amount <= lastDamage) {
 						return false;
 					}
-
 					damageEntity(source, amount - lastDamage);
 					lastDamage = amount;
 					flag1 = false;
@@ -226,21 +219,17 @@ public class EntityEvolvedEnderman extends EntityEnderman {
 					maxHurtTime = 10;
 					hurtTime = maxHurtTime;
 				}
-
 				attackedAtYaw = 0.0F;
-				Entity entity = source.getTrueSource();
-
+				final Entity entity = source.getTrueSource();
 				if (entity != null) {
 					if (entity instanceof EntityLivingBase) {
 						setRevengeTarget((EntityLivingBase) entity);
 					}
-
 					if (entity instanceof EntityPlayer) {
 						recentlyHit = 100;
 						attackingPlayer = (EntityPlayer) entity;
 					}
 				}
-
 				if (flag1) {
 					if (flag) {
 						EasyMappings.world(this).setEntityState(this, (byte) 29);
@@ -255,15 +244,12 @@ public class EntityEvolvedEnderman extends EntityEnderman {
 					if (source != DamageSource.DROWN && (!flag || amount > 0.0F)) {
 						markVelocityChanged();
 					}
-
 					if (entity != null) {
 						double d1 = entity.posX - posX;
 						double d0;
-
 						for (d0 = entity.posZ - posZ; d1 * d1 + d0 * d0 < 1.0E-4D; d0 = (Math.random() - Math.random()) * 0.01D) {
 							d1 = (Math.random() - Math.random()) * 0.01D;
 						}
-
 						attackedAtYaw = (float) (MathHelper.atan2(d0, d1) * (180D / Math.PI) - rotationYaw);
 						if (source.isProjectile()) {
 							source.getImmediateSource().setDead();
@@ -271,20 +257,16 @@ public class EntityEvolvedEnderman extends EntityEnderman {
 						else {
 							knockBack(entity, 0.4F, d1, d0);
 						}
-						//entity.setDead();
 					}
 					else {
 						attackedAtYaw = (int) (Math.random() * 2.0D) * 180;
 					}
 				}
-
 				if (getHealth() <= 0.0F) {
-					SoundEvent soundevent = getDeathSound();
-
+					final SoundEvent soundevent = getDeathSound();
 					if (flag1 && soundevent != null) {
 						playSound(soundevent, getSoundVolume(), getSoundPitch());
 					}
-
 					onDeath(source);
 				}
 				else if (flag1) {
@@ -295,34 +277,30 @@ public class EntityEvolvedEnderman extends EntityEnderman {
 					MCPrivateUtils.setLastDamageSource(this, source);
 					MCPrivateUtils.setLastDamageStamp(this, EasyMappings.world(this).getTotalWorldTime());
 				}
-
 				return !flag || amount > 0.0F;
 			}
 		}
 	}
 
 	@Override
-	public boolean attemptTeleport(double x, double y, double z) {
+	public boolean attemptTeleport(final double x, final double y, final double z) {
 		if (isInWater()) {
 			return false;
 		}
-		double d0 = posX;
-		double d1 = posY;
-		double d2 = posZ;
+		final double d0 = posX;
+		final double d1 = posY;
+		final double d2 = posZ;
 		posX = x;
 		posY = y;
 		posZ = z;
 		boolean flag = false;
 		BlockPos blockpos = new BlockPos(this);
-		Random random = getRNG();
-
+		final Random random = getRNG();
 		if (EasyMappings.world(this).isBlockLoaded(blockpos)) {
 			boolean flag1 = false;
-
 			while (!flag1 && blockpos.getY() > 0) {
-				BlockPos blockpos1 = blockpos.down();
-				IBlockState iblockstate = EasyMappings.world(this).getBlockState(blockpos1);
-
+				final BlockPos blockpos1 = blockpos.down();
+				final IBlockState iblockstate = EasyMappings.world(this).getBlockState(blockpos1);
 				if (iblockstate.getMaterial().blocksMovement()) {
 					flag1 = true;
 				}
@@ -331,7 +309,6 @@ public class EntityEvolvedEnderman extends EntityEnderman {
 					blockpos = blockpos1;
 				}
 			}
-
 			if (flag1) {
 				setPositionAndUpdate(posX, posY, posZ);
 
@@ -340,7 +317,6 @@ public class EntityEvolvedEnderman extends EntityEnderman {
 				}
 			}
 		}
-
 		if (!flag) {
 			setPositionAndUpdate(d0, d1, d2);
 			return false;
@@ -348,20 +324,19 @@ public class EntityEvolvedEnderman extends EntityEnderman {
 		else {
 			if (FMLCommonHandler.instance().getSide() == Side.CLIENT) {
 				for (int j = 0; j < 128; ++j) {
-					double d6 = j / 127.0D;
-					float f = (random.nextFloat() - 0.5F) * 0.2F;
-					float f1 = (random.nextFloat() - 0.5F) * 0.2F;
-					float f2 = (random.nextFloat() - 0.5F) * 0.2F;
-					double d3 = d0 + (posX - d0) * d6 + (random.nextDouble() - 0.5D) * width * 2.0D;
-					double d4 = d1 + (posY - d1) * d6 + random.nextDouble() * height;
-					double d5 = d2 + (posZ - d2) * d6 + (random.nextDouble() - 0.5D) * width * 2.0D;
+					final double d6 = j / 127.0D;
+					final float f = (random.nextFloat() - 0.5F) * 0.2F;
+					final float f1 = (random.nextFloat() - 0.5F) * 0.2F;
+					final float f2 = (random.nextFloat() - 0.5F) * 0.2F;
+					final double d3 = d0 + (posX - d0) * d6 + (random.nextDouble() - 0.5D) * width * 2.0D;
+					final double d4 = d1 + (posY - d1) * d6 + random.nextDouble() * height;
+					final double d5 = d2 + (posZ - d2) * d6 + (random.nextDouble() - 0.5D) * width * 2.0D;
 					ParticleUtil.spawn(getParticle(), EasyMappings.world(this), d3, d4, d5, f, f1, f2);
 				}
 			}
 			if (this instanceof EntityCreature) {
 				((EntityCreature) this).getNavigator().clearPath();
 			}
-
 			return true;
 		}
 	}
@@ -371,7 +346,7 @@ public class EntityEvolvedEnderman extends EntityEnderman {
 	}
 
 	@Override
-	public float getBlockPathWeight(BlockPos pos) {
+	public float getBlockPathWeight(final BlockPos pos) {
 		return ConfigOptions.ENDERMAN_DAY_SPAWN ? 0.0F : super.getBlockPathWeight(pos);
 	}
 
@@ -384,33 +359,29 @@ public class EntityEvolvedEnderman extends EntityEnderman {
 	public void onLivingUpdate() {
 		if (getEntityWorld() != null && getEntityWorld().isRemote) {
 			for (int i = 0; i < 2; ++i) {
-				double x = posX + (rand.nextDouble() - 0.5D) * width;
-				double y = posY + rand.nextDouble() * height - 0.25D;
-				double z = posZ + (rand.nextDouble() - 0.5D) * width;
-				double sx = (rand.nextDouble() - 0.5D) * 2.0D;
-				double sy = -rand.nextDouble();
-				double sz = (rand.nextDouble() - 0.5D) * 2.0D;
+				final double x = posX + (rand.nextDouble() - 0.5D) * width;
+				final double y = posY + rand.nextDouble() * height - 0.25D;
+				final double z = posZ + (rand.nextDouble() - 0.5D) * width;
+				final double sx = (rand.nextDouble() - 0.5D) * 2.0D;
+				final double sy = -rand.nextDouble();
+				final double sz = (rand.nextDouble() - 0.5D) * 2.0D;
 				ParticleUtil.spawn(getParticle(), EasyMappings.world(this), x, y, z, sx, sy, sz);
 			}
 		}
-
 		isJumping = false;
 		updateArmSwingProgress();
-		float f = getBrightness();
-
+		final float f = getBrightness();
 		if (f > 0.5F) {
 			idleTime += 2;
 		}
-
 		if (jumpTicks > 0) {
 			--jumpTicks;
 		}
-
 		if (newPosRotationIncrements > 0 && !canPassengerSteer()) {
-			double d0 = posX + (interpTargetX - posX) / newPosRotationIncrements;
-			double d1 = posY + (interpTargetY - posY) / newPosRotationIncrements;
-			double d2 = posZ + (interpTargetZ - posZ) / newPosRotationIncrements;
-			double d3 = MathHelper.wrapDegrees(interpTargetYaw - rotationYaw);
+			final double d0 = posX + (interpTargetX - posX) / newPosRotationIncrements;
+			final double d1 = posY + (interpTargetY - posY) / newPosRotationIncrements;
+			final double d2 = posZ + (interpTargetZ - posZ) / newPosRotationIncrements;
+			final double d3 = MathHelper.wrapDegrees(interpTargetYaw - rotationYaw);
 			rotationYaw = (float) (rotationYaw + d3 / newPosRotationIncrements);
 			rotationPitch = (float) (rotationPitch + (interpTargetPitch - rotationPitch) / newPosRotationIncrements);
 			--newPosRotationIncrements;
@@ -422,21 +393,16 @@ public class EntityEvolvedEnderman extends EntityEnderman {
 			motionY *= 0.98D;
 			motionZ *= 0.98D;
 		}
-
 		if (Math.abs(motionX) < 0.003D) {
 			motionX = 0.0D;
 		}
-
 		if (Math.abs(motionY) < 0.003D) {
 			motionY = 0.0D;
 		}
-
 		if (Math.abs(motionZ) < 0.003D) {
 			motionZ = 0.0D;
 		}
-
 		EasyMappings.world(this).profiler.startSection("ai");
-
 		if (isMovementBlocked()) {
 			isJumping = false;
 			moveStrafing = 0.0F;
@@ -448,10 +414,8 @@ public class EntityEvolvedEnderman extends EntityEnderman {
 			updateEntityActionState();
 			EasyMappings.world(this).profiler.endSection();
 		}
-
 		EasyMappings.world(this).profiler.endSection();
 		EasyMappings.world(this).profiler.startSection("jump");
-
 		if (isJumping) {
 			if (isInWater()) {
 				handleJumpWater();
@@ -467,17 +431,14 @@ public class EntityEvolvedEnderman extends EntityEnderman {
 		else {
 			jumpTicks = 0;
 		}
-
 		EasyMappings.world(this).profiler.endSection();
 		EasyMappings.world(this).profiler.startSection("travel");
 		moveStrafing *= 0.98F;
 		moveForward *= 0.98F;
 		randomYawVelocity *= 0.9F;
-		// updateElytra()
 		boolean flag = getFlag(7);
-
 		if (flag && !onGround && !isRiding()) {
-			ItemStack itemstack = getItemStackFromSlot(EntityEquipmentSlot.CHEST);
+			final ItemStack itemstack = getItemStackFromSlot(EntityEquipmentSlot.CHEST);
 
 			if (itemstack.getItem() == Items.ELYTRA && ItemElytra.isUsable(itemstack)) {
 				flag = true;
@@ -497,55 +458,44 @@ public class EntityEvolvedEnderman extends EntityEnderman {
 		if (!world.isRemote) {
 			setFlag(7, flag);
 		}
-		//updateElytra() end
 		travel(moveStrafing, randomYawVelocity, moveForward);
 		EasyMappings.world(this).profiler.endSection();
 		EasyMappings.world(this).profiler.startSection("push");
 		collideWithNearbyEntities();
 		EasyMappings.world(this).profiler.endSection();
-
 		EasyMappings.world(this).profiler.startSection("looting");
-
 		if (!EasyMappings.world(this).isRemote && canPickUpLoot() && !dead && EasyMappings.world(this).getGameRules().getBoolean("mobGriefing")) {
-			for (EntityItem entityitem : EasyMappings.world(this).getEntitiesWithinAABB(EntityItem.class, getEntityBoundingBox().expand(1.0D, 0.0D, 1.0D))) {
+			for (final EntityItem entityitem : EasyMappings.world(this).getEntitiesWithinAABB(EntityItem.class, getEntityBoundingBox().expand(1.0D, 0.0D, 1.0D))) {
 				if (!entityitem.isDead && entityitem.getItem() != null && !entityitem.cannotPickup()) {
 					updateEquipmentIfNeeded(entityitem);
 				}
 			}
 		}
-
 		EasyMappings.world(this).profiler.endSection();
-		//super.onLivingUpdate();
 	}
 
 	static class AIFindPlayer extends EntityAINearestAttackableTarget<EntityPlayer> {
+
 		private final EntityEvolvedEnderman enderman;
-		/** The player */
 		private EntityPlayer player;
 		private int aggroTime;
 		private int teleportTime;
 		private int direMessageTime;
 		private TextComponentString aggroMessage;
-		private TextComponentString nextTimeMessage = new TextComponentString(TextFormatting.GREEN + "" + TextFormatting.BOLD + "You're not worth my time -_-");
+		private final TextComponentString nextTimeMessage = new TextComponentString(TextFormatting.GREEN + "" + TextFormatting.BOLD + "You're not worth my time -_-");
 
-		public AIFindPlayer(EntityEvolvedEnderman p_i45842_1_) {
+		public AIFindPlayer(final EntityEvolvedEnderman p_i45842_1_) {
 			super(p_i45842_1_, EntityPlayer.class, false);
 			enderman = p_i45842_1_;
 		}
 
-		/**
-		 * Returns whether the EntityAIBase should begin execution.
-		 */
 		@Override
 		public boolean shouldExecute() {
-			double d0 = getTargetDistance();
-			player = enderman.world.getNearestAttackablePlayer(enderman.posX, enderman.posY, enderman.posZ, d0, d0, (Function<EntityPlayer, Double>) null, (@Nullable EntityPlayer p_apply_1_) -> p_apply_1_ != null && enderman.shouldAttackPlayer(p_apply_1_));
+			final double d0 = getTargetDistance();
+			player = enderman.world.getNearestAttackablePlayer(enderman.posX, enderman.posY, enderman.posZ, d0, d0, (Function<EntityPlayer, Double>) null, (@Nullable final EntityPlayer p_apply_1_) -> p_apply_1_ != null && enderman.shouldAttackPlayer(p_apply_1_));
 			return player != null;
 		}
 
-		/**
-		 * Execute a one shot task or start executing a continuous task
-		 */
 		@Override
 		public void startExecuting() {
 			aggroTime = 5;
@@ -553,9 +503,6 @@ public class EntityEvolvedEnderman extends EntityEnderman {
 			direMessageTime = 0;
 		}
 
-		/**
-		 * Reset the task's internal state. Called when this task is interrupted by another one
-		 */
 		@Override
 		public void resetTask() {
 			player = null;
@@ -566,9 +513,6 @@ public class EntityEvolvedEnderman extends EntityEnderman {
 			super.resetTask();
 		}
 
-		/**
-		 * Returns whether an in-progress EntityAIBase should continue executing
-		 */
 		@Override
 		public boolean shouldContinueExecuting() {
 			if (player != null) {
@@ -581,15 +525,12 @@ public class EntityEvolvedEnderman extends EntityEnderman {
 				}
 			}
 			else {
-				boolean shouldContinue = targetEntity != null && targetEntity.isEntityAlive() ? true : super.shouldContinueExecuting();
+				final boolean shouldContinue = targetEntity != null && targetEntity.isEntityAlive() ? true : super.shouldContinueExecuting();
 				enderman.setAggro(shouldContinue);
 				return shouldContinue;
 			}
 		}
 
-		/**
-		 * Keep ticking a continuous task that has already been started
-		 */
 		@Override
 		public void updateTask() {
 			if (player != null) {
@@ -631,22 +572,19 @@ public class EntityEvolvedEnderman extends EntityEnderman {
 						teleportTime = 0;
 					}
 				}
-
 				super.updateTask();
 			}
 		}
 	}
 
 	static class AIPlaceBlock extends EntityAIBase {
+
 		private final EntityEnderman enderman;
 
-		public AIPlaceBlock(EntityEnderman p_i45843_1_) {
+		public AIPlaceBlock(final EntityEnderman p_i45843_1_) {
 			enderman = p_i45843_1_;
 		}
 
-		/**
-		 * Returns whether the EntityAIBase should begin execution.
-		 */
 		@Override
 		public boolean shouldExecute() {
 			if (enderman.getHeldBlockState() == null) {
@@ -660,28 +598,24 @@ public class EntityEvolvedEnderman extends EntityEnderman {
 			}
 		}
 
-		/**
-		 * Keep ticking a continuous task that has already been started
-		 */
 		@Override
 		public void updateTask() {
-			Random random = enderman.getRNG();
-			World world = enderman.world;
-			int i = MathHelper.floor(enderman.posX - 1.0D + random.nextDouble() * 2.0D);
-			int j = MathHelper.floor(enderman.posY + random.nextDouble() * 2.0D);
-			int k = MathHelper.floor(enderman.posZ - 1.0D + random.nextDouble() * 2.0D);
-			BlockPos blockpos = new BlockPos(i, j, k);
-			IBlockState iblockstate = world.getBlockState(blockpos);
-			IBlockState iblockstate1 = world.getBlockState(blockpos.down());
-			IBlockState iblockstate2 = enderman.getHeldBlockState();
-
+			final Random random = enderman.getRNG();
+			final World world = enderman.world;
+			final int i = MathHelper.floor(enderman.posX - 1.0D + random.nextDouble() * 2.0D);
+			final int j = MathHelper.floor(enderman.posY + random.nextDouble() * 2.0D);
+			final int k = MathHelper.floor(enderman.posZ - 1.0D + random.nextDouble() * 2.0D);
+			final BlockPos blockpos = new BlockPos(i, j, k);
+			final IBlockState iblockstate = world.getBlockState(blockpos);
+			final IBlockState iblockstate1 = world.getBlockState(blockpos.down());
+			final IBlockState iblockstate2 = enderman.getHeldBlockState();
 			if (iblockstate2 != null && canPlaceBlock(world, blockpos, iblockstate2.getBlock(), iblockstate, iblockstate1)) {
 				world.setBlockState(blockpos, iblockstate2, 3);
 				enderman.setHeldBlockState((IBlockState) null);
 			}
 		}
 
-		private boolean canPlaceBlock(World p_188518_1_, BlockPos p_188518_2_, Block p_188518_3_, IBlockState p_188518_4_, IBlockState p_188518_5_) {
+		private boolean canPlaceBlock(final World p_188518_1_, final BlockPos p_188518_2_, final Block p_188518_3_, final IBlockState p_188518_4_, final IBlockState p_188518_5_) {
 			if (!p_188518_3_.canPlaceBlockAt(p_188518_1_, p_188518_2_)) {
 				return false;
 			}
@@ -698,15 +632,13 @@ public class EntityEvolvedEnderman extends EntityEnderman {
 	}
 
 	static class AITakeBlock extends EntityAIBase {
+
 		private final EntityEnderman enderman;
 
-		public AITakeBlock(EntityEnderman p_i45841_1_) {
+		public AITakeBlock(final EntityEnderman p_i45841_1_) {
 			enderman = p_i45841_1_;
 		}
 
-		/**
-		 * Returns whether the EntityAIBase should begin execution.
-		 */
 		@Override
 		public boolean shouldExecute() {
 			if (enderman.getHeldBlockState() != null) {
@@ -720,22 +652,18 @@ public class EntityEvolvedEnderman extends EntityEnderman {
 			}
 		}
 
-		/**
-		 * Keep ticking a continuous task that has already been started
-		 */
 		@Override
 		public void updateTask() {
-			Random random = enderman.getRNG();
-			World world = enderman.world;
-			int i = MathHelper.floor(enderman.posX - 2.0D + random.nextDouble() * 4.0D);
-			int j = MathHelper.floor(enderman.posY + random.nextDouble() * 3.0D);
-			int k = MathHelper.floor(enderman.posZ - 2.0D + random.nextDouble() * 4.0D);
-			BlockPos blockpos = new BlockPos(i, j, k);
-			IBlockState iblockstate = world.getBlockState(blockpos);
-			Block block = iblockstate.getBlock();
-			RayTraceResult raytraceresult = world.rayTraceBlocks(new Vec3d(MathHelper.floor(enderman.posX) + 0.5F, j + 0.5F, MathHelper.floor(enderman.posZ) + 0.5F), new Vec3d(i + 0.5F, j + 0.5F, k + 0.5F), false, true, false);
-			boolean flag = raytraceresult != null && raytraceresult.getBlockPos().equals(blockpos);
-
+			final Random random = enderman.getRNG();
+			final World world = enderman.world;
+			final int i = MathHelper.floor(enderman.posX - 2.0D + random.nextDouble() * 4.0D);
+			final int j = MathHelper.floor(enderman.posY + random.nextDouble() * 3.0D);
+			final int k = MathHelper.floor(enderman.posZ - 2.0D + random.nextDouble() * 4.0D);
+			final BlockPos blockpos = new BlockPos(i, j, k);
+			final IBlockState iblockstate = world.getBlockState(blockpos);
+			final Block block = iblockstate.getBlock();
+			final RayTraceResult raytraceresult = world.rayTraceBlocks(new Vec3d(MathHelper.floor(enderman.posX) + 0.5F, j + 0.5F, MathHelper.floor(enderman.posZ) + 0.5F), new Vec3d(i + 0.5F, j + 0.5F, k + 0.5F), false, true, false);
+			final boolean flag = raytraceresult != null && raytraceresult.getBlockPos().equals(blockpos);
 			if (EntityEvolvedEnderman.getCarriable(block) && flag) {
 				enderman.setHeldBlockState(iblockstate);
 				world.setBlockToAir(blockpos);
@@ -744,27 +672,21 @@ public class EntityEvolvedEnderman extends EntityEnderman {
 	}
 
 	public class EntityAIEndermanHurtByTarget extends EntityAITarget {
-		/** Store the previous revengeTimer value */
+
 		private int revengeTimerOld;
 
-		public EntityAIEndermanHurtByTarget(EntityCreature creatureIn) {
+		public EntityAIEndermanHurtByTarget(final EntityCreature creatureIn) {
 			super(creatureIn, true);
 			setMutexBits(1);
 		}
 
-		/**
-		 * Returns whether the EntityAIBase should begin execution.
-		 */
 		@Override
 		public boolean shouldExecute() {
-			int i = taskOwner.getRevengeTimer();
-			EntityLivingBase entitylivingbase = taskOwner.getRevengeTarget();
+			final int i = taskOwner.getRevengeTimer();
+			final EntityLivingBase entitylivingbase = taskOwner.getRevengeTarget();
 			return i != revengeTimerOld && entitylivingbase != null && this.isSuitableTarget(entitylivingbase, false);
 		}
 
-		/**
-		 * Execute a one shot task or start executing a continuous task
-		 */
 		@Override
 		public void startExecuting() {
 			taskOwner.setAttackTarget(taskOwner.getRevengeTarget());
@@ -774,26 +696,26 @@ public class EntityEvolvedEnderman extends EntityEnderman {
 			if (taskOwner.getEntityWorld() != null && taskOwner.getEntityWorld().provider.getDimensionType() == DimensionType.NETHER) {
 				alertOthers();
 			}
-
 			super.startExecuting();
 		}
 
 		protected void alertOthers() {
-			double d0 = getTargetDistance();
-			for (EntityCreature entitycreature : taskOwner.world.getEntitiesWithinAABB(taskOwner.getClass(), (new AxisAlignedBB(taskOwner.posX, taskOwner.posY, taskOwner.posZ, taskOwner.posX + 1.0D, taskOwner.posY + 1.0D, taskOwner.posZ + 1.0D)).grow(d0, 10.0D, d0))) {
+			final double d0 = getTargetDistance();
+			for (final EntityCreature entitycreature : taskOwner.world.getEntitiesWithinAABB(taskOwner.getClass(), new AxisAlignedBB(taskOwner.posX, taskOwner.posY, taskOwner.posZ, taskOwner.posX + 1.0D, taskOwner.posY + 1.0D, taskOwner.posZ + 1.0D).grow(d0, 10.0D, d0))) {
 				if (taskOwner != entitycreature && entitycreature.getAttackTarget() == null && (!(taskOwner instanceof EntityTameable) || ((EntityTameable) taskOwner).getOwner() == ((EntityTameable) entitycreature).getOwner()) && !entitycreature.isOnSameTeam(taskOwner.getRevengeTarget())) {
 					setEntityAttackTarget(entitycreature, taskOwner.getRevengeTarget());
 				}
 			}
 		}
 
-		protected void setEntityAttackTarget(EntityCreature creatureIn, EntityLivingBase entityLivingBaseIn) {
+		protected void setEntityAttackTarget(final EntityCreature creatureIn, final EntityLivingBase entityLivingBaseIn) {
 			creatureIn.setAttackTarget(entityLivingBaseIn);
 		}
+
 	}
 
 	@Override
-	public void setAttackTarget(@Nullable EntityLivingBase entitylivingbaseIn) {
+	public void setAttackTarget(@Nullable final EntityLivingBase entitylivingbaseIn) {
 		super.setAttackTarget(entitylivingbaseIn);
 		setAggro(getAttackTarget() != null);
 	}

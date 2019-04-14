@@ -71,18 +71,6 @@ public class BlockEnderFlower extends Block implements IGrowable, IPlantable {
 	public boolean onBlockActivated(final World world, final BlockPos pos, final IBlockState state, final EntityPlayer player, final EnumHand hand, final EnumFacing facing, final float hitX, final float hitY, final float hitZ) {
 		if (!world.isRemote) {
 			if (getAge(state) == getMaxAge() && hand == EnumHand.MAIN_HAND) {
-				/*
-				int fortune = 0;
-				ItemStack heldStack = player.getHeldItemMainhand();
-				if (!heldStack.isEmpty()) {
-					Map<Enchantment, Integer> enchantments = EnchantmentHelper.getEnchantments(heldStack);
-					if (!enchantments.isEmpty()) {
-						if (enchantments.containsKey(Enchantments.FORTUNE)) {
-							fortune = enchantments.get(Enchantments.FORTUNE);
-						}
-					}
-				}
-				*/
 				dropBlockAsItem(world, pos, state, -1);
 				if (!player.capabilities.isCreativeMode) {
 					world.setBlockState(pos, getDefaultState().withProperty(STAGE, Integer.valueOf(0)), 3);
@@ -290,10 +278,6 @@ public class BlockEnderFlower extends Block implements IGrowable, IPlantable {
 
 	public static boolean tryBonemeal(final ItemStack stack, final World world, final BlockPos target, final EntityPlayer player, @Nullable final EnumHand hand) {
 		final IBlockState iblockstate = world.getBlockState(target);
-		//int hook = net.minecraftforge.event.ForgeEventFactory.onApplyBonemeal(player, world, target, iblockstate, stack, hand);
-		//if (hook != 0) {
-		//	return hook > 0;
-		//}
 		if (iblockstate.getBlock() instanceof BlockEnderFlower) {
 			final BlockEnderFlower flower = (BlockEnderFlower) iblockstate.getBlock();
 			if (flower.canGrow(world, target, iblockstate, world.isRemote)) {

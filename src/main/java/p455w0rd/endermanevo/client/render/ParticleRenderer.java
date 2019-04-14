@@ -18,7 +18,7 @@ import p455w0rdslib.util.EasyMappings;
  */
 public class ParticleRenderer {
 
-	ArrayList<Particle> particles = new ArrayList<Particle>();
+	ArrayList<Particle> particles = new ArrayList<>();
 
 	private static ParticleRenderer INSTANCE;
 
@@ -30,7 +30,7 @@ public class ParticleRenderer {
 	}
 
 	public void updateParticles() {
-		boolean[] particleIndexes = new boolean[particles.size()];
+		final boolean[] particleIndexes = new boolean[particles.size()];
 		for (int i = 0; i < particles.size(); i++) {//must do this way to prevent CME
 			if (particleIndexes[i]) {
 				particles.remove(i);
@@ -38,50 +38,43 @@ public class ParticleRenderer {
 		}
 	}
 
-	public void renderParticles(EntityPlayer dumbplayer, float partialTicks) {
+	public void renderParticles(final EntityPlayer dumbplayer, final float partialTicks) {
 		if (Minecraft.getMinecraft().gameSettings.particleSetting == 2) {
 			return;
 		}
-		float f = ActiveRenderInfo.getRotationX();
-		float f1 = ActiveRenderInfo.getRotationZ();
-		float f2 = ActiveRenderInfo.getRotationYZ();
-		float f3 = ActiveRenderInfo.getRotationXY();
-		float f4 = ActiveRenderInfo.getRotationXZ();
-		EntityPlayer player = EasyMappings.player();
+		final float f = ActiveRenderInfo.getRotationX();
+		final float f1 = ActiveRenderInfo.getRotationZ();
+		final float f2 = ActiveRenderInfo.getRotationYZ();
+		final float f3 = ActiveRenderInfo.getRotationXY();
+		final float f4 = ActiveRenderInfo.getRotationXZ();
+		final EntityPlayer player = EasyMappings.player();
 		if (player != null) {
 			Particle.interpPosX = player.lastTickPosX + (player.posX - player.lastTickPosX) * partialTicks;
 			Particle.interpPosY = player.lastTickPosY + (player.posY - player.lastTickPosY) * partialTicks;
 			Particle.interpPosZ = player.lastTickPosZ + (player.posZ - player.lastTickPosZ) * partialTicks;
-
 			Particle.cameraViewDir = player.getLook(partialTicks);
-			//GlStateManager.glTexParameterf(3553, 10242, 10497.0F);
-			//GlStateManager.glTexParameterf(3553, 10243, 10497.0F);
 			GlStateManager.enableAlpha();
 			GlStateManager.enableBlend();
 			GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE);
-			//GlStateManager.alphaFunc(GL11.GL_GREATER, 0F);
 			GlStateManager.disableCull();
-
 			GlStateManager.depthMask(false);
-
 			Minecraft.getMinecraft().renderEngine.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
-			Tessellator tess = Tessellator.getInstance();
-			BufferBuilder buffer = tess.getBuffer();
+			final Tessellator tess = Tessellator.getInstance();
+			final BufferBuilder buffer = tess.getBuffer();
 			buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.PARTICLE_POSITION_TEX_COLOR_LMAP);
 			for (int i = 0; i < particles.size(); i++) {
 				particles.get(i).renderParticle(buffer, player, partialTicks, f, f4, f1, f2, f3);
 			}
 			tess.draw();
-
 			GlStateManager.enableCull();
 			GlStateManager.depthMask(true);
 			GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
 			GlStateManager.disableBlend();
-			//GlStateManager.alphaFunc(516, 0.1F);
 		}
 	}
 
-	public void addParticle(Particle particle) {
+	public void addParticle(final Particle particle) {
 		particles.add(particle);
 	}
+
 }

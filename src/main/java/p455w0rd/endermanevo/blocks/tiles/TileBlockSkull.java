@@ -24,7 +24,7 @@ public class TileBlockSkull extends TileEntitySkull {
 	public TileBlockSkull() {
 	}
 
-	public TileBlockSkull(String name) {
+	public TileBlockSkull(final String name) {
 		entity = name;
 	}
 
@@ -36,7 +36,7 @@ public class TileBlockSkull extends TileEntitySkull {
 	}
 
 	@Override
-	public void readFromNBT(NBTTagCompound nbt) {
+	public void readFromNBT(final NBTTagCompound nbt) {
 		super.readFromNBT(nbt);
 		entity = nbt.getString(ENTITY_TAG);
 	}
@@ -46,13 +46,6 @@ public class TileBlockSkull extends TileEntitySkull {
 		return true;
 	}
 
-	/*
-		@Override
-		@SideOnly(Side.CLIENT)
-		public AxisAlignedBB getRenderBoundingBox() {
-			return new AxisAlignedBB(getPos().add(-1, -1, -1), getPos().add(2, 2, 2));
-		}
-		*/
 	@Override
 	@SideOnly(Side.CLIENT)
 	public double getMaxRenderDistanceSquared() {
@@ -73,7 +66,7 @@ public class TileBlockSkull extends TileEntitySkull {
 		return getModels().get(entity);
 	}
 
-	public static ModelSkullBase getModel(String name) {
+	public static ModelSkullBase getModel(final String name) {
 		return getModels().get(name);
 	}
 

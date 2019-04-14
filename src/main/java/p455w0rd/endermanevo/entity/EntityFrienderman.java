@@ -145,7 +145,6 @@ public class EntityFrienderman extends EntityCreature implements IMob, IEntityOw
 	@Override
 	public int getBrightnessForRender() {
 		final BlockPos.MutableBlockPos blockpos$mutableblockpos = new BlockPos.MutableBlockPos(MathHelper.floor(posX), 0, MathHelper.floor(posZ));
-
 		if (world != null && world.isBlockLoaded(blockpos$mutableblockpos)) {
 			blockpos$mutableblockpos.setY(MathHelper.floor(posY + getEyeHeight()));
 			return world.getCombinedLight(blockpos$mutableblockpos, 0);
@@ -157,7 +156,6 @@ public class EntityFrienderman extends EntityCreature implements IMob, IEntityOw
 
 	@Override
 	protected void dropLoot(final boolean wasRecentlyHit, final int lootingModifier, final DamageSource source) {
-
 		super.dropLoot(wasRecentlyHit, lootingModifier, source);
 		if (isHoldingChest()) {
 			entityDropItem(getHeldItemStack(), 2.0F);
@@ -167,7 +165,6 @@ public class EntityFrienderman extends EntityCreature implements IMob, IEntityOw
 	@Override
 	public float getBrightness() {
 		final BlockPos.MutableBlockPos blockpos$mutableblockpos = new BlockPos.MutableBlockPos(MathHelper.floor(posX), 0, MathHelper.floor(posZ));
-
 		if (world != null && world.isBlockLoaded(blockpos$mutableblockpos)) {
 			blockpos$mutableblockpos.setY(MathHelper.floor(posY + getEyeHeight()));
 			return world.getLightBrightness(blockpos$mutableblockpos);
@@ -245,7 +242,6 @@ public class EntityFrienderman extends EntityCreature implements IMob, IEntityOw
 		if (SCREAMING.equals(key) && isScreaming() && EasyMappings.world(this).isRemote) {
 			playEndermanSound();
 		}
-
 		super.notifyDataManagerChange(key);
 	}
 
@@ -639,7 +635,6 @@ public class EntityFrienderman extends EntityCreature implements IMob, IEntityOw
 			if (!player.capabilities.isCreativeMode) {
 				stack.shrink(1);
 			}
-
 			if (!EasyMappings.world(this).isRemote) {
 				int random = 0;
 				if (!player.capabilities.isCreativeMode) {
@@ -749,7 +744,7 @@ public class EntityFrienderman extends EntityCreature implements IMob, IEntityOw
 	}
 
 	public boolean chestHasRoom(final ItemStack stack) {
-		return isHoldingChest() && testInventoryInsertion(getHeldChestInventory(), stack) > 0;//InventoryUtils.canInsertStack(getHeldChestInventory(), stack);
+		return isHoldingChest() && testInventoryInsertion(getHeldChestInventory(), stack) > 0;
 	}
 
 	public int testInventoryInsertion(final IInventory inventory, final ItemStack item) {
@@ -994,12 +989,10 @@ public class EntityFrienderman extends EntityCreature implements IMob, IEntityOw
 			final double sz = (rand.nextDouble() - 0.5D) * 2.0D;
 			ParticleUtil.spawn(EnumParticles.LOVE, getEntityWorld(), x, y, z, sx, sy, sz);
 		}
-
 		if (jukeboxPosition == null || jukeboxPosition.distanceSq(posX, posY, posZ) > 12.0D || world.getBlockState(jukeboxPosition).getBlock() != Blocks.JUKEBOX) {
 			isPartying = false;
 			jukeboxPosition = null;
 		}
-
 		if (!lidClosed) {
 			if (getLidAngle() >= 1.5F) {
 				lidOpening = false;
@@ -1021,15 +1014,12 @@ public class EntityFrienderman extends EntityCreature implements IMob, IEntityOw
 		isJumping = false;
 		updateArmSwingProgress();
 		final float f = getBrightness();
-
 		if (f > 0.5F) {
 			idleTime += 2;
 		}
-
 		if (jumpTicks > 0) {
 			--jumpTicks;
 		}
-
 		if (newPosRotationIncrements > 0 && !canPassengerSteer()) {
 			final double d0 = posX + (interpTargetX - posX) / newPosRotationIncrements;
 			final double d1 = posY + (interpTargetY - posY) / newPosRotationIncrements;
@@ -1046,21 +1036,16 @@ public class EntityFrienderman extends EntityCreature implements IMob, IEntityOw
 			motionY *= 0.98D;
 			motionZ *= 0.98D;
 		}
-
 		if (Math.abs(motionX) < 0.003D) {
 			motionX = 0.0D;
 		}
-
 		if (Math.abs(motionY) < 0.003D) {
 			motionY = 0.0D;
 		}
-
 		if (Math.abs(motionZ) < 0.003D) {
 			motionZ = 0.0D;
 		}
-
 		EasyMappings.world(this).profiler.startSection("ai");
-
 		if (isMovementBlocked()) {
 			isJumping = false;
 			moveStrafing = 0.0F;
@@ -1072,10 +1057,8 @@ public class EntityFrienderman extends EntityCreature implements IMob, IEntityOw
 			updateEntityActionState();
 			EasyMappings.world(this).profiler.endSection();
 		}
-
 		EasyMappings.world(this).profiler.endSection();
 		EasyMappings.world(this).profiler.startSection("jump");
-
 		if (isJumping) {
 			if (isInWater()) {
 				handleJumpWater();
@@ -1091,21 +1074,17 @@ public class EntityFrienderman extends EntityCreature implements IMob, IEntityOw
 		else {
 			jumpTicks = 0;
 		}
-
 		EasyMappings.world(this).profiler.endSection();
 		EasyMappings.world(this).profiler.startSection("travel");
 		moveStrafing *= 0.98F;
 		moveForward *= 0.98F;
 		randomYawVelocity *= 0.9F;
-		//move(MoverType.SELF, moveStrafing, randomYawVelocity, moveForward);
 		travel(moveStrafing, randomYawVelocity, moveForward);
 		EasyMappings.world(this).profiler.endSection();
 		EasyMappings.world(this).profiler.startSection("push");
 		collideWithNearbyEntities();
 		EasyMappings.world(this).profiler.endSection();
-
 		EasyMappings.world(this).profiler.startSection("looting");
-
 		if (!dead || isHoldingChest() && isSitting()) {
 			final List<EntityItem> nearList = getEntityWorld().getEntitiesWithinAABB(EntityItem.class, getEntityBoundingBox().grow(6.0));
 			for (final EntityItem entityitem : nearList) {
@@ -1120,9 +1099,7 @@ public class EntityFrienderman extends EntityCreature implements IMob, IEntityOw
 				}
 			}
 		}
-
 		EasyMappings.world(this).profiler.endSection();
-
 	}
 
 	@Override
@@ -1309,7 +1286,6 @@ public class EntityFrienderman extends EntityCreature implements IMob, IEntityOw
 				return false;
 			}
 			if (thePet.world != null) {
-
 				final List<EntityItem> items = thePet.world.getEntitiesWithinAABB(EntityItem.class, thePet.getEntityBoundingBox().expand(0.0D, -1.0D, 0.0D).expand(10D, 2.0D, 10D));
 				EntityItem closest = null;
 				double closestDistance = Double.MAX_VALUE;
@@ -1384,7 +1360,6 @@ public class EntityFrienderman extends EntityCreature implements IMob, IEntityOw
 			minDist = minDistIn;
 			maxDist = maxDistIn;
 			setMutexBits(3);
-
 			if (!(thePetIn.getNavigator() instanceof PathNavigateGround)) {
 				throw new IllegalArgumentException("Unsupported mob type for FollowOwnerGoal");
 			}
@@ -1392,7 +1367,6 @@ public class EntityFrienderman extends EntityCreature implements IMob, IEntityOw
 
 		@Override
 		public boolean shouldExecute() {
-			//EntityLivingBase entitylivingbase = thePet.getOwner();
 			itemsNear = thePet.getEntityWorld().getEntitiesWithinAABB(EntityItem.class, thePet.getEntityBoundingBox().expand(0.0D, -1.0D, 0.0D).expand(6.0D, 2.0D, 6.0D));
 			if (!thePet.isTamed() || itemsNear.size() <= 0 || !thePet.isHoldingChest()) {
 				return false;
@@ -1497,9 +1471,6 @@ public class EntityFrienderman extends EntityCreature implements IMob, IEntityOw
 			}
 		}
 
-		/**
-		 * Returns whether the EntityAIBase should begin execution.
-		 */
 		@Override
 		public boolean shouldExecute() {
 			final EntityLivingBase entitylivingbase = thePet.getOwner();
@@ -1522,17 +1493,11 @@ public class EntityFrienderman extends EntityCreature implements IMob, IEntityOw
 			}
 		}
 
-		/**
-		 * Returns whether an in-progress EntityAIBase should continue executing
-		 */
 		@Override
 		public boolean shouldContinueExecuting() {
 			return !petPathfinder.noPath() && thePet.getDistanceSq(theOwner) > maxDist * maxDist && !thePet.isSitting();
 		}
 
-		/**
-		 * Execute a one shot task or start executing a continuous task
-		 */
 		@Override
 		public void startExecuting() {
 			timeToRecalcPath = 0;
@@ -1540,9 +1505,6 @@ public class EntityFrienderman extends EntityCreature implements IMob, IEntityOw
 			thePet.setPathPriority(PathNodeType.WATER, 0.0F);
 		}
 
-		/**
-		 * Resets the task
-		 */
 		@Override
 		public void resetTask() {
 			theOwner = null;
@@ -1555,24 +1517,18 @@ public class EntityFrienderman extends EntityCreature implements IMob, IEntityOw
 			return iblockstate.getMaterial() == Material.AIR ? true : !iblockstate.isFullCube();
 		}
 
-		/**
-		 * Updates the task
-		 */
 		@Override
 		public void updateTask() {
 			thePet.getLookHelper().setLookPositionWithEntity(theOwner, 10.0F, thePet.getVerticalFaceSpeed());
-
 			if (!thePet.isSitting()) {
 				if (--timeToRecalcPath <= 0) {
 					timeToRecalcPath = 10;
-
 					if (!petPathfinder.tryMoveToEntityLiving(theOwner, followSpeed)) {
 						if (!thePet.getLeashed()) {
 							if (thePet.getDistanceSq(theOwner) >= 144.0D) {
 								final int i = MathUtils.floor(theOwner.posX) - 2;
 								final int j = MathUtils.floor(theOwner.posZ) - 2;
 								final int k = MathUtils.floor(theOwner.getEntityBoundingBox().minY);
-
 								for (int l = 0; l <= 4; ++l) {
 									for (int i1 = 0; i1 <= 4; ++i1) {
 										if ((l < 1 || i1 < 1 || l > 3 || i1 > 3) && theWorld.getBlockState(new BlockPos(i + l, k - 1, j + i1)).isSideSolid(theWorld, new BlockPos(i + l, k - 1, j + i1), EnumFacing.UP) && isEmptyBlock(new BlockPos(i + l, k, j + i1)) && isEmptyBlock(new BlockPos(i + l, k + 1, j + i1))) {
@@ -1601,9 +1557,6 @@ public class EntityFrienderman extends EntityCreature implements IMob, IEntityOw
 			setMutexBits(1);
 		}
 
-		/**
-		 * Returns whether the EntityAIBase should begin execution.
-		 */
 		@Override
 		public boolean shouldExecute() {
 			if (!theDefendingTameable.isTamed()) {
@@ -1623,18 +1576,13 @@ public class EntityFrienderman extends EntityCreature implements IMob, IEntityOw
 			}
 		}
 
-		/**
-		 * Execute a one shot task or start executing a continuous task
-		 */
 		@Override
 		public void startExecuting() {
 			taskOwner.setAttackTarget(theOwnerAttacker);
 			final EntityLivingBase entitylivingbase = theDefendingTameable.getOwner();
-
 			if (entitylivingbase != null) {
 				timestamp = entitylivingbase.getRevengeTimer();
 			}
-
 			super.startExecuting();
 		}
 	}
