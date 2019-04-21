@@ -15,4 +15,14 @@ itemGroup.endermanevo=Enderman Evolution
 jei.friender_pearl.desc=Wird verwendet, um Freundermen zu zähmen. Wird zufällig von Entwickelten Endermen gedroppt.
 jei.skull_enderman.desc=Gedroppt von einem Enderman. Wenn aufgesetzt, werden Enderman-Attacken abgewehrt.
 jei.skull_evolved_enderman.desc=Gedroppt von einem Entwickelten Enderman. Wenn aufgesetzt, werden Enderman-Attacken abgewehrt.
-jei.skull_frienderman.desc=Gedroppt von einem Freunderman. Wenn aufgesetzt, werden Enderman-Attacken abgewehrt. Außerdem erhöht es die Chancen erheblich, einen Freunderman mit einer Freunderperle zu zähmen.
+jei.skull_frienderman.desc=Gedroppt von einem Freunderman. Wenn aufgesetzt, werden Enderman-Attacken abgewehrt. Außerdem steigt die Chance erheblich, einen Freunderman mit einer Freunderperle zu zähmen.
+
+waila.404=404 Error: Name nicht gefunden!
+waila.owner=Besitzer
+waila.mode=Modus
+waila.idle=Untätig
+waila.followingdefending=Folgend/Verteidigend
+waila.sneakrclicktotake=Schleichen+Rechtsklick, um Truhe aufzunehmen
+waila.rightclickpearltotame=Rechtsklick mit Freunderperle, um zu zähmen
+
+top.unavailable=<Nicht verfügbar>
