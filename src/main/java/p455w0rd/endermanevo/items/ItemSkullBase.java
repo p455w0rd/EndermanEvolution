@@ -16,6 +16,7 @@ import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
+import net.minecraftforge.fml.common.Optional;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import p455w0rd.endermanevo.api.IModelHolder;
@@ -25,12 +26,14 @@ import p455w0rd.endermanevo.client.render.ItemLayerWrapper;
 import p455w0rd.endermanevo.init.ModBlocks;
 import p455w0rd.endermanevo.init.ModMaterials;
 import p455w0rdslib.util.MathUtils;
+import thaumcraft.api.crafting.IInfusionStabiliserExt;
 
 /**
  * @author p455w0rd
  *
  */
-public class ItemSkullBase extends ItemArmor implements IModelHolder {
+@Optional.Interface(modid = "thaumcraft", iface = "thaumcraft.api.crafting.IInfusionStabiliserExt", striprefs = true)
+public class ItemSkullBase extends ItemArmor implements IModelHolder, IInfusionStabiliserExt {
 
 	private final BlockSkullBase skullBlock;
 	@SideOnly(Side.CLIENT)
@@ -175,6 +178,26 @@ public class ItemSkullBase extends ItemArmor implements IModelHolder {
 			return true;
 		}
 
+	}
+
+	@Override
+	public boolean canStabaliseInfusion(final World world, final BlockPos pos) {
+		return true;
+	}
+
+	@Override
+	public float getStabilizationAmount(final World world, final BlockPos pos) {
+		return 0.1f;
+	}
+
+	@Override
+	public boolean hasSymmetryPenalty(final World world, final BlockPos pos1, final BlockPos pos2) {
+		return false;
+	}
+
+	@Override
+	public float getSymmetryPenalty(final World world, final BlockPos pos) {
+		return 0.0f;
 	}
 
 }
