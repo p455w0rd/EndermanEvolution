@@ -76,7 +76,7 @@ public class ModelSkullBase extends ModelBiped {
 
 	public void render(final float rotationX, final float rotationY, final EntityLivingBase entity) {
 		if (entity != null && entity.isSneaking()) {
-			GlStateManager.translate(0.0F, 0.25F, 0.0F);
+			GlStateManager.translate(0.0F, 0.175F, 0.0F);
 		}
 		else {
 			GlStateManager.translate(0.0F, 0.02F, 0.0F);
@@ -92,16 +92,20 @@ public class ModelSkullBase extends ModelBiped {
 			}
 		}
 		if (entity != null && entity.isSneaking()) {
-			GlStateManager.translate(0.0F, -0.25F, 0.0F);
+			GlStateManager.translate(0.0F, -0.175F, 0.0F);
 		}
 		else {
 			GlStateManager.translate(0.0F, -0.02F, 0.0F);
 		}
+		if (entity != null && entity.isSneaking()) {
+			GlStateManager.translate(0, 0.2f, 0);
+		}
 		if (this instanceof Enderman2) {
+
 			GlStateManager.pushMatrix();
 			final float oldTexX = OpenGlHelper.lastBrightnessX;
 			final float oldTexY = OpenGlHelper.lastBrightnessY;
-			GlStateManager.depthMask(true);
+			GlStateManager.depthMask(false);
 			bindTexture(new ResourceLocation(ModGlobals.MODID, "textures/entity/charge_nocolor.png"));
 			GlStateManager.matrixMode(5890);
 			GlStateManager.loadIdentity();
@@ -109,6 +113,7 @@ public class ModelSkullBase extends ModelBiped {
 			GlStateManager.translate(f * 0.01F, f * 0.01F, 0.0F);
 			GlStateManager.matrixMode(5888);
 			GlStateManager.enableBlend();
+			GlStateManager.enableAlpha();
 			final float r = 0;
 			final float g = 0.75F;
 			final float b = 0;
@@ -117,20 +122,20 @@ public class ModelSkullBase extends ModelBiped {
 			OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, 260.0F, 260.0F);
 			GlStateManager.blendFunc(GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ONE);
 			GlStateManager.scale(1.1F, 1.1F, 1.1F);
-
 			head.render(0.0625F);
-
-			GlStateManager.translate(-0.5F, -0.5F, -0.5F);
+			GlStateManager.translate(-(f * 0.01F), -(f * 0.01F), 0.0F);
 			GlStateManager.matrixMode(5890);
 			GlStateManager.loadIdentity();
 			GlStateManager.matrixMode(5888);
 			GlStateManager.blendFunc(GlStateManager.SourceFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.DestFactor.DST_ALPHA);
-			GlStateManager.enableLighting();
 			GlStateManager.disableBlend();
 			GlStateManager.depthMask(true);
 			OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, oldTexX, oldTexY);
 			GlStateManager.color(1.0f, 1.0f, 1.0f, 1.0F);
 			GlStateManager.popMatrix();
+		}
+		if (entity != null && entity.isSneaking()) {
+			GlStateManager.translate(0, -0.2f, 0);
 		}
 	}
 
@@ -170,7 +175,6 @@ public class ModelSkullBase extends ModelBiped {
 	}
 
 	public void renderLightMap(final float skullRotation, final float skullPitch, final EntityLivingBase entity) {
-
 		GlStateManager.pushMatrix();
 		final float brightnessX = OpenGlHelper.lastBrightnessX;
 		final float brightnessY = OpenGlHelper.lastBrightnessY;
@@ -182,7 +186,6 @@ public class ModelSkullBase extends ModelBiped {
 		else {
 			render(skullRotation, skullPitch, null);
 		}
-
 		OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, brightnessX, brightnessY);
 		GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 		GlStateManager.popMatrix();

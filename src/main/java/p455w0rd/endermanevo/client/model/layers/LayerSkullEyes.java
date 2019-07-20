@@ -12,14 +12,14 @@ import p455w0rd.endermanevo.util.EntityUtils;
  */
 public class LayerSkullEyes implements LayerRenderer<EntityLivingBase> {
 
-	private RenderLivingBase<EntityLivingBase> livingRenderer;
+	private final RenderLivingBase<EntityLivingBase> livingRenderer;
 
-	public LayerSkullEyes(RenderLivingBase<EntityLivingBase> renderer) {
+	public LayerSkullEyes(final RenderLivingBase<EntityLivingBase> renderer) {
 		livingRenderer = renderer;
 	}
 
 	@Override
-	public void doRenderLayer(EntityLivingBase entitylivingbaseIn, float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch, float scale) {
+	public void doRenderLayer(final EntityLivingBase entitylivingbaseIn, final float limbSwing, final float limbSwingAmount, final float partialTicks, final float ageInTicks, final float netHeadYaw, final float headPitch, final float scale) {
 		if (!EntityUtils.isWearingCustomSkull(entitylivingbaseIn) || entitylivingbaseIn instanceof EntityAnimal) {
 			return;
 		}

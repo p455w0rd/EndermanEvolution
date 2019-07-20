@@ -34,7 +34,7 @@ public class LayerEntityCharge<T extends EntityLivingBase> implements LayerRende
 			enderman = (EntityEvolvedEnderman) entitylivingbaseIn;
 		}
 		if (!flag) {
-			//return;
+			return;
 		}
 		GlStateManager.depthMask(!flag);
 		entityRenderer.bindTexture(LIGHTNING_TEXTURE);
@@ -44,6 +44,7 @@ public class LayerEntityCharge<T extends EntityLivingBase> implements LayerRende
 		GlStateManager.translate(f * 0.01F, f * 0.01F, 0.0F);
 		GlStateManager.matrixMode(5888);
 		GlStateManager.enableBlend();
+		GlStateManager.enableAlpha();
 		float r = 0;
 		float g = 0.75F;
 		final float b = 0;
@@ -76,6 +77,7 @@ public class LayerEntityCharge<T extends EntityLivingBase> implements LayerRende
 		GlStateManager.matrixMode(5888);
 		GlStateManager.enableLighting();
 		GlStateManager.disableBlend();
+		GlStateManager.disableAlpha();
 		GlStateManager.depthMask(flag);
 		OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, oldTexX, oldTexY);
 	}

@@ -35,14 +35,14 @@ public class RenderEvolvedEnderman extends RenderEndermanBase<EntityEvolvedEnder
 		super(EndermanType.EVOLED);
 		addLayer(new LayerEndermanEvolvedEyes(this));
 		addLayer(new LayerHeldBlock2(this));
-		addLayer(new LayerEntityCharge<EntityEvolvedEnderman>(this, endermanModel));
+		addLayer(new LayerEntityCharge<>(this, endermanModel));
 	}
 
 	@Override
-	public void doRender(EntityEvolvedEnderman entity, double x, double y, double z, float entityYaw, float partialTicks) {
+	public void doRender(final EntityEvolvedEnderman entity, double x, final double y, double z, final float entityYaw, final float partialTicks) {
 		if (endermanModel instanceof ModelEvolvedEnderman) {
-			ModelEvolvedEnderman model = (ModelEvolvedEnderman) endermanModel;
-			IBlockState iblockstate = entity.getHeldBlockState();
+			final ModelEvolvedEnderman model = (ModelEvolvedEnderman) endermanModel;
+			final IBlockState iblockstate = entity.getHeldBlockState();
 			model.isCarrying = iblockstate != null;
 			model.isAttacking = entity.isScreaming();
 			if (entity.isScreaming()) {

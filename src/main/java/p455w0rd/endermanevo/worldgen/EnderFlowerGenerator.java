@@ -52,7 +52,7 @@ public class EnderFlowerGenerator implements IWorldGenerator {
 
 	private boolean isValidDimension(World world) {
 		if (validDimenions.isEmpty()) {
-			for (int dimension : ConfigOptions.ENDERFLOWER_DIM_WHITELIST) {
+			for (int dimension : ConfigOptions.enderFlowerDimWhitelist) {
 				validDimenions.add(dimension);
 			}
 		}
@@ -60,7 +60,7 @@ public class EnderFlowerGenerator implements IWorldGenerator {
 	}
 
 	private void genFlower(World world, Random rand, int x, int z) {
-		if (rand.nextFloat() < ConfigOptions.ENDERFLOWER_SPAWN_PROBABILITY) {
+		if (rand.nextFloat() < ConfigOptions.enderFlowerSpawnProbability) {
 			final int posX = x + world.rand.nextInt(16);
 			final int posZ = z + world.rand.nextInt(16);
 			final BlockPos newPos = getGroundPos(world, posX, posZ);

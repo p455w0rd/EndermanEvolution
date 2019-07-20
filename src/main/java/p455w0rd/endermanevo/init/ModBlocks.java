@@ -25,7 +25,7 @@ public class ModBlocks {
 	};
 
 	public static void init() {
-		GameRegistry.registerTileEntity(TileBlockSkull.class, new ResourceLocation(ModGlobals.MODID, ":tile_pskull"));
+		GameRegistry.registerTileEntity(TileBlockSkull.class, new ResourceLocation(ModGlobals.MODID, "tile_pskull"));
 	}
 
 	@SideOnly(Side.CLIENT)

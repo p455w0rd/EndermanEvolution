@@ -16,7 +16,7 @@ public class ModConfig {
 	public static boolean reloadConfigs = false;
 
 	@SubscribeEvent
-	public void onConfigChange(ConfigChangedEvent.OnConfigChangedEvent e) {
+	public void onConfigChange(final ConfigChangedEvent.OnConfigChangedEvent e) {
 		if (e.getModID().equals(ModGlobals.MODID)) {
 			init();
 		}
@@ -28,15 +28,15 @@ public class ModConfig {
 			MinecraftForge.EVENT_BUS.register(new ModConfig());
 		}
 
-		ConfigOptions.ENDERMAN_DAY_SPAWN = CONFIG.getBoolean("EndermanSpawnIgnoreLightLevel", DEF_CAT, true, "Allow Evolved Enderman to spawn at any light level");
-		ConfigOptions.ENDERMAN_PROBABILITY = CONFIG.getInt("EndermanSpawnProbability", DEF_CAT, 3, 1, 10, "Probability Evolved Enderman will spawn when game deicdes to spawn a mob");
-		ConfigOptions.FRIENDERMAN_PROBABILITY = CONFIG.getInt("FrindermanSpawnProbability", DEF_CAT, 3, 1, 10, "Probability Frienderman will spawn when game deicdes to spawn a mob");
-		ConfigOptions.ENDERMAN_MAX_SPAWN = CONFIG.getInt("EndermanMaxSpawnPerGroup", DEF_CAT, 2, 1, 4, "When the game decides to spawn an Evolved Enderman, what is the max that should spawn in the group?");
-		ConfigOptions.FRIENDERMAN_MAX_SPAWN = CONFIG.getInt("FriendermanMaxSpawnPerGroup", DEF_CAT, 2, 1, 4, "When the game decides to spawn a Frienderman, what is the max that should spawn in the group?");
-		ConfigOptions.SHOW_SKULL_PARTICLES = CONFIG.getBoolean("DisplaySkullParticles", CLIENT_CAT, true, "Whether or not to spawn particles when wearing an enderman skull");
-		ConfigOptions.ENABLE_ENDERFLOWER_WORLDGEN = CONFIG.getBoolean("EnableEnderDaisyWorldGen", DEF_CAT, true, "Whether or not Ender Daisies generate naturally");
-		ConfigOptions.ENDERFLOWER_SPAWN_PROBABILITY = CONFIG.getFloat("EnderDaisySpawnProbability", DEF_CAT, 0.2F, 0.01F, 0.8F, "Chance between 0.0 and 1.0 that an Ender Daisy will spawn (0.2=20% chance)");
-		ConfigOptions.ENDERFLOWER_DIM_WHITELIST = CONFIG.get(DEF_CAT, "EnderDaisyDimensionWhitelist", new int[] {
+		ConfigOptions.endermanDaySpawn = CONFIG.getBoolean("EndermanSpawnIgnoreLightLevel", DEF_CAT, true, "Allow Evolved Enderman to spawn at any light level");
+		ConfigOptions.endermanSpawnProbability = CONFIG.getInt("EndermanSpawnProbability", DEF_CAT, 3, 1, 10, "Probability Evolved Enderman will spawn when game deicdes to spawn a mob");
+		ConfigOptions.friendermanSpawnProbability = CONFIG.getInt("FrindermanSpawnProbability", DEF_CAT, 3, 1, 10, "Probability Frienderman will spawn when game deicdes to spawn a mob");
+		ConfigOptions.endermanMaxSpawn = CONFIG.getInt("EndermanMaxSpawnPerGroup", DEF_CAT, 2, 1, 4, "When the game decides to spawn an Evolved Enderman, what is the max that should spawn in the group?");
+		ConfigOptions.friendermanMaxSpawn = CONFIG.getInt("FriendermanMaxSpawnPerGroup", DEF_CAT, 2, 1, 4, "When the game decides to spawn a Frienderman, what is the max that should spawn in the group?");
+		ConfigOptions.showSkullParticles = CONFIG.getBoolean("DisplaySkullParticles", CLIENT_CAT, true, "Whether or not to spawn particles when wearing an enderman skull");
+		ConfigOptions.enableEnderFlowerWorldGen = CONFIG.getBoolean("EnableEnderDaisyWorldGen", DEF_CAT, true, "Whether or not Ender Daisies generate naturally");
+		ConfigOptions.enderFlowerSpawnProbability = CONFIG.getFloat("EnderDaisySpawnProbability", DEF_CAT, 0.2F, 0.01F, 0.8F, "Chance between 0.0 and 1.0 that an Ender Daisy will spawn (0.2=20% chance)");
+		ConfigOptions.enderFlowerDimWhitelist = CONFIG.get(DEF_CAT, "EnderDaisyDimensionWhitelist", new int[] {
 				-1, 0, 1
 		}, "Integer dimension IDs where Ender Daisies are allowed to spawn. One integer per line.").getIntList();
 
@@ -48,17 +48,18 @@ public class ModConfig {
 
 	public static class ConfigOptions {
 
-		public static int ENDERMAN_PROBABILITY = 3;
-		public static int FRIENDERMAN_PROBABILITY = 3;
-		public static int ENDERMAN_MAX_SPAWN = 2;
-		public static int FRIENDERMAN_MAX_SPAWN = 2;
-		public static boolean ENDERMAN_DAY_SPAWN = true;
-		public static boolean SHOW_SKULL_PARTICLES = true;
-		public static boolean ENABLE_ENDERFLOWER_WORLDGEN = true;
-		public static float ENDERFLOWER_SPAWN_PROBABILITY = 0.2F;
-		public static int[] ENDERFLOWER_DIM_WHITELIST = new int[] {
+		public static int endermanSpawnProbability = 3;
+		public static int friendermanSpawnProbability = 3;
+		public static int endermanMaxSpawn = 2;
+		public static int friendermanMaxSpawn = 2;
+		public static boolean endermanDaySpawn = true;
+		public static boolean showSkullParticles = true;
+		public static boolean enableEnderFlowerWorldGen = true;
+		public static float enderFlowerSpawnProbability = 0.2F;
+		public static int[] enderFlowerDimWhitelist = new int[] {
 				-1, 0, 1
 		};
+		public static boolean enableColoredLighting = true;
 
 	}
 }

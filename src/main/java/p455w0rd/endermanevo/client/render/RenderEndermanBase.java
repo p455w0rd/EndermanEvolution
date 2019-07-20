@@ -37,7 +37,7 @@ public abstract class RenderEndermanBase<T extends EntityLiving> extends RenderL
 	private final Random rnd = new Random();
 	private final EndermanType endermanType;
 
-	public RenderEndermanBase(EndermanType endermanType) {
+	public RenderEndermanBase(final EndermanType endermanType) {
 		super(ModRendering.getRenderManager(), endermanType.getModel(), endermanType.getShadowSize());
 		this.endermanType = endermanType;
 		endermanModel = super.mainModel;
@@ -52,12 +52,12 @@ public abstract class RenderEndermanBase<T extends EntityLiving> extends RenderL
 	}
 
 	@Override
-	public void doRender(T entity, double x, double y, double z, float entityYaw, float partialTicks) {
+	public void doRender(final T entity, final double x, final double y, final double z, final float entityYaw, final float partialTicks) {
 		super.doRender(entity, x, y, z, entityYaw, partialTicks);
 	}
 
 	@Override
-	protected ResourceLocation getEntityTexture(T entity) {
+	protected ResourceLocation getEntityTexture(final T entity) {
 		return endermanType.getEntityTexture();
 	}
 

@@ -30,8 +30,8 @@ public class ModEntities {
 
 		EntitySpawnPlacementRegistry.setPlacementType(EntityEvolvedEnderman.class, SpawnPlacementType.ON_GROUND);
 		EntitySpawnPlacementRegistry.setPlacementType(EntityFrienderman.class, SpawnPlacementType.ON_GROUND);
-		EntityRegistry.addSpawn(EntityEvolvedEnderman.class, ConfigOptions.ENDERMAN_PROBABILITY, 1, ConfigOptions.ENDERMAN_MAX_SPAWN, EnumCreatureType.MONSTER, getBiomeList());
-		EntityRegistry.addSpawn(EntityFrienderman.class, ConfigOptions.FRIENDERMAN_PROBABILITY, 1, ConfigOptions.FRIENDERMAN_MAX_SPAWN, EnumCreatureType.CREATURE, Biomes.SKY, Biomes.DESERT, Biomes.HELL);
+		EntityRegistry.addSpawn(EntityEvolvedEnderman.class, ConfigOptions.endermanSpawnProbability, 1, ConfigOptions.endermanMaxSpawn, EnumCreatureType.MONSTER, getBiomeList());
+		EntityRegistry.addSpawn(EntityFrienderman.class, ConfigOptions.friendermanSpawnProbability, 1, ConfigOptions.friendermanMaxSpawn, EnumCreatureType.CREATURE, Biomes.SKY, Biomes.DESERT, Biomes.HELL);
 	}
 
 	private static Biome[] getBiomeList() {

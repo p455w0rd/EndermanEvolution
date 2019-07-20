@@ -1,5 +1,7 @@
 package p455w0rd.endermanevo.items;
 
+import java.util.List;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockSkull;
 import net.minecraft.block.state.IBlockState;
@@ -11,11 +13,14 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.*;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.fml.common.Optional;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -25,6 +30,10 @@ import p455w0rd.endermanevo.blocks.tiles.TileBlockSkull;
 import p455w0rd.endermanevo.client.render.ItemLayerWrapper;
 import p455w0rd.endermanevo.init.ModBlocks;
 import p455w0rd.endermanevo.init.ModMaterials;
+import p455w0rd.endermanevo.integration.PwLib;
+import p455w0rdslib.api.client.shader.Light;
+import p455w0rdslib.capabilities.CapabilityLightEmitter;
+import p455w0rdslib.capabilities.CapabilityLightEmitter.StackLightEmitter;
 import p455w0rdslib.util.MathUtils;
 import thaumcraft.api.crafting.IInfusionStabiliserExt;
 
@@ -161,9 +170,50 @@ public class ItemSkullBase extends ItemArmor implements IModelHolder, IInfusionS
 		}
 
 		@Override
+		public ICapabilityProvider initCapabilities(final ItemStack stack, final NBTTagCompound nbt) {
+			return new ICapabilityProvider() {
+				@Override
+				public boolean hasCapability(final Capability<?> capability, final EnumFacing facing) {
+					return PwLib.checkCap(capability);
+				}
+
+				@Override
+				public <T> T getCapability(final Capability<T> capability, final EnumFacing facing) {
+					if (hasCapability(capability, facing)) {
+						if (PwLib.checkCap(capability)) {
+							return CapabilityLightEmitter.LIGHT_EMITTER_CAPABILITY.cast(new StackLightEmitter(stack) {
+								@Override
+								public List<Light> emitLight(final List<Light> lights, final Entity entity) {
+									//lights.add(Light.builder().pos(entity).color(0, 0.85f, 0, 0.75f).radius(2.5f).intensity(1).build());
+									lights.add(Light.builder().pos(entity).color(0, 0.85f, 0, 0.75f).radius(3.0f).intensity(1f).build());
+									return lights;
+								}
+							});
+						}
+					}
+					return null;
+				}
+			};
+		}
+
+		@Override
 		public boolean isEndermanSkull() {
 			return true;
 		}
+
+		/*@Override
+		public void emitLight(final List<Light> lights, final Entity e) {
+			if (e instanceof EntityPlayer) {
+				final EntityPlayer p = (EntityPlayer) e;
+				final ItemStack helmet = ItemUtils.getHelmet(p);
+				if (helmet.getItem() == this) {
+					lights.add(Light.builder().pos(p).color(0, 0.85f, 0, 0.75f).radius(1.5f).intensity(1).build());
+				}
+			}
+			else if (e instanceof EntityItem) {
+				lights.add(Light.builder().pos(e).color(0, 0.85f, 0, 0.75f).radius(1.0f).intensity(1f).build());
+			}
+		}*/
 
 	}
 

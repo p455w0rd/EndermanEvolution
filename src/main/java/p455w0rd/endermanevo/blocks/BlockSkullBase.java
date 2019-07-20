@@ -34,9 +34,9 @@ public class BlockSkullBase extends BlockSkull {
 	protected static final AxisAlignedBB EAST_AABB = new AxisAlignedBB(0.0D, 0.25D, 0.25D, 0.5D, 0.75D, 0.75D);
 	ItemBlock itemBlock = null;
 
-	private String NAME;
+	private final String NAME;
 
-	public BlockSkullBase(String name) {
+	public BlockSkullBase(final String name) {
 		NAME = name;
 		setUnlocalizedName(NAME);
 		setRegistryName(NAME);
@@ -55,7 +55,7 @@ public class BlockSkullBase extends BlockSkull {
 	}
 
 	@Override
-	public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos) {
+	public AxisAlignedBB getBoundingBox(final IBlockState state, final IBlockAccess source, final BlockPos pos) {
 		switch (state.getValue(FACING)) {
 		case UP:
 		default:
@@ -72,22 +72,22 @@ public class BlockSkullBase extends BlockSkull {
 	}
 
 	@Override
-	public void onBlockHarvested(World worldIn, BlockPos pos, IBlockState state, EntityPlayer player) {
+	public void onBlockHarvested(final World worldIn, final BlockPos pos, final IBlockState state, final EntityPlayer player) {
 
 	}
 
 	@Override
-	public IBlockState getStateForPlacement(World worldIn, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer) {
+	public IBlockState getStateForPlacement(final World worldIn, final BlockPos pos, final EnumFacing facing, final float hitX, final float hitY, final float hitZ, final int meta, final EntityLivingBase placer) {
 		return getDefaultState().withProperty(FACING, placer.getHorizontalFacing().getOpposite()).withProperty(NODROP, Boolean.valueOf(false));
 	}
 
 	@Override
-	public TileEntity createNewTileEntity(World world, int meta) {
+	public TileEntity createNewTileEntity(final World world, final int meta) {
 		return new TileBlockSkull(NAME);
 	}
 
 	@Override
-	public boolean canDispenserPlace(World world, BlockPos pos, ItemStack stack) {
+	public boolean canDispenserPlace(final World world, final BlockPos pos, final ItemStack stack) {
 		return false;
 	}
 
@@ -98,22 +98,22 @@ public class BlockSkullBase extends BlockSkull {
 		}
 
 		@Override
-		public ItemStack getItem(World worldIn, BlockPos pos, IBlockState state) {
+		public ItemStack getItem(final World worldIn, final BlockPos pos, final IBlockState state) {
 			return new ItemStack(ModItems.SKULL_ENDERMAN);
 		}
 
 		@Override
-		public Item getItemDropped(IBlockState state, Random rand, int fortune) {
+		public Item getItemDropped(final IBlockState state, final Random rand, final int fortune) {
 			return null;
 		}
 
 		@Override
-		public List<ItemStack> getDrops(IBlockAccess worldIn, BlockPos pos, IBlockState state, int fortune) {
+		public List<ItemStack> getDrops(final IBlockAccess worldIn, final BlockPos pos, final IBlockState state, final int fortune) {
 			return Lists.newArrayList(new ItemStack(ModItems.SKULL_ENDERMAN));
 		}
 
 		@Override
-		public ItemStack getPickBlock(IBlockState state, RayTraceResult target, World world, BlockPos pos, EntityPlayer player) {
+		public ItemStack getPickBlock(final IBlockState state, final RayTraceResult target, final World world, final BlockPos pos, final EntityPlayer player) {
 			return new ItemStack(ModItems.SKULL_ENDERMAN);
 		}
 
@@ -126,22 +126,22 @@ public class BlockSkullBase extends BlockSkull {
 		}
 
 		@Override
-		public ItemStack getItem(World worldIn, BlockPos pos, IBlockState state) {
+		public ItemStack getItem(final World worldIn, final BlockPos pos, final IBlockState state) {
 			return new ItemStack(ModItems.SKULL_FRIENDERMAN);
 		}
 
 		@Override
-		public Item getItemDropped(IBlockState state, Random rand, int fortune) {
+		public Item getItemDropped(final IBlockState state, final Random rand, final int fortune) {
 			return ModItems.SKULL_FRIENDERMAN;
 		}
 
 		@Override
-		public List<ItemStack> getDrops(IBlockAccess worldIn, BlockPos pos, IBlockState state, int fortune) {
+		public List<ItemStack> getDrops(final IBlockAccess worldIn, final BlockPos pos, final IBlockState state, final int fortune) {
 			return Lists.newArrayList(new ItemStack(ModItems.SKULL_FRIENDERMAN));
 		}
 
 		@Override
-		public ItemStack getPickBlock(IBlockState state, RayTraceResult target, World world, BlockPos pos, EntityPlayer player) {
+		public ItemStack getPickBlock(final IBlockState state, final RayTraceResult target, final World world, final BlockPos pos, final EntityPlayer player) {
 			return new ItemStack(ModItems.SKULL_FRIENDERMAN);
 		}
 
@@ -154,22 +154,22 @@ public class BlockSkullBase extends BlockSkull {
 		}
 
 		@Override
-		public ItemStack getItem(World worldIn, BlockPos pos, IBlockState state) {
+		public ItemStack getItem(final World worldIn, final BlockPos pos, final IBlockState state) {
 			return new ItemStack(ModItems.SKULL_EVOLVED_ENDERMAN);
 		}
 
 		@Override
-		public Item getItemDropped(IBlockState state, Random rand, int fortune) {
+		public Item getItemDropped(final IBlockState state, final Random rand, final int fortune) {
 			return ModItems.SKULL_EVOLVED_ENDERMAN;
 		}
 
 		@Override
-		public List<ItemStack> getDrops(IBlockAccess worldIn, BlockPos pos, IBlockState state, int fortune) {
+		public List<ItemStack> getDrops(final IBlockAccess worldIn, final BlockPos pos, final IBlockState state, final int fortune) {
 			return Lists.newArrayList(new ItemStack(ModItems.SKULL_EVOLVED_ENDERMAN));
 		}
 
 		@Override
-		public ItemStack getPickBlock(IBlockState state, RayTraceResult target, World world, BlockPos pos, EntityPlayer player) {
+		public ItemStack getPickBlock(final IBlockState state, final RayTraceResult target, final World world, final BlockPos pos, final EntityPlayer player) {
 			return new ItemStack(ModItems.SKULL_EVOLVED_ENDERMAN);
 		}
 

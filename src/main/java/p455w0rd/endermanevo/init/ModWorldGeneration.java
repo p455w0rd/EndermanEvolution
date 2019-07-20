@@ -13,7 +13,7 @@ public class ModWorldGeneration {
 	private static final EnderFlowerGenerator ENDER_FLOWER = new EnderFlowerGenerator();
 
 	public static void init() {
-		if (ConfigOptions.ENABLE_ENDERFLOWER_WORLDGEN) {
+		if (ConfigOptions.enableEnderFlowerWorldGen) {
 			GameRegistry.registerWorldGenerator(ENDER_FLOWER, 0);
 		}
 	}

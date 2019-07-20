@@ -1,6 +1,5 @@
 package p455w0rd.endermanevo.init;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import com.google.common.collect.Lists;
@@ -19,8 +18,6 @@ import p455w0rd.endermanevo.items.*;
 
 public class ModItems {
 
-	private static final List<Item> ITEM_LIST = new ArrayList<>();
-
 	public static final ItemFrienderPearl FRIENDER_PEARL = new ItemFrienderPearl();
 	public static final ItemSkullBase.Enderman SKULL_ENDERMAN = new ItemSkullBase.Enderman();
 	public static final ItemSkullBase.Frienderman SKULL_FRIENDERMAN = new ItemSkullBase.Frienderman();
@@ -31,16 +28,6 @@ public class ModItems {
 			FRIENDER_PEARL, SKULL_ENDERMAN, SKULL_FRIENDERMAN, SKULL_EVOLVED_ENDERMAN, ENDER_FLOWER, ENDER_FRAGMENT
 	};
 
-	/*
-	@SideOnly(Side.CLIENT)
-	public static void preInitModels() {
-		for (Item item : ITEM_LIST) {
-			if (item instanceof IModelHolder) {
-				((IModelHolder) item).initModel();
-			}
-		}
-	}
-	*/
 	@SideOnly(Side.CLIENT)
 	public static final void initModels(final ModelBakeEvent event) {
 		for (final Item item : ITEM_ARRAY) {
@@ -71,4 +58,5 @@ public class ModItems {
 	public static List<Item> getList() {
 		return Lists.newArrayList(ITEM_ARRAY);
 	}
+
 }

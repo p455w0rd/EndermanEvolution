@@ -16,22 +16,25 @@ import net.minecraft.entity.monster.EntityEnderman;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
 import net.minecraft.item.*;
+import net.minecraft.network.datasync.DataParameter;
+import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.world.World;
 import net.minecraft.world.storage.loot.*;
 import net.minecraft.world.storage.loot.conditions.LootCondition;
 import net.minecraft.world.storage.loot.functions.LootFunction;
 import net.minecraftforge.client.event.*;
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.LootTableLoadEvent;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.event.entity.living.*;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent.RightClickBlock;
+import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.common.eventhandler.Event.Result;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.PlayerTickEvent;
-import net.minecraftforge.fml.relauncher.*;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import p455w0rd.endermanevo.blocks.BlockEnderFlower;
 import p455w0rd.endermanevo.client.model.layers.LayerEntityCharge;
 import p455w0rd.endermanevo.client.model.layers.LayerSkullEyes;
@@ -42,26 +45,22 @@ import p455w0rd.endermanevo.init.ModConfig.ConfigOptions;
 import p455w0rd.endermanevo.init.ModIntegration.Mods;
 import p455w0rd.endermanevo.integration.TiC;
 import p455w0rd.endermanevo.items.ItemSkullBase;
-import p455w0rd.endermanevo.util.EntityUtils;
-import p455w0rd.endermanevo.util.EnumParticles;
-import p455w0rd.endermanevo.util.ParticleUtil;
-import p455w0rdslib.util.*;
+import p455w0rd.endermanevo.util.*;
+import p455w0rdslib.util.EasyMappings;
+import p455w0rdslib.util.MathUtils;
 
+@EventBusSubscriber(modid = ModGlobals.MODID)
 public class ModEvents {
 
-	public static void init() {
-		MinecraftForge.EVENT_BUS.register(new ModEvents());
-	}
-
 	@SubscribeEvent
-	public void registerItems(final RegistryEvent.Register<Item> event) {
+	public static void registerItems(final RegistryEvent.Register<Item> event) {
 		for (final Item item : ModItems.getList()) {
 			event.getRegistry().register(item);
 		}
 	}
 
 	@SubscribeEvent
-	public void registerBlock(final RegistryEvent.Register<Block> event) {
+	public static void registerBlock(final RegistryEvent.Register<Block> event) {
 		for (final Block block : ModBlocks.getList()) {
 			event.getRegistry().register(block);
 		}
@@ -69,19 +68,19 @@ public class ModEvents {
 
 	@SideOnly(Side.CLIENT)
 	@SubscribeEvent
-	public void registerModels(final ModelRegistryEvent event) {
+	public static void registerModels(final ModelRegistryEvent event) {
 		ModBlocks.preInitModels();
 		ModItems.registerTEISRs(event);
 	}
 
 	@SubscribeEvent
 	@SideOnly(Side.CLIENT)
-	public void onModelBake(final ModelBakeEvent event) {
+	public static void onModelBake(final ModelBakeEvent event) {
 		ModItems.initModels(event);
 	}
 
 	@SubscribeEvent
-	public void onItemUse(final RightClickBlock event) {
+	public static void onItemUse(final RightClickBlock event) {
 		final ItemStack stack = event.getItemStack();
 		if (stack.getItem() == Items.DYE && EnumDyeColor.WHITE == EnumDyeColor.byDyeDamage(stack.getMetadata())) {
 			BlockEnderFlower.tryBonemeal(stack, event.getWorld(), event.getPos(), event.getEntityPlayer(), event.getHand());
@@ -89,20 +88,20 @@ public class ModEvents {
 	}
 
 	@SubscribeEvent
-	public void onSpawnPackSize(final LivingPackSizeEvent event) {
+	public static void onSpawnPackSize(final LivingPackSizeEvent event) {
 		if (event.getEntityLiving() instanceof EntityEvolvedEnderman) {
-			event.setMaxPackSize(ConfigOptions.ENDERMAN_MAX_SPAWN);
+			event.setMaxPackSize(ConfigOptions.endermanMaxSpawn);
 		}
 		else if (event.getEntityLiving() instanceof EntityFrienderman) {
-			event.setMaxPackSize(ConfigOptions.FRIENDERMAN_MAX_SPAWN);
+			event.setMaxPackSize(ConfigOptions.friendermanMaxSpawn);
 		}
 	}
 
 	@SideOnly(Side.CLIENT)
 	@SubscribeEvent
-	public void renderLivingBase(final RenderLivingEvent.Pre<EntityLivingBase> event) {
+	public static void renderLivingBase(final RenderLivingEvent.Pre<EntityLivingBase> event) {
 		final RenderLivingBase<EntityLivingBase> renderer = event.getRenderer();
-		final List<LayerRenderer<EntityLivingBase>> layers = ReflectionHelper.getPrivateValue(RenderLivingBase.class, renderer, ReflectionUtils.determineSRG("layerRenderers"));
+		final List<LayerRenderer<EntityLivingBase>> layers = renderer.layerRenderers;
 		boolean isEyesLayerAdded = false;
 		boolean isChargeLayerAdded = false;
 		for (final LayerRenderer<EntityLivingBase> layer : layers) {
@@ -126,10 +125,15 @@ public class ModEvents {
 					bipedModel.bipedHeadwear.isHidden = true;
 				}
 			}
-			if (!isChargeLayerAdded && event.getEntity() instanceof EntityPlayer) {
+			if (event.getEntity() instanceof EntityPlayer) {
 				final ItemSkullBase skull = EntityUtils.getSkullItem(event.getEntity());
-				if (skull == ModItems.SKULL_EVOLVED_ENDERMAN) {
-					renderer.addLayer(new LayerEntityCharge<>(renderer, renderer.getMainModel()));
+				if (!isChargeLayerAdded) {
+					if (skull == ModItems.SKULL_EVOLVED_ENDERMAN) {
+						renderer.addLayer(new LayerEntityCharge<>(renderer, renderer.getMainModel()));
+					}
+				}
+				else if (skull != ModItems.SKULL_EVOLVED_ENDERMAN) {
+					removeEntityChargeLayer(event.getEntity(), layers);
 				}
 			}
 		}
@@ -142,6 +146,8 @@ public class ModEvents {
 				}
 			}
 			if (isChargeLayerAdded && event.getEntity() instanceof EntityPlayer) {
+				removeEntityChargeLayer(event.getEntity(), layers);
+				/*
 				final Iterator<LayerRenderer<EntityLivingBase>> iterator = layers.iterator();
 				LayerEntityCharge<EntityLivingBase> layerToRemove = null;
 				while (iterator.hasNext()) {
@@ -154,51 +160,70 @@ public class ModEvents {
 				if (layerToRemove != null) {
 					layers.remove(layerToRemove);
 				}
+				*/
 			}
+		}
+	}
+
+	private static void removeEntityChargeLayer(final EntityLivingBase entity, final List<LayerRenderer<EntityLivingBase>> layers) {
+		final Iterator<LayerRenderer<EntityLivingBase>> iterator = layers.iterator();
+		LayerEntityCharge<EntityLivingBase> layerToRemove = null;
+		while (iterator.hasNext()) {
+			final LayerRenderer<EntityLivingBase> currentLayer = iterator.next();
+			if (currentLayer instanceof LayerEntityCharge) {
+				layerToRemove = (LayerEntityCharge<EntityLivingBase>) currentLayer;
+				break;
+			}
+		}
+		if (layerToRemove != null) {
+			layers.remove(layerToRemove);
 		}
 	}
 
 	@SubscribeEvent
 	@SideOnly(Side.CLIENT)
-	public void onRenderAfterWorld(final RenderWorldLastEvent event) {
+	public static void onRenderAfterWorld(final RenderWorldLastEvent event) {
 		ParticleRenderer.getInstance().renderParticles(EasyMappings.player(), event.getPartialTicks());
 	}
 
 	@SubscribeEvent
-	public void onLivingUpdate(final LivingEvent.LivingUpdateEvent event) {
+	public static void onLivingUpdate(final LivingEvent.LivingUpdateEvent event) {
 		if (event.getEntityLiving() instanceof EntityEnderman) {
 			final EntityEnderman enderman = (EntityEnderman) event.getEntityLiving();
 			if (enderman.getAttackTarget() == null) {
-				MCPrivateUtils.setEndermanScreaming(enderman, false);
+				final DataParameter<Boolean> screaming = EntityEnderman.SCREAMING;
+				final EntityDataManager dm = enderman.getDataManager();
+				dm.set(screaming, Boolean.valueOf(false));
+				dm.setDirty(screaming);
 			}
 		}
 	}
 
 	@SubscribeEvent
-	public void onEntitySpawn(final LivingSpawnEvent.CheckSpawn event) {
+	public static void onEntitySpawn(final LivingSpawnEvent.CheckSpawn event) {
 		if (event.getWorld().isRemote || !(event.getEntityLiving() instanceof EntityEvolvedEnderman)) {
 			return;
 		}
 		final World world = event.getWorld();
 		final int radius = 32;
 		final List<EntityEvolvedEnderman> endermanList = world.getEntitiesWithinAABB(EntityEvolvedEnderman.class, new AxisAlignedBB(event.getX() - radius, 0, event.getZ() - radius, event.getX() + radius, world.getHeight(), event.getZ() + radius));
-		if (endermanList.size() >= ConfigOptions.ENDERMAN_MAX_SPAWN) {
+		if (endermanList.size() >= ConfigOptions.endermanMaxSpawn) {
 			event.setResult(Result.DENY);
 		}
 	}
 
 	@SubscribeEvent
-	public void onSetEntitySpawnGroupSize(final LivingPackSizeEvent event) {
+	public static void onSetEntitySpawnGroupSize(final LivingPackSizeEvent event) {
 		if (event.getEntityLiving() instanceof EntityEvolvedEnderman) {
-			event.setMaxPackSize(ConfigOptions.ENDERMAN_MAX_SPAWN);
+			event.setMaxPackSize(ConfigOptions.endermanMaxSpawn);
 		}
 		else if (event.getEntityLiving() instanceof EntityFrienderman) {
-			event.setMaxPackSize(ConfigOptions.FRIENDERMAN_MAX_SPAWN);
+			event.setMaxPackSize(ConfigOptions.friendermanMaxSpawn);
 		}
 	}
 
 	@SubscribeEvent
-	public void onTargetSelect(final LivingSetAttackTargetEvent event) {
+	public static void onTargetSelect(final LivingSetAttackTargetEvent event) {
 		if (event.getEntityLiving() instanceof EntityEnderman && event.getTarget() instanceof EntityPlayer) {
 			final EntityPlayer player = (EntityPlayer) event.getTarget();
 			final ItemStack stack = player.inventory.armorInventory.get(3);
@@ -216,7 +241,7 @@ public class ModEvents {
 	}
 
 	@SubscribeEvent
-	public void onMobDrop(final LivingDropsEvent event) {
+	public static void onMobDrop(final LivingDropsEvent event) {
 		if (event.getSource().getTrueSource() instanceof EntityLivingBase) { //only respect death by living entity
 			final World world = event.getEntity().getEntityWorld();
 			final double x = event.getEntity().posX;
@@ -272,7 +297,7 @@ public class ModEvents {
 	}
 
 	@SubscribeEvent
-	public void onLootTablesLoaded(final LootTableLoadEvent event) {
+	public static void onLootTablesLoaded(final LootTableLoadEvent event) {
 		if (event.getName().equals(LootTableList.CHESTS_ABANDONED_MINESHAFT) || event.getName().equals(LootTableList.CHESTS_SIMPLE_DUNGEON) || event.getName().equals(LootTableList.CHESTS_DESERT_PYRAMID) || event.getName().equals(LootTableList.CHESTS_NETHER_BRIDGE) || event.getName().equals(LootTableList.CHESTS_STRONGHOLD_LIBRARY) || event.getName().equals(LootTableList.CHESTS_END_CITY_TREASURE)) {
 			final LootPool mainPool = event.getTable().getPool("main");
 			if (mainPool != null) {
@@ -287,7 +312,7 @@ public class ModEvents {
 	// rainbow colors
 
 	@SubscribeEvent
-	public void tickEvent(final TickEvent event) {
+	public static void tickEvent(final TickEvent event) {
 		ModGlobals.TIME_LONG++;
 
 		if (ModGlobals.TIME % 0.5 == 0) {
@@ -336,10 +361,10 @@ public class ModEvents {
 
 	@SubscribeEvent
 	@SideOnly(Side.CLIENT)
-	public void onPlayerTick(final PlayerTickEvent event) {
+	public static void onPlayerTick(final PlayerTickEvent event) {
 		final EntityPlayer player = event.player;
 		if (player.world.isRemote) {
-			if (player == Minecraft.getMinecraft().player && Minecraft.getMinecraft().gameSettings.thirdPersonView == 0 && !ConfigOptions.SHOW_SKULL_PARTICLES) {
+			if (player == Minecraft.getMinecraft().player && Minecraft.getMinecraft().gameSettings.thirdPersonView == 0 && !ConfigOptions.showSkullParticles) {
 				return;
 			}
 			if (EntityUtils.isWearingCustomSkull(player)) {

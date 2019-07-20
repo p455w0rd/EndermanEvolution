@@ -29,15 +29,18 @@ import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.*;
 import net.minecraftforge.common.ForgeHooks;
+import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import p455w0rd.endermanevo.init.ModConfig.ConfigOptions;
+import p455w0rd.endermanevo.integration.PwLib;
 import p455w0rd.endermanevo.items.ItemSkullBase;
 import p455w0rd.endermanevo.util.EnumParticles;
 import p455w0rd.endermanevo.util.ParticleUtil;
+import p455w0rdslib.api.client.shader.Light;
+import p455w0rdslib.capabilities.CapabilityLightEmitter;
 import p455w0rdslib.util.EasyMappings;
-import p455w0rdslib.util.MCPrivateUtils;
 
 public class EntityEvolvedEnderman extends EntityEnderman {
 
@@ -125,7 +128,7 @@ public class EntityEvolvedEnderman extends EntityEnderman {
 	public IEntityLivingData onInitialSpawn(final DifficultyInstance difficulty, @Nullable final IEntityLivingData livingdata) {
 		final int radius = 32;
 		final List<EntityEvolvedEnderman> endermanList = world.getEntitiesWithinAABB(EntityEvolvedEnderman.class, new AxisAlignedBB(posX - radius, 0, posZ - radius, posX + radius, world.getHeight(), posZ + radius));
-		if (endermanList.size() >= ConfigOptions.ENDERMAN_MAX_SPAWN) {
+		if (endermanList.size() >= ConfigOptions.endermanMaxSpawn) {
 			return null;
 		}
 		if (!getCanSpawnHere()) {
@@ -163,31 +166,49 @@ public class EntityEvolvedEnderman extends EntityEnderman {
 	protected void updateAITasks() {
 	}
 
+	private boolean canBlockDamageSrc(final DamageSource damageSourceIn) {
+		if (!damageSourceIn.isUnblockable() && isActiveItemStackBlocking()) {
+			final Vec3d vec3d = damageSourceIn.getDamageLocation();
+
+			if (vec3d != null) {
+				final Vec3d vec3d1 = getLook(1.0F);
+				Vec3d vec3d2 = vec3d.subtractReverse(new Vec3d(posX, posY, posZ)).normalize();
+				vec3d2 = new Vec3d(vec3d2.x, 0.0D, vec3d2.z);
+
+				if (vec3d2.dotProduct(vec3d1) < 0.0D) {
+					return true;
+				}
+			}
+		}
+
+		return false;
+	}
+
 	@Override
 	public boolean attackEntityFrom(final DamageSource source, float amount) {
 		if (isEntityInvulnerable(source) || world.isRemote || !ForgeHooks.onLivingAttack(this, source, amount)) {
 			return false;
 		}
-		if ((source instanceof EntityDamageSourceIndirect || source.isProjectile()) && !isInWater()) {
-			if (source.isProjectile() && !(source.getImmediateSource() instanceof EntitySnowball)) {
-				final Entity sourceEntity = source.getTrueSource();
-				if (sourceEntity != null && attemptTeleport(sourceEntity.posX + (rand.nextInt(3) == 2 ? -1 : 1), sourceEntity.posY, sourceEntity.posZ + (rand.nextInt(3) == 2 ? -1 : 1))) {
-					if (sourceEntity instanceof EntityLivingBase) {
-						setRevengeTarget((EntityLivingBase) sourceEntity);
-					}
-					return true;
-				}
-			}
-			else {
-				for (int i = 0; i < 64; ++i) {
-					if (teleportRandomly()) {
+		else {
+			if ((source instanceof EntityDamageSourceIndirect || source.isProjectile()) && !isInWater()) {
+				if (source.isProjectile() && !(source.getImmediateSource() instanceof EntitySnowball)) {
+					final Entity sourceEntity = source.getTrueSource();
+					if (sourceEntity != null && attemptTeleport(sourceEntity.posX + (rand.nextInt(3) == 2 ? -1 : 1), sourceEntity.posY, sourceEntity.posZ + (rand.nextInt(3) == 2 ? -1 : 1))) {
+						if (sourceEntity instanceof EntityLivingBase) {
+							setRevengeTarget((EntityLivingBase) sourceEntity);
+						}
 						return true;
 					}
 				}
+				else {
+					for (int i = 0; i < 64; ++i) {
+						if (teleportRandomly()) {
+							return true;
+						}
+					}
+				}
+				return false;
 			}
-			return false;
-		}
-		else {
 			idleTime = 0;
 
 			if (getHealth() <= 0.0F) {
@@ -201,7 +222,23 @@ public class EntityEvolvedEnderman extends EntityEnderman {
 					getItemStackFromSlot(EntityEquipmentSlot.HEAD).damageItem((int) (amount * 4.0F + rand.nextFloat() * amount * 2.0F), this);
 					amount *= 0.75F;
 				}
-				final boolean flag = false;
+				boolean flag = false;
+
+				if (amount > 0.0F && canBlockDamageSrc(source)) {
+					damageShield(amount);
+					amount = 0.0F;
+
+					if (!source.isProjectile()) {
+						final Entity entity = source.getImmediateSource();
+
+						if (entity instanceof EntityLivingBase) {
+							blockUsingShield((EntityLivingBase) entity);
+						}
+					}
+
+					flag = true;
+				}
+
 				limbSwingAmount = 1.5F;
 				boolean flag1 = true;
 				if (hurtResistantTime > maxHurtResistantTime / 2.0F) {
@@ -274,8 +311,8 @@ public class EntityEvolvedEnderman extends EntityEnderman {
 				}
 
 				if (!flag || amount > 0.0F) {
-					MCPrivateUtils.setLastDamageSource(this, source);
-					MCPrivateUtils.setLastDamageStamp(this, EasyMappings.world(this).getTotalWorldTime());
+					lastDamageSource = source;
+					lastDamageStamp = EasyMappings.world(this).getTotalWorldTime();
 				}
 				return !flag || amount > 0.0F;
 			}
@@ -347,12 +384,12 @@ public class EntityEvolvedEnderman extends EntityEnderman {
 
 	@Override
 	public float getBlockPathWeight(final BlockPos pos) {
-		return ConfigOptions.ENDERMAN_DAY_SPAWN ? 0.0F : super.getBlockPathWeight(pos);
+		return ConfigOptions.endermanDaySpawn ? 0.0F : super.getBlockPathWeight(pos);
 	}
 
 	@Override
 	protected boolean isValidLightLevel() {
-		return ConfigOptions.ENDERMAN_DAY_SPAWN ? true : super.isValidLightLevel();
+		return ConfigOptions.endermanDaySpawn ? true : super.isValidLightLevel();
 	}
 
 	@Override
@@ -718,6 +755,22 @@ public class EntityEvolvedEnderman extends EntityEnderman {
 	public void setAttackTarget(@Nullable final EntityLivingBase entitylivingbaseIn) {
 		super.setAttackTarget(entitylivingbaseIn);
 		setAggro(getAttackTarget() != null);
+	}
+
+	@Override
+	public boolean hasCapability(final Capability<?> c, final EnumFacing f) {
+		return PwLib.checkCap(c);
+	}
+
+	@Override
+	public <T> T getCapability(final Capability<T> c, final EnumFacing f) {
+		return hasCapability(c, f) && PwLib.checkCap(c) ? CapabilityLightEmitter.LIGHT_EMITTER_CAPABILITY.cast(new CapabilityLightEmitter.EntityLightEmitter(this) {
+			@Override
+			public List<Light> emitLight(final List<Light> lights, final Entity entity) {
+				lights.add(Light.builder().pos(entity).color(0, 0.85f, 0, 0.75f).radius(2.5f).intensity(1).build());
+				return lights;
+			}
+		}) : null;
 	}
 
 }
