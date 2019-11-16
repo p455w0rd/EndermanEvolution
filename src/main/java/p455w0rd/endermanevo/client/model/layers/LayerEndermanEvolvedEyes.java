@@ -20,17 +20,16 @@ package p455w0rd.endermanevo.client.model.layers;
 
 import net.minecraft.client.renderer.*;
 import net.minecraft.client.renderer.entity.layers.LayerRenderer;
-import net.minecraft.util.ResourceLocation;
 import p455w0rd.endermanevo.client.render.RenderEvolvedEnderman;
 import p455w0rd.endermanevo.entity.EntityEvolvedEnderman;
-import p455w0rd.endermanevo.init.ModGlobals;
 
 /**
  * @author p455w0rd
  *
  */
 public class LayerEndermanEvolvedEyes implements LayerRenderer<EntityEvolvedEnderman> {
-	private static final ResourceLocation RES_ENDERMAN_EYES = new ResourceLocation(ModGlobals.MODID, "textures/entity/enderman_evolved_eyes.png");
+
+	//private static final ResourceLocation RES_ENDERMAN_EYES = new ResourceLocation(ModGlobals.MODID, "textures/entity/enderman_evolved_eyes.png");
 	private final RenderEvolvedEnderman endermanRenderer;
 
 	public LayerEndermanEvolvedEyes(final RenderEvolvedEnderman endermanRendererIn) {
@@ -46,7 +45,7 @@ public class LayerEndermanEvolvedEyes implements LayerRenderer<EntityEvolvedEnde
 		GlStateManager.blendFunc(GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ONE);
 		GlStateManager.disableLighting();
 		GlStateManager.depthMask(false);//!entitylivingbaseIn.isInvisible());
-		
+
 		OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, 61680.0F, 0.0F);
 		GlStateManager.enableLighting();
 		GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);

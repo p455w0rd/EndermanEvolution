@@ -13,12 +13,7 @@ buildscript {
     }
 }
 
-plugins {
-	id "com.wynprice.cursemaven" version "1.1.0"
-}
-
 apply from : 'https://github.com/p455w0rd/buildscripts/raw/master/base.gradle'
-apply from : 'https://github.com/p455w0rd/buildscripts/raw/master/ccl.gradle'
 apply from : 'https://github.com/p455w0rd/buildscripts/raw/master/enderstorage.gradle'
 apply from : 'https://github.com/p455w0rd/buildscripts/raw/master/thermal.gradle'
 apply from : 'https://github.com/p455w0rd/buildscripts/raw/master/thaumcraft.gradle'

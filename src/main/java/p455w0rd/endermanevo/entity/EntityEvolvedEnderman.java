@@ -29,17 +29,13 @@ import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.*;
 import net.minecraftforge.common.ForgeHooks;
-import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import p455w0rd.endermanevo.init.ModConfig.ConfigOptions;
-import p455w0rd.endermanevo.integration.PwLib;
 import p455w0rd.endermanevo.items.ItemSkullBase;
 import p455w0rd.endermanevo.util.EnumParticles;
 import p455w0rd.endermanevo.util.ParticleUtil;
-import p455w0rdslib.api.client.shader.Light;
-import p455w0rdslib.capabilities.CapabilityLightEmitter;
 import p455w0rdslib.util.EasyMappings;
 
 public class EntityEvolvedEnderman extends EntityEnderman {
@@ -755,22 +751,6 @@ public class EntityEvolvedEnderman extends EntityEnderman {
 	public void setAttackTarget(@Nullable final EntityLivingBase entitylivingbaseIn) {
 		super.setAttackTarget(entitylivingbaseIn);
 		setAggro(getAttackTarget() != null);
-	}
-
-	@Override
-	public boolean hasCapability(final Capability<?> c, final EnumFacing f) {
-		return PwLib.checkCap(c);
-	}
-
-	@Override
-	public <T> T getCapability(final Capability<T> c, final EnumFacing f) {
-		return hasCapability(c, f) && PwLib.checkCap(c) ? CapabilityLightEmitter.LIGHT_EMITTER_CAPABILITY.cast(new CapabilityLightEmitter.EntityLightEmitter(this) {
-			@Override
-			public List<Light> emitLight(final List<Light> lights, final Entity entity) {
-				lights.add(Light.builder().pos(entity).color(0, 0.85f, 0, 0.75f).radius(2.5f).intensity(1).build());
-				return lights;
-			}
-		}) : null;
 	}
 
 }
