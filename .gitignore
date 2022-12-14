@@ -1,26 +1,40 @@
-#Stolen form AE2 Repo. :D
-# exclude all
+# gradle
 
-/*
+.gradle/
+build/
+out/
+classes/
 
-# Include important folders
+# eclipse
 
-# Gradle stuff
-!gradle/
-!gradlew
-!gradlew.bat
-!build.gradle
-!gradle.properties
-!settings.gradle
+*.launch
 
-# Other Files.
-!LICENSE
-!README.md
+# idea
 
-# Include git important files
-!.gitmodules
-!.gitignore
+.idea/
+*.iml
+*.ipr
+*.iws
 
-# Include Important Folders
-!src/
-!libs/
+# vscode
+
+.settings/
+.vscode/
+bin/
+.classpath
+.project
+
+# macos
+
+*.DS_Store
+
+# fabric
+
+run/
+
+# java
+
+hs_err_*.log
+replay_*.log
+*.hprof
+*.jfr
