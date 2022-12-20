@@ -1,0 +1,19 @@
+{
+  "item.endermanevolution.friender_pearl": [
+    {
+      "text": "Friender",
+      "color": "#E8027C"
+    },
+    {
+      "text": " Pearl",
+      "color": "#FFFFFF"
+    }
+  ],
+  "item.endermanevolution.ender_fragment": "Ender Fragment",
+
+  "itemGroup.endermanevolution.endermanevolution_group": [
+    {
+      "text": "Enderman Evolution"
+    }
+  ]
+}
