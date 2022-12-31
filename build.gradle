@@ -1,6 +1,7 @@
 plugins {
     id 'fabric-loom' version '1.0-SNAPSHOT'
     id 'maven-publish'
+    id 'com.diffplug.spotless' version '6.11.0'
 }
 
 sourceCompatibility = JavaVersion.VERSION_17
@@ -12,7 +13,6 @@ group = project.maven_group
 
 repositories {
     maven { url 'https://dl.cloudsmith.io/public/geckolib3/geckolib/maven/' }
-
     maven { url 'https://maven.wispforest.io' }
 }
 
@@ -58,4 +58,32 @@ publishing {
     }
 
     repositories {}
+}
+
+spotless {
+    format 'misc', {
+        target '*.gradle', '*.md', '.gitignore'
+
+        trimTrailingWhitespace()
+        indentWithSpaces(4)
+        endWithNewline()
+    }
+
+    java {
+        target 'forge/src/*/java/**/*.java', 'fabric/src/*/java/**/*.java', 'quilt/src/*/java/**/*.java'
+
+        googleJavaFormat().aosp()
+        trimTrailingWhitespace()
+        indentWithSpaces(4)
+        endWithNewline()
+        removeUnusedImports()
+        formatAnnotations()
+    }
+
+    json {
+        target 'forge/src/**/*.json', 'fabric/src/**/*.json', 'quilt/src/**/*.json'
+
+        gson()
+                .indentWithSpaces(4)
+    }
 }
