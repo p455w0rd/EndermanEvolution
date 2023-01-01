@@ -1,0 +1,12 @@
+{
+    "variants": {
+        "age=0": { "model": "endermanevolution:ender_flower_stage0" },
+        "age=1": { "model": "endermanevolution:ender_flower_stage1" },
+        "age=2": { "model": "endermanevolution:ender_flower_stage2" },
+        "age=3": { "model": "endermanevolution:ender_flower_stage3" },
+        "age=4": { "model": "endermanevolution:ender_flower_stage4" },
+        "age=5": { "model": "endermanevolution:ender_flower_stage5" },
+        "age=6": { "model": "endermanevolution:ender_flower_stage6" },
+        "age=7": { "model": "endermanevolution:ender_flower_stage7" }
+    }
+}

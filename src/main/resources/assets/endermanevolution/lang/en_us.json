@@ -9,7 +9,27 @@
       "color": "#FFFFFF"
     }
   ],
-  "item.endermanevolution.ender_fragment": "Ender Fragment",
+  "item.endermanevolution.ender_fragment": [
+    {
+      "text": "Ender",
+      "color": "#258273"
+    },
+    {
+      "text": " Fragment",
+      "color": "#FFFFFF"
+    }
+  ],
+  "item.endermanevolution.ender_flower_seed": [
+    {
+      "text": "Ender",
+      "color": "#258273"
+    },
+    {
+      "text": " Flower",
+      "color": "#FFFFFF"
+    }
+  ],
+
 
   "itemGroup.endermanevolution.endermanevolution_group": [
     {

@@ -1,0 +1,6 @@
+{
+    "parent": "minecraft:block/crop",
+    "textures": {
+        "crop": "endermanevolution:block/ender_flower_6"
+    }
+}

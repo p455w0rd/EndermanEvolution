@@ -10,5 +10,6 @@ public class EndermanEvolution implements ModInitializer {
         Vars.ITEM_GROUP.initialize();
 
         FieldRegistrationHandler.register(ItemManager.class, Vars.MOD_ID, false);
+        FieldRegistrationHandler.register(BlockManager.class, Vars.MOD_ID, false);
     }
 }

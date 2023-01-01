@@ -20,6 +20,9 @@
   "entrypoints": {
     "main": [
       "org.goldpiggymc.endermanevolution.EndermanEvolution"
+    ],
+    "client": [
+      "org.goldpiggymc.endermanevolution.EndermanEvolutionClient"
     ]
   },
 
