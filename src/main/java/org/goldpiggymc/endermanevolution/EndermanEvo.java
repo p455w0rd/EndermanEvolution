@@ -2,12 +2,19 @@ package org.goldpiggymc.endermanevolution;
 
 import io.wispforest.owo.registration.reflect.FieldRegistrationHandler;
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.object.builder.v1.entity.FabricDefaultAttributeRegistry;
+import org.goldpiggymc.endermanevolution.entity.EntityManager;
+import org.goldpiggymc.endermanevolution.entity.custom.FriendermanEntity;
+import software.bernie.geckolib3.GeckoLib;
 
 public class EndermanEvo implements ModInitializer {
 
     @Override
     public void onInitialize() {
         Vars.ITEM_GROUP.initialize();
+        GeckoLib.initialize();
+
+        FabricDefaultAttributeRegistry.register(EntityManager.FRIENDERMAN, FriendermanEntity.setAttribute());
 
         FieldRegistrationHandler.register(
             ItemManager.class,
