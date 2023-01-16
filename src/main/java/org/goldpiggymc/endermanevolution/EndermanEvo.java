@@ -3,7 +3,7 @@ package org.goldpiggymc.endermanevolution;
 import io.wispforest.owo.registration.reflect.FieldRegistrationHandler;
 import net.fabricmc.api.ModInitializer;
 
-public class EndermanEvolution implements ModInitializer {
+public class EndermanEvo implements ModInitializer {
 
     @Override
     public void onInitialize() {

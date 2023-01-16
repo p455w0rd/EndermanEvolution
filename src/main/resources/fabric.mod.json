@@ -19,10 +19,10 @@
   "environment": "*",
   "entrypoints": {
     "main": [
-      "org.goldpiggymc.endermanevolution.EndermanEvolution"
+      "org.goldpiggymc.endermanevolution.EndermanEvo"
     ],
     "client": [
-      "org.goldpiggymc.endermanevolution.EndermanEvolutionClient"
+      "org.goldpiggymc.endermanevolution.client.EndermanEvo"
     ]
   },
 
