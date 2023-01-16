@@ -70,20 +70,14 @@ spotless {
     }
 
     java {
-        target 'forge/src/*/java/**/*.java', 'fabric/src/*/java/**/*.java', 'quilt/src/*/java/**/*.java'
+        target 'src/*/java/**/*.java'
 
-        googleJavaFormat().aosp()
-        trimTrailingWhitespace()
-        indentWithSpaces(4)
-        endWithNewline()
-        removeUnusedImports()
-        formatAnnotations()
+        prettier(['prettier': '2.8.1', 'prettier-plugin-java': '2.0.0']).config(['parser': 'java', 'tabWidth': 4, 'endOfLine': 'crlf'])
     }
 
     json {
-        target 'forge/src/**/*.json', 'fabric/src/**/*.json', 'quilt/src/**/*.json'
+        target 'src/**/*.json'
 
-        gson()
-                .indentWithSpaces(4)
+        prettier(['prettier': '2.8.1']).config(['parser': 'json', 'tabWidth': 4, 'endOfLine': 'crlf'])
     }
 }
