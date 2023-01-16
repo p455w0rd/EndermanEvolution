@@ -9,7 +9,15 @@ public class EndermanEvo implements ModInitializer {
     public void onInitialize() {
         Vars.ITEM_GROUP.initialize();
 
-        FieldRegistrationHandler.register(ItemManager.class, Vars.MOD_ID, false);
-        FieldRegistrationHandler.register(BlockManager.class, Vars.MOD_ID, false);
+        FieldRegistrationHandler.register(
+            ItemManager.class,
+            Vars.MOD_ID,
+            false
+        );
+        FieldRegistrationHandler.register(
+            BlockManager.class,
+            Vars.MOD_ID,
+            false
+        );
     }
 }

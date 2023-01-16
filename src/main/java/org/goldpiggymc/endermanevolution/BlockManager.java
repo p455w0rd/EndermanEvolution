@@ -8,5 +8,14 @@ import net.minecraft.sound.BlockSoundGroup;
 import org.goldpiggymc.endermanevolution.block.EnderFlowerCrop;
 
 public class BlockManager implements BlockRegistryContainer {
-    public static final Block ENDER_FLOWER = new EnderFlowerCrop(AbstractBlock.Settings.of(Material.PLANT).nonOpaque().noCollision().ticksRandomly().breakInstantly().sounds(BlockSoundGroup.CROP));
+
+    public static final Block ENDER_FLOWER = new EnderFlowerCrop(
+        AbstractBlock.Settings
+            .of(Material.PLANT)
+            .nonOpaque()
+            .noCollision()
+            .ticksRandomly()
+            .breakInstantly()
+            .sounds(BlockSoundGroup.CROP)
+    );
 }

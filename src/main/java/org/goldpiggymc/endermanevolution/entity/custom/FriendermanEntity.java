@@ -10,17 +10,23 @@ import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
 public class FriendermanEntity extends AnimalEntity {
+
     @Nullable
     @Override
     public PassiveEntity createChild(ServerWorld world, PassiveEntity entity) {
         return null;
     }
 
-    public FriendermanEntity(EntityType<? extends AnimalEntity> entityType, World world) {
+    public FriendermanEntity(
+        EntityType<? extends AnimalEntity> entityType,
+        World world
+    ) {
         super(entityType, world);
     }
 
     public static DefaultAttributeContainer.Builder setAttribute() {
-        return AnimalEntity.createMobAttributes().add(EntityAttributes.GENERIC_MAX_HEALTH, 20);
+        return AnimalEntity
+            .createMobAttributes()
+            .add(EntityAttributes.GENERIC_MAX_HEALTH, 20);
     }
 }

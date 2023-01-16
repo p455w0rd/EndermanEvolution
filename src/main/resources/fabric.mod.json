@@ -1,35 +1,29 @@
 {
-  "schemaVersion": 1,
-  "id": "endermanevolution",
-  "version": "${version}",
+    "schemaVersion": 1,
+    "id": "endermanevolution",
+    "version": "${version}",
 
-  "name": "Enderman Evolution Refabricated",
-  "description": "Rework of Enderman Evolution mod for FabricMC",
-  "authors": [
-    "GoldPiggyMC"
-  ],
-  "contact": {
-    "homepage": "https://github.com/GoldPiggyMC/EndermanEvolution-Refabricated",
-    "sources": "https://github.com/GoldPiggyMC/EndermanEvolution-Refabricated"
-  },
+    "name": "Enderman Evolution Refabricated",
+    "description": "Rework of Enderman Evolution mod for FabricMC",
+    "authors": ["GoldPiggyMC"],
+    "contact": {
+        "homepage": "https://github.com/GoldPiggyMC/EndermanEvolution-Refabricated",
+        "sources": "https://github.com/GoldPiggyMC/EndermanEvolution-Refabricated"
+    },
 
-  "license": "MIT",
-  "icon": "assets/endermanevolution/icon.png",
+    "license": "MIT",
+    "icon": "assets/endermanevolution/icon.png",
 
-  "environment": "*",
-  "entrypoints": {
-    "main": [
-      "org.goldpiggymc.endermanevolution.EndermanEvo"
-    ],
-    "client": [
-      "org.goldpiggymc.endermanevolution.client.EndermanEvo"
-    ]
-  },
+    "environment": "*",
+    "entrypoints": {
+        "main": ["org.goldpiggymc.endermanevolution.EndermanEvo"],
+        "client": ["org.goldpiggymc.endermanevolution.client.EndermanEvo"]
+    },
 
-  "depends": {
-    "fabricloader": ">=0.14.11",
-    "fabric-api": "*",
-    "minecraft": "1.19.2",
-    "java": ">=17"
-  }
+    "depends": {
+        "fabricloader": ">=0.14.11",
+        "fabric-api": "*",
+        "minecraft": "1.19.2",
+        "java": ">=17"
+    }
 }

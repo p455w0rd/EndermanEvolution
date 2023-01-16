@@ -1,16 +1,12 @@
 {
-  "type": "minecraft:crafting_shaped",
-  "key": {
-    "G": {
-      "item": "endermanevolution:ender_fragment"
+    "type": "minecraft:crafting_shaped",
+    "key": {
+        "G": {
+            "item": "endermanevolution:ender_fragment"
+        }
+    },
+    "pattern": ["GGG", "GGG", "GGG"],
+    "result": {
+        "item": "minecraft:ender_pearl"
     }
-  },
-  "pattern": [
-    "GGG",
-    "GGG",
-    "GGG"
-  ],
-  "result": {
-    "item": "minecraft:ender_pearl"
-  }
 }

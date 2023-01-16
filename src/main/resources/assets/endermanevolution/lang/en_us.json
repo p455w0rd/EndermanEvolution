@@ -1,39 +1,38 @@
 {
-  "item.endermanevolution.friender_pearl": [
-    {
-      "text": "Friender",
-      "color": "#E8027C"
-    },
-    {
-      "text": " Pearl",
-      "color": "#FFFFFF"
-    }
-  ],
-  "item.endermanevolution.ender_fragment": [
-    {
-      "text": "Ender",
-      "color": "#258273"
-    },
-    {
-      "text": " Fragment",
-      "color": "#FFFFFF"
-    }
-  ],
-  "item.endermanevolution.ender_flower_seed": [
-    {
-      "text": "Ender",
-      "color": "#258273"
-    },
-    {
-      "text": " Flower",
-      "color": "#FFFFFF"
-    }
-  ],
+    "item.endermanevolution.friender_pearl": [
+        {
+            "text": "Friender",
+            "color": "#E8027C"
+        },
+        {
+            "text": " Pearl",
+            "color": "#FFFFFF"
+        }
+    ],
+    "item.endermanevolution.ender_fragment": [
+        {
+            "text": "Ender",
+            "color": "#258273"
+        },
+        {
+            "text": " Fragment",
+            "color": "#FFFFFF"
+        }
+    ],
+    "item.endermanevolution.ender_flower_seed": [
+        {
+            "text": "Ender",
+            "color": "#258273"
+        },
+        {
+            "text": " Flower",
+            "color": "#FFFFFF"
+        }
+    ],
 
-
-  "itemGroup.endermanevolution.endermanevolution_group": [
-    {
-      "text": "Enderman Evolution"
-    }
-  ]
+    "itemGroup.endermanevolution.endermanevolution_group": [
+        {
+            "text": "Enderman Evolution"
+        }
+    ]
 }

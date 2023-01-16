@@ -9,6 +9,9 @@ public class EndermanEvo implements ClientModInitializer {
 
     @Override
     public void onInitializeClient() {
-        BlockRenderLayerMap.INSTANCE.putBlocks(RenderLayer.getCutout(), BlockManager.ENDER_FLOWER);
+        BlockRenderLayerMap.INSTANCE.putBlocks(
+            RenderLayer.getCutout(),
+            BlockManager.ENDER_FLOWER
+        );
     }
 }
