@@ -7,12 +7,18 @@ import net.minecraft.util.Identifier;
 import org.goldpiggymc.endermanevolution.Vars;
 
 public class EvolvedEndermanEntityRenderer extends EndermanEntityRenderer {
-    public EvolvedEndermanEntityRenderer(EntityRendererFactory.Context context) {
+
+    public EvolvedEndermanEntityRenderer(
+        EntityRendererFactory.Context context
+    ) {
         super(context);
     }
 
     @Override
     public Identifier getTexture(EndermanEntity endermanEntity) {
-        return new Identifier(Vars.MOD_ID, "textures/entity/evolved_enderman.png");
+        return new Identifier(
+            Vars.MOD_ID,
+            "textures/entity/evolved_enderman.png"
+        );
     }
 }

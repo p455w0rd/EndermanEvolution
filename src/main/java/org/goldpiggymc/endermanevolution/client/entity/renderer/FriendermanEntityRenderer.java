@@ -7,6 +7,7 @@ import net.minecraft.util.Identifier;
 import org.goldpiggymc.endermanevolution.Vars;
 
 public class FriendermanEntityRenderer extends EndermanEntityRenderer {
+
     public FriendermanEntityRenderer(EntityRendererFactory.Context context) {
         super(context);
     }

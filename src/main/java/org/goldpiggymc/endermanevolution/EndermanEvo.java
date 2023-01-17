@@ -15,8 +15,14 @@ public class EndermanEvo implements ModInitializer {
         Vars.ITEM_GROUP.initialize();
         GeckoLib.initialize();
 
-        FabricDefaultAttributeRegistry.register(EntityManager.FRIENDERMAN, FriendermanEntity.createEndermanAttributes());
-        FabricDefaultAttributeRegistry.register(EntityManager.EVOLVED_ENDERMAN, EvolvedEnderman.createEndermanAttributes());
+        FabricDefaultAttributeRegistry.register(
+            EntityManager.FRIENDERMAN,
+            FriendermanEntity.createEndermanAttributes()
+        );
+        FabricDefaultAttributeRegistry.register(
+            EntityManager.EVOLVED_ENDERMAN,
+            EvolvedEnderman.createEndermanAttributes()
+        );
 
         FieldRegistrationHandler.register(
             ItemManager.class,

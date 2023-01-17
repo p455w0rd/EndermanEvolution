@@ -19,7 +19,13 @@ public class EndermanEvo implements ClientModInitializer {
             BlockManager.ENDER_FLOWER
         );
 
-        EntityRendererRegistry.register(EntityManager.FRIENDERMAN, FriendermanEntityRenderer::new);
-        EntityRendererRegistry.register(EntityManager.EVOLVED_ENDERMAN, EvolvedEndermanEntityRenderer::new);
+        EntityRendererRegistry.register(
+            EntityManager.FRIENDERMAN,
+            FriendermanEntityRenderer::new
+        );
+        EntityRendererRegistry.register(
+            EntityManager.EVOLVED_ENDERMAN,
+            EvolvedEndermanEntityRenderer::new
+        );
     }
 }

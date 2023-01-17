@@ -29,6 +29,16 @@
             "color": "#FFFFFF"
         }
     ],
+    "item.endermanevolution.frienderman_spawn_egg": [
+        {
+            "text": "Frienderman",
+            "color": "#E8027C"
+        },
+        {
+            "text": " Spawn Egg",
+            "color": "#FFFFFF"
+        }
+    ],
 
     "itemGroup.endermanevolution.endermanevolution_group": [
         {

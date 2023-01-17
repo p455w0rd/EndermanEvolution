@@ -11,7 +11,11 @@ import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
 public class FriendermanEntity extends EndermanEntity {
-    public FriendermanEntity(EntityType<? extends EndermanEntity> entityType, World world) {
+
+    public FriendermanEntity(
+        EntityType<? extends EndermanEntity> entityType,
+        World world
+    ) {
         super(entityType, world);
     }
 }

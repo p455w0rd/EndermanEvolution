@@ -22,11 +22,11 @@ public class EntityManager {
     );
 
     public static final EntityType<EvolvedEnderman> EVOLVED_ENDERMAN = Registry.register(
-            Registry.ENTITY_TYPE,
-            new Identifier(Vars.MOD_ID, "evolved_enderman"),
-            FabricEntityTypeBuilder
-                    .create(SpawnGroup.CREATURE, EvolvedEnderman::new)
-                    .dimensions(EntityDimensions.fixed(0.4f, 0.4f))
-                    .build()
+        Registry.ENTITY_TYPE,
+        new Identifier(Vars.MOD_ID, "evolved_enderman"),
+        FabricEntityTypeBuilder
+            .create(SpawnGroup.CREATURE, EvolvedEnderman::new)
+            .dimensions(EntityDimensions.fixed(0.4f, 0.4f))
+            .build()
     );
 }
