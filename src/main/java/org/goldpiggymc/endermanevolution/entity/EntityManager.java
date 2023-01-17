@@ -7,6 +7,7 @@ import net.minecraft.entity.SpawnGroup;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 import org.goldpiggymc.endermanevolution.Vars;
+import org.goldpiggymc.endermanevolution.entity.custom.EvolvedEnderman;
 import org.goldpiggymc.endermanevolution.entity.custom.FriendermanEntity;
 
 public class EntityManager {
@@ -18,5 +19,14 @@ public class EntityManager {
             .create(SpawnGroup.CREATURE, FriendermanEntity::new)
             .dimensions(EntityDimensions.fixed(0.4f, 0.4f))
             .build()
+    );
+
+    public static final EntityType<EvolvedEnderman> EVOLVED_ENDERMAN = Registry.register(
+            Registry.ENTITY_TYPE,
+            new Identifier(Vars.MOD_ID, "evolved_enderman"),
+            FabricEntityTypeBuilder
+                    .create(SpawnGroup.CREATURE, EvolvedEnderman::new)
+                    .dimensions(EntityDimensions.fixed(0.4f, 0.4f))
+                    .build()
     );
 }
