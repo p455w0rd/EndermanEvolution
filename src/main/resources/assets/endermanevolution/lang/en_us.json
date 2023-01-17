@@ -39,6 +39,16 @@
             "color": "#FFFFFF"
         }
     ],
+    "item.endermanevolution.evolved_enderman_spawn_egg": [
+        {
+            "text": "Evolved",
+            "color": "#048236"
+        },
+        {
+            "text": " Enderman Spawn Egg",
+            "color": "#FFFFFF"
+        }
+    ],
 
     "itemGroup.endermanevolution.endermanevolution_group": [
         {

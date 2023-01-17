@@ -28,4 +28,11 @@ public class ItemManager implements ItemRegistryContainer {
         0xF4C9E1,
         new OwoItemSettings().group(Vars.ITEM_GROUP)
     );
+
+    public static final Item EVOLVED_ENDERMAN_SPAWN_EGG = new SpawnEggItem(
+            EntityManager.EVOLVED_ENDERMAN,
+            0x000000,
+            0x048236,
+            new OwoItemSettings().group(Vars.ITEM_GROUP)
+    );
 }
