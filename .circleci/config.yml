@@ -1,0 +1,39 @@
+version: 2
+
+jobs:
+  build:
+    docker:
+      - image: cimg/openjdk:17.0.5-node
+
+    working_directory: ~/repo
+
+    environment:
+      JVM_OPTS: -Xmx3200m
+      TERM: dumb
+    steps:
+      - checkout
+
+      - restore_cache:
+          keys:
+            - v1-dependencies-{{ checksum "build.gradle" }}
+            - v1-dependencies-
+
+      - run: gradle dependencies
+
+      - save_cache:
+          paths:
+            - ~/.gradle
+          key: v1-dependencies-{{ checksum "build.gradle" }}
+          
+      - run: chmod +x ./gradlew
+
+      - run:
+          name: Format codes
+          command: ./gradlew :spotlessApply
+
+      - run:
+          name: Build
+          command: ./gradlew build
+
+      - store_artifacts:
+          path: build/libs/
